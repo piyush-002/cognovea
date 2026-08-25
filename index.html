@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cognovea — Data Engineering, Analytics, BI &amp; AI | Coming Soon</title>
+<meta name="description" content="Cognovea is coming to help enterprises connect their data, uncover what it means and build intelligent capabilities around it. Data Engineering, Analytics, Business Intelligence and AI.">
+<meta name="theme-color" content="#0B1020">
+<link rel="canonical" href="https://cognovea.com/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cognovea — Data Engineering, Analytics, BI &amp; AI">
+<meta property="og:description" content="Every business has a story hidden in its data. Cognovea is coming.">
+<meta property="og:url" content="https://cognovea.com/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='6' r='2.4' fill='%237C3AED'/%3E%3Ccircle cx='8' cy='10' r='2.4' fill='%237C3AED'/%3E%3Ccircle cx='5' cy='16' r='2.4' fill='%235B6BF0'/%3E%3Ccircle cx='8' cy='22' r='2.4' fill='%233B9DF4'/%3E%3Ccircle cx='16' cy='26' r='2.4' fill='%2322D3EE'/%3E%3Ccircle cx='23' cy='24' r='1.6' fill='%2322D3EE'/%3E%3Ccircle cx='23' cy='8' r='1.6' fill='%234F6BF0'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Cognovea",
+  "url": "https://cognovea.com/",
+  "description": "Data engineering, analytics, business intelligence and AI services for enterprises.",
+  "slogan": "Clarity in Data. Intelligence in Action.",
+  "address": { "@type": "PostalAddress", "addressLocality": "Bengaluru", "addressRegion": "KA", "addressCountry": "IN" },
+  "location": [
+    { "@type": "Place", "name": "Bengaluru (Head Office)", "address": { "@type": "PostalAddress", "addressLocality": "Bengaluru", "addressRegion": "KA", "addressCountry": "IN" } },
+    { "@type": "Place", "name": "Indore (Delivery Centre)", "address": { "@type": "PostalAddress", "addressLocality": "Indore", "addressRegion": "MP", "addressCountry": "IN" } }
+  ]
+}
+</script>
+
+<style>
+  :root{
+    --ink:#0B1020;
+    --ink-2:#1E293B;
+    --paper:#F8FAFC;
+    --violet:#7C3AED;
+    --cyan:#22D3EE;
+    --muted:rgba(248,250,252,.62);
+    --faint:rgba(248,250,252,.34);
+    --hair:rgba(248,250,252,.12);
+    --gut:clamp(24px,5vw,72px);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  html,body{height:100%}
+
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+
+  /* ambient depth — two soft brand-coloured washes, no gradient bar clichés */
+  body::before{
+    content:'';
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(58vw 58vw at 76% 28%, rgba(124,58,237,.16), transparent 62%),
+      radial-gradient(52vw 52vw at 88% 82%, rgba(34,211,238,.11), transparent 60%);
+  }
+
+  .shell{
+    position:relative; z-index:1;
+    min-height:100svh;
+    display:flex; flex-direction:column;
+    padding:clamp(22px,3.4vw,40px) var(--gut);
+    gap:clamp(28px,4vw,48px);
+  }
+
+  /* ---------- masthead ---------- */
+  .mast{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap}
+
+  .word{
+    font-size:clamp(21px,2.1vw,26px);
+    font-weight:500;
+    letter-spacing:-.02em;
+    line-height:1;
+  }
+  .word i{font-style:normal;color:var(--paper)}
+  .word b{
+    font-weight:500;
+    background:linear-gradient(96deg,var(--violet),#4F6BF0 46%,var(--cyan));
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:transparent;
+  }
+  .kicker{
+    font-size:9.5px; font-weight:400;
+    letter-spacing:.34em; text-transform:uppercase;
+    color:var(--faint);
+    transform:translateY(-1px);
+  }
+
+  /* ---------- main split ---------- */
+  .grid{
+    flex:1;
+    display:grid;
+    grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);
+    align-items:center;
+    gap:clamp(30px,5vw,76px);
+  }
+
+  .copy{max-width:35rem}
+
+  h1{
+    margin:0;
+    font-size:clamp(1.95rem,4.15vw,3.35rem);
+    font-weight:400;
+    line-height:1.1;
+    letter-spacing:-.032em;
+  }
+  h1 em{
+    font-style:normal;
+    background:linear-gradient(94deg,var(--violet),#4F6BF0 44%,var(--cyan));
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:transparent;
+  }
+
+  .lede{
+    margin:clamp(20px,2.4vw,28px) 0 0;
+    font-size:clamp(.94rem,1.13vw,1.045rem);
+    line-height:1.72;
+    color:var(--muted);
+    max-width:30.5rem;
+  }
+  .lede + .lede{margin-top:1.1em}
+  .lede strong{color:var(--paper); font-weight:400}
+
+  /* disciplines — hairline rule + dot separators, no pills */
+  .disc{
+    margin:clamp(24px,3vw,34px) 0 0;
+    padding-top:clamp(18px,2.2vw,24px);
+    border-top:1px solid var(--hair);
+    display:flex; flex-wrap:wrap; align-items:center;
+    gap:.55em 1.05em;
+    font-size:clamp(.75rem,.94vw,.845rem);
+    font-weight:400;
+    letter-spacing:.075em;
+    color:rgba(248,250,252,.8);
+  }
+  .disc span{white-space:nowrap}
+  .disc s{
+    text-decoration:none;
+    width:4px; height:4px; border-radius:50%;
+    background:var(--cyan); opacity:.72;
+    flex:none;
+  }
+
+  /* coming soon marker */
+  .soon{
+    margin-top:clamp(26px,3.2vw,36px);
+    display:inline-flex; align-items:center; gap:11px;
+    font-size:11px; font-weight:400;
+    letter-spacing:.32em; text-transform:uppercase;
+    color:rgba(248,250,252,.9);
+  }
+  .pulse{
+    width:7px; height:7px; border-radius:50%; flex:none;
+    background:var(--cyan);
+    box-shadow:0 0 0 0 rgba(34,211,238,.55);
+    animation:beat 2.6s ease-out infinite;
+  }
+  @keyframes beat{
+    0%{box-shadow:0 0 0 0 rgba(34,211,238,.5)}
+    70%{box-shadow:0 0 0 13px rgba(34,211,238,0)}
+    100%{box-shadow:0 0 0 0 rgba(34,211,238,0)}
+  }
+
+  /* ---------- canvas ---------- */
+  .stage{
+    position:relative;
+    aspect-ratio:1;
+    width:100%;
+    max-width:min(46vh,520px);
+    margin-inline:auto;
+  }
+  .stage canvas{display:block; width:100%; height:100%}
+
+  /* ---------- footer ---------- */
+  .foot{
+    display:flex; flex-wrap:wrap; align-items:center;
+    justify-content:space-between; gap:14px 26px;
+    padding-top:clamp(16px,2vw,22px);
+    border-top:1px solid var(--hair);
+    font-size:12.5px; font-weight:300;
+    color:var(--faint);
+  }
+  .foot a{
+    color:var(--muted);
+    text-decoration:none;
+    border-bottom:1px solid transparent;
+    transition:color .25s ease, border-color .25s ease;
+  }
+  .foot a:hover{color:var(--paper); border-bottom-color:var(--cyan)}
+  .foot a:focus-visible{
+    outline:2px solid var(--cyan);
+    outline-offset:4px;
+    border-radius:2px;
+  }
+  .tag{letter-spacing:.06em}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:900px){
+    .grid{
+      grid-template-columns:1fr;
+      gap:clamp(24px,6vw,40px);
+      align-content:center;
+      text-align:left;
+    }
+    .stage{order:-1; max-width:min(60vw,300px); margin-inline:auto}
+    .copy{max-width:none}
+    .lede{max-width:none}
+  }
+  @media (max-width:560px){
+    .stage{max-width:min(66vw,240px)}
+    .foot{flex-direction:column; align-items:flex-start; gap:8px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .pulse{animation:none}
+    *{transition-duration:.01ms !important}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <header class="mast">
+    <div class="word"><i>cogno</i><b>vea</b></div>
+    <div class="kicker">Data + AI Solutions</div>
+  </header>
+
+  <main class="grid">
+    <div class="copy">
+      <h1>Every business has a story <em>hidden in its data.</em></h1>
+
+      <p class="lede">Across systems, teams, transactions, customers and operations, your business is constantly creating information.</p>
+
+      <p class="lede"><strong>Cognovea is coming</strong> to help enterprises connect their data, uncover what it means and build intelligent capabilities around it.</p>
+
+      <p class="disc">
+        <span>Data Engineering</span><s></s>
+        <span>Analytics</span><s></s>
+        <span>Business Intelligence</span><s></s>
+        <span>AI</span>
+      </p>
+
+      <p class="soon"><span class="pulse" aria-hidden="true"></span>Coming Soon</p>
+    </div>
+
+    <div class="stage">
+      <canvas id="mark" role="img" aria-label="The Cognovea mark: a ring of data points resolving into the letter C"></canvas>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <span class="tag">Clarity in Data. Intelligence in Action.</span>
+    <span><a href="mailto:cognovea@gmail.com">cognovea@gmail.com</a> &nbsp;·&nbsp; Bengaluru &nbsp;·&nbsp; Indore</span>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var cv = document.getElementById('mark');
+  var ctx = cv.getContext('2d');
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var V=[124,58,237], M=[79,107,240], C=[34,211,238];
+  var pts=[], S=0, dpr=1, t0=0, raf=null;
+  var pointer={x:-9999,y:-9999,on:false};
+
+  function shade(k){
+    var a,b,f;
+    if(k<0.5){ a=V; b=M; f=k/0.5; } else { a=M; b=C; f=(k-0.5)/0.5; }
+    return 'rgb('+Math.round(a[0]+(b[0]-a[0])*f)+','
+                 +Math.round(a[1]+(b[1]-a[1])*f)+','
+                 +Math.round(a[2]+(b[2]-a[2])*f)+')';
+  }
+
+  // The mark: an open ring of dots — dense along the stroke, dissolving outward
+  // toward the aperture. Scatter → resolve is the whole idea: raw points becoming form.
+  function build(size){
+    var cx=size/2, cy=size/2, R=size*0.295;
+    var A0=54*Math.PI/180, A1=306*Math.PI/180;   // aperture faces right
+    var out=[], N=Math.round(size*0.86);
+
+    for(var i=0;i<N;i++){
+      var a=A0+Math.random()*(A1-A0);
+
+      // proximity to the arc's midpoint — the stroke is densest here,
+      // and frays as it approaches either tip
+      var mid=(A0+A1)/2;
+      var near=1-Math.abs(a-mid)/((A1-A0)/2);
+
+      var u=Math.random(), off, sz, core;
+      if(u<0.60){                                   // the stroke itself
+        off=(Math.random()-0.5)*size*0.080; core=1;
+      }else if(u<0.87){                             // first fray
+        off=(Math.random()*0.55+0.28)*size*0.10*(Math.random()<0.42?-1:1); core=0.6;
+      }else{                                        // outer dissolve, always outward
+        off=(Math.random()*1.05+0.42)*size*0.115; core=0.22;
+      }
+
+      // tips shed more of their outer particles than the body does
+      if(core<1 && Math.random()>near*0.62+0.34) continue;
+
+      var r=R+off;
+      var x=cx+Math.cos(a)*r, y=cy-Math.sin(a)*r;
+
+      sz = core===1 ? size*(0.0068+Math.random()*0.0072)
+                    : size*(0.0030+Math.random()*0.0052*core+0.0012);
+
+      // violet at the top-left, cyan at the lower-right — a diagonal read
+      var k=Math.max(0,Math.min(1, (((x-cx)/R)+((y-cy)/R))/3.4+0.5 ));
+
+      out.push({
+        tx:x, ty:y,
+        x:cx+(Math.random()-0.5)*size*1.5,
+        y:cy+(Math.random()-0.5)*size*1.5,
+        r:sz,
+        c:shade(k),
+        al:core===1?0.94:0.30+core*0.52,
+        ph:Math.random()*Math.PI*2,
+        dr:0.5+Math.random()*1.1,
+        dl:Math.random()*0.36
+      });
+    }
+    return out;
+  }
+
+  function fit(){
+    var box=cv.getBoundingClientRect();
+    if(!box.width) return;
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    S=box.width;
+    cv.width=Math.round(S*dpr);
+    cv.height=Math.round(S*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    pts=build(S);
+    if(still){ pts.forEach(function(p){p.x=p.tx;p.y=p.ty;}); paint(0); }
+    else { t0=performance.now(); }
+  }
+
+  function paint(now){
+    ctx.clearRect(0,0,S,S);
+    for(var i=0;i<pts.length;i++){
+      var p=pts[i], px=p.x, py=p.y;
+      if(!still){
+        // idle drift keeps the swarm alive without wobbling the letterform
+        px+=Math.sin(now/1750+p.ph)*p.dr;
+        py+=Math.cos(now/2050+p.ph)*p.dr;
+      }
+      ctx.globalAlpha=p.al;
+      ctx.fillStyle=p.c;
+      ctx.beginPath();
+      ctx.arc(px,py,p.r,0,6.2832);
+      ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function frame(now){
+    var e=(now-t0)/1000;
+    for(var i=0;i<pts.length;i++){
+      var p=pts[i];
+      var g=Math.max(0,Math.min(1,(e-p.dl)/1.5));
+      g=1-Math.pow(1-g,3.2);                       // ease-out cubic: settles, never bounces
+
+      var gx=p.tx, gy=p.ty;
+
+      if(pointer.on){                              // cursor parts the swarm
+        var dx=p.tx-pointer.x, dy=p.ty-pointer.y;
+        var d2=dx*dx+dy*dy, R=118;
+        if(d2<R*R && d2>0.01){
+          var d=Math.sqrt(d2), push=(1-d/R)*30;
+          gx+=dx/d*push; gy+=dy/d*push;
+        }
+      }
+
+      if(g<1){ p.x+=(gx-p.x)*0.055+ (gx-p.x)*g*0.02; p.y+=(gy-p.y)*0.055+(gy-p.y)*g*0.02; }
+      else   { p.x+=(gx-p.x)*0.10;  p.y+=(gy-p.y)*0.10; }
+    }
+    paint(now);
+    raf=requestAnimationFrame(frame);
+  }
+
+  function track(e){
+    var b=cv.getBoundingClientRect();
+    var x=e.clientX-b.left, y=e.clientY-b.top;
+    if(x>-70&&y>-70&&x<b.width+70&&y<b.height+70){ pointer.x=x; pointer.y=y; pointer.on=true; }
+    else pointer.on=false;
+  }
+
+  fit();
+  if(!still) raf=requestAnimationFrame(frame);
+
+  var rt;
+  window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(fit,140); });
+  if(!still && window.matchMedia('(pointer:fine)').matches){
+    window.addEventListener('mousemove',track,{passive:true});
+    window.addEventListener('mouseleave',function(){pointer.on=false;});
+  }
+  document.addEventListener('visibilitychange',function(){
+    if(still) return;
+    if(document.hidden){ cancelAnimationFrame(raf); raf=null; }
+    else if(!raf){ raf=requestAnimationFrame(frame); }
+  });
+})();
+</script>
+
+</body>
+</html>
