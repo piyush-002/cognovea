@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="">
+
+  <defs>
+    <radialGradient id="locations-a" cx="30%" cy="28%" r="55%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity=".62"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="locations-b" cx="76%" cy="70%" r="52%">
+      <stop offset="0%" stop-color="#4F6BF0" stop-opacity=".38"/>
+      <stop offset="100%" stop-color="#4F6BF0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="locations-c" cx="88%" cy="20%" r="34%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="locations-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="55%" stop-color="#4F6BF0"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+    <filter id="locations-blur" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="52"/>
+    </filter>
+  </defs>
+  <rect width="800" height="520" fill="#FFFFFF"/>
+  <g filter="url(#locations-blur)" opacity="0.85">
+    <rect width="800" height="520" fill="url(#locations-a)"/>
+    <rect width="800" height="520" fill="url(#locations-b)"/>
+    <rect width="800" height="520" fill="url(#locations-c)"/>
+  </g>
+  <path d="M 250 300 C 340 210 470 300 560 210" fill="none" stroke="url(#locations-stroke)" stroke-width="2.6" stroke-dasharray="8 8"/>
+     <circle cx="250" cy="300" r="16" fill="#7C3AED"/>
+            <circle cx="250" cy="300" r="36" fill="none" stroke="#7C3AED" stroke-opacity=".45" stroke-width="2"/>
+            <circle cx="250" cy="300" r="58" fill="none" stroke="#7C3AED" stroke-opacity=".2" stroke-width="1.6"/><circle cx="560" cy="210" r="13" fill="#22D3EE"/>
+            <circle cx="560" cy="210" r="30" fill="none" stroke="#22D3EE" stroke-opacity=".45" stroke-width="2"/>
+            <circle cx="560" cy="210" r="50" fill="none" stroke="#22D3EE" stroke-opacity=".2" stroke-width="1.6"/>
+</svg>

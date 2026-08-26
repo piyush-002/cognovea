@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Arrow, PageHero, breadcrumbSchema, serviceSchema } from '@/components/Bits';
+import { Arrow, Figure, PageHero, breadcrumbSchema, serviceSchema } from '@/components/Bits';
 import ContactForm from '@/components/ContactForm';
 import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
@@ -176,7 +176,8 @@ export default function DataHealthCheckPage() {
       {/* --- No lock in --- */}
       <section className="band band--dark">
         <div className="wrap">
-          <div className="rv measure">
+          <div className="feature feature--copy">
+            <div className="rv rv--left">
             <p className="eyebrow">No Lock In. Ever.</p>
             <h2 className="h-lg" style={{ marginTop: '1rem' }}>
               The findings are yours, whatever you decide next.
@@ -185,6 +186,11 @@ export default function DataHealthCheckPage() {
               The Data Health Check is designed to give you useful findings that you can take forward regardless of
               whether you continue working with Cognovea, so the decision about what happens next remains yours.
             </p>
+            </div>
+            <Figure
+              src="/img/dhc-ladder.svg"
+              alt="Abstract rising ladder of engagement sizes, starting from a short audit"
+            />
           </div>
         </div>
       </section>

@@ -229,9 +229,21 @@ that file and run:
 npm run art
 ```
 
-The motifs are meant to carry meaning rather than decorate: a radar sweep for
-"see clearly", a forecast cone for "know what's next", a pipeline for "work
-smarter", converging paths for "move with confidence", and one per industry.
+The motifs are meant to carry meaning rather than decorate. The homepage set:
+a radar sweep for "see clearly", a forecast cone for "know what's next", a
+pipeline for "work smarter", converging paths for "move with confidence", and
+one per industry. The inner pages add layered warehouse storage, source
+orchestration, a quality-check grid with one anomaly flagged, concurrency lanes,
+a batch-by-batch migration, a falling cost curve, RAG retrieval with citations,
+an agent workflow pausing at a human approval gate, document extraction with a
+low-confidence row escalated, an impact-versus-effort matrix, a six-phase
+roadmap, an engagement ladder, delivery phases, a hiring funnel and a two-city
+locations mark.
+
+Long-copy sections use `.feature--copy`: the prose takes 1.55fr to the art's
+1fr, top-aligned, with the figure `position: sticky`. A 1:1 centred split
+narrows nine paragraphs by ~30% — making them ~30% taller — and leaves the
+figure floating in the middle of a tall column.
 
 **These are placeholders for photography, not a substitute for it.** The People
 section on the homepage has a marked slot (`TEAM PHOTOGRAPHY SLOT` in

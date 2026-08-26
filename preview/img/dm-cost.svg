@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="">
+
+  <defs>
+    <radialGradient id="cost-a" cx="30%" cy="28%" r="55%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity=".62"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cost-b" cx="76%" cy="70%" r="52%">
+      <stop offset="0%" stop-color="#4F6BF0" stop-opacity=".38"/>
+      <stop offset="100%" stop-color="#4F6BF0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cost-c" cx="88%" cy="20%" r="34%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cost-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="55%" stop-color="#4F6BF0"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+    <filter id="cost-blur" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="52"/>
+    </filter>
+  </defs>
+  <rect width="800" height="520" fill="#FFFFFF"/>
+  <g filter="url(#cost-blur)" opacity="0.85">
+    <rect width="800" height="520" fill="url(#cost-a)"/>
+    <rect width="800" height="520" fill="url(#cost-b)"/>
+    <rect width="800" height="520" fill="url(#cost-c)"/>
+  </g>
+  <line x1="60" y1="150" x2="750" y2="150" stroke="#0A1024" stroke-opacity=".07"/><line x1="60" y1="222" x2="750" y2="222" stroke="#0A1024" stroke-opacity=".07"/><line x1="60" y1="294" x2="750" y2="294" stroke="#0A1024" stroke-opacity=".07"/><line x1="60" y1="366" x2="750" y2="366" stroke="#0A1024" stroke-opacity=".07"/><path d="M 70.0 234.0 L 87.0 181.2 L 104.0 184.4 L 121.0 187.6 L 138.0 190.8 L 155.0 250.0 L 172.0 253.2 L 189.0 256.4 L 206.0 259.6 L 223.0 262.8 L 240.0 210.0 L 257.0 213.2 L 274.0 216.4 L 291.0 219.6 L 308.0 222.8 L 325.0 282.0 L 342.0 285.2 L 359.0 288.4 L 376.0 291.6 L 393.0 294.8 L 410.0 242.0 L 427.0 245.2 L 444.0 248.4 L 461.0 251.6 L 478.0 254.8 L 495.0 314.0 L 512.0 317.2 L 529.0 320.4 L 546.0 323.6 L 563.0 326.8 L 580.0 274.0 L 597.0 277.2 L 614.0 280.4 L 631.0 283.6 L 648.0 342.8 L 665.0 346.0 L 682.0 349.2 L 699.0 352.4 L 716.0 355.6 L 733.0 358.8 L 750.0 306.0 L 750 150 L 70 150 Z" fill="url(#cost-stroke)" fill-opacity=".16"/><path d="M 70.0 234.0 L 87.0 181.2 L 104.0 184.4 L 121.0 187.6 L 138.0 190.8 L 155.0 250.0 L 172.0 253.2 L 189.0 256.4 L 206.0 259.6 L 223.0 262.8 L 240.0 210.0 L 257.0 213.2 L 274.0 216.4 L 291.0 219.6 L 308.0 222.8 L 325.0 282.0 L 342.0 285.2 L 359.0 288.4 L 376.0 291.6 L 393.0 294.8 L 410.0 242.0 L 427.0 245.2 L 444.0 248.4 L 461.0 251.6 L 478.0 254.8 L 495.0 314.0 L 512.0 317.2 L 529.0 320.4 L 546.0 323.6 L 563.0 326.8 L 580.0 274.0 L 597.0 277.2 L 614.0 280.4 L 631.0 283.6 L 648.0 342.8 L 665.0 346.0 L 682.0 349.2 L 699.0 352.4 L 716.0 355.6 L 733.0 358.8 L 750.0 306.0" fill="none" stroke="url(#cost-stroke)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

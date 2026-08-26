@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Arrow, CtaBand, PageHero, breadcrumbSchema, serviceSchema } from '@/components/Bits';
+import { Arrow, CtaBand, Figure, PageHero, breadcrumbSchema, serviceSchema } from '@/components/Bits';
 import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
@@ -315,11 +315,14 @@ export default function AiStrategyPage() {
             </p>
           </div>
 
-          <div className="rich measure rv" style={{ marginBottom: '2.2rem' }}>
-            <p>
-              Through our Enterprise AI consulting framework, we organize the planning lifecycle into six distinct
-              steps. This ensures that the technical side of your business perfectly supports the human side.
-            </p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                Through our Enterprise AI consulting framework, we organize the planning lifecycle into six distinct
+                steps. This ensures that the technical side of your business perfectly supports the human side.
+              </p>
+            </div>
+            <Figure src="/img/as-roadmap.svg" alt="Abstract six-phase timeline with the first three phases complete" />
           </div>
 
           <div className="table-scroll rv">
@@ -423,13 +426,16 @@ export default function AiStrategyPage() {
             </p>
           </div>
 
-          <div className="rich measure rv" style={{ marginBottom: '2.2rem' }}>
-            <p>
-              When executives evaluate top ai consulting firms, they look for clear communication and deep technical
-              knowledge. We deliver actionable, highly detailed blueprints that your internal IT teams can execute with
-              total confidence.
-            </p>
-            <p>Here are the specific guarantees we provide to every business we advise:</p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                When executives evaluate top ai consulting firms, they look for clear communication and deep technical
+                knowledge. We deliver actionable, highly detailed blueprints that your internal IT teams can execute with
+                total confidence.
+              </p>
+              <p>Here are the specific guarantees we provide to every business we advise:</p>
+            </div>
+            <Figure src="/img/as-matrix.svg" alt="Abstract impact-versus-effort scatter with the high-impact low-effort quadrant highlighted" />
           </div>
 
           <div className="grid grid--2">

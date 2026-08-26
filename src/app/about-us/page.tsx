@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Arrow, CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
+import { Arrow, CtaBand, Figure, PageHero, breadcrumbSchema } from '@/components/Bits';
 import JsonLd from '@/components/JsonLd';
 import Tabs from '@/components/Tabs';
 
@@ -515,12 +515,15 @@ export default function AboutPage() {
             <h2 className="h-lg">How We Think About Data and AI</h2>
           </div>
 
-          <div className="rich measure rv">
-            <ul>
-              {BELIEFS.map((b) => (
-                <li key={b}>{b}</li>
-              ))}
-            </ul>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <ul>
+                {BELIEFS.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+            </div>
+            <Figure src="/img/de-pipeline.svg" alt="Abstract diagram of separate systems connected into one data platform" />
           </div>
         </div>
       </section>

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Arrow, CtaBand, PageHero, breadcrumbSchema, serviceSchema } from '@/components/Bits';
+import { Arrow, CtaBand, Figure, PageHero, breadcrumbSchema, serviceSchema } from '@/components/Bits';
 import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
@@ -195,51 +195,54 @@ export default function DataEngineeringPage() {
             <h2 className="h-lg">Architecting the Modern Enterprise Data Foundation</h2>
           </div>
 
-          <div className="rich measure rv">
-            <p>
-              When you run a large business, you just don&rsquo;t run a business but essentially you manage a plethora
-              of data. Every single day, your daily operations, cloud storage, and supply chains create endless streams
-              of valuable data that tell the story of your corporate journey.
-            </p>
-            <p>
-              Harnessing this data brings incredible business value. When your information flows smoothly across all
-              department systems, your team makes quick, confident decisions that propel the organization forward.
-            </p>
-            <p>
-              At Cognovea, we partner with progressive organizations to build unified data architectures. As data
-              engineering service providers, we design and build clean data systems that turn your information into
-              secure and easy to use business assets.
-            </p>
-            <p>
-              Our data engineering solutions give your team the speed and reliability needed to lead your market. Modern
-              businesses move very fast, and leaders need instant visibility into daily performance to capture new
-              opportunities and expand their market footprint.
-            </p>
-            <p>
-              Cohesive architecture turns reporting into a smooth, automated experience. Clear and consistent reports
-              build absolute trust in your numbers, ensuring everyone across the enterprise shares a unified vision of
-              success.
-            </p>
-            <p>
-              Our goal and vision is clear, we need to make data work hard for you to make reliable business insights an
-              everyday reality. By establishing storage tiers and automated pipelines, we become helping hands to your
-              team to focus entirely on strategic growth, market expansion, and product innovation.
-            </p>
-            <p>
-              Every enterprise is unique and it operates within a unique ecosystem of digital tools and cloud platforms.
-              In the world of digital abundance, the choices are more than needed. We understand those choices and
-              differences by crafting custom data pathways that align perfectly with your infrastructure.
-            </p>
-            <p>
-              When your data architecture is built with clarity and precision, the reporting and decisions gets
-              extraordinarily easier. Finance teams will have confidence in their forecasts, operational groups can
-              streamline daily workflows, and executive leadership steers the company with empirical clarity.
-            </p>
-            <p>
-              And with our modern approach, we ensure that your processes are uber smooth. We believe in building
-              lasting technical autonomy so your organization can continue to scale its data capabilities long into the
-              future.
-            </p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                When you run a large business, you just don&rsquo;t run a business but essentially you manage a plethora
+                of data. Every single day, your daily operations, cloud storage, and supply chains create endless streams
+                of valuable data that tell the story of your corporate journey.
+              </p>
+              <p>
+                Harnessing this data brings incredible business value. When your information flows smoothly across all
+                department systems, your team makes quick, confident decisions that propel the organization forward.
+              </p>
+              <p>
+                At Cognovea, we partner with progressive organizations to build unified data architectures. As data
+                engineering service providers, we design and build clean data systems that turn your information into
+                secure and easy to use business assets.
+              </p>
+              <p>
+                Our data engineering solutions give your team the speed and reliability needed to lead your market. Modern
+                businesses move very fast, and leaders need instant visibility into daily performance to capture new
+                opportunities and expand their market footprint.
+              </p>
+              <p>
+                Cohesive architecture turns reporting into a smooth, automated experience. Clear and consistent reports
+                build absolute trust in your numbers, ensuring everyone across the enterprise shares a unified vision of
+                success.
+              </p>
+              <p>
+                Our goal and vision is clear, we need to make data work hard for you to make reliable business insights an
+                everyday reality. By establishing storage tiers and automated pipelines, we become helping hands to your
+                team to focus entirely on strategic growth, market expansion, and product innovation.
+              </p>
+              <p>
+                Every enterprise is unique and it operates within a unique ecosystem of digital tools and cloud platforms.
+                In the world of digital abundance, the choices are more than needed. We understand those choices and
+                differences by crafting custom data pathways that align perfectly with your infrastructure.
+              </p>
+              <p>
+                When your data architecture is built with clarity and precision, the reporting and decisions gets
+                extraordinarily easier. Finance teams will have confidence in their forecasts, operational groups can
+                streamline daily workflows, and executive leadership steers the company with empirical clarity.
+              </p>
+              <p>
+                And with our modern approach, we ensure that your processes are uber smooth. We believe in building
+                lasting technical autonomy so your organization can continue to scale its data capabilities long into the
+                future.
+              </p>
+            </div>
+            <Figure src="/img/de-warehouse.svg" alt="Abstract diagram of layered cloud warehouse storage with queries resolving on top" />
           </div>
         </div>
       </section>
@@ -317,36 +320,39 @@ export default function DataEngineeringPage() {
             <h2 className="h-lg">How Does Cognovea Deliver Seamless Data Integration Across Multiple Clouds?</h2>
           </div>
 
-          <div className="rich measure rv">
-            <p>
-              Large enterprises spread their technology across multiple cloud providers and data platforms to optimize
-              performance, manage costs, and meet local laws. Cognovea is a flexible multicloud data engineering
-              consultancy that creates enterprise cloud data platform architecture that connects various systems without
-              any problems.
-            </p>
-            <p>
-              Your company might use Microsoft Azure for main tasks, Snowflake to store data, AWS for hosting, or
-              Databricks for machine learning. We combine all of these into a single, synchronized platform for your
-              business. Your team can use the best parts of each cloud service because of this.
-            </p>
-            <p>
-              Modern cloud setups benefit from unified organization. Keeping smooth pipelines across cloud vendors
-              empowers your engineering hours.
-            </p>
-            <p>
-              We create single connection layers that connect all of your cloud assets in a neat way. This gives your
-              architects a clear picture of everything and a single place to control how the data moves.
-            </p>
-            <p>
-              It is no longer necessary that for managing multiple cloud environments there is a need to maintain
-              separate and siloed workflows. We make your multicloud investments work together in a smooth operational
-              ecosystem by creating unified orchestration layers.
-            </p>
-            <p>
-              Your engineering leaders gain centralized visibility over data movement, storage distribution, and compute
-              allocation. This unified control center maximizes resource efficiency while giving your development teams
-              the freedom to utilize the specialized tools of each cloud provider.
-            </p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                Large enterprises spread their technology across multiple cloud providers and data platforms to optimize
+                performance, manage costs, and meet local laws. Cognovea is a flexible multicloud data engineering
+                consultancy that creates enterprise cloud data platform architecture that connects various systems without
+                any problems.
+              </p>
+              <p>
+                Your company might use Microsoft Azure for main tasks, Snowflake to store data, AWS for hosting, or
+                Databricks for machine learning. We combine all of these into a single, synchronized platform for your
+                business. Your team can use the best parts of each cloud service because of this.
+              </p>
+              <p>
+                Modern cloud setups benefit from unified organization. Keeping smooth pipelines across cloud vendors
+                empowers your engineering hours.
+              </p>
+              <p>
+                We create single connection layers that connect all of your cloud assets in a neat way. This gives your
+                architects a clear picture of everything and a single place to control how the data moves.
+              </p>
+              <p>
+                It is no longer necessary that for managing multiple cloud environments there is a need to maintain
+                separate and siloed workflows. We make your multicloud investments work together in a smooth operational
+                ecosystem by creating unified orchestration layers.
+              </p>
+              <p>
+                Your engineering leaders gain centralized visibility over data movement, storage distribution, and compute
+                allocation. This unified control center maximizes resource efficiency while giving your development teams
+                the freedom to utilize the specialized tools of each cloud provider.
+              </p>
+            </div>
+            <Figure src="/img/de-pipeline.svg" alt="Abstract diagram of many source systems orchestrated into one warehouse" />
           </div>
 
           <ul className="chips rv mt-3">
@@ -368,35 +374,38 @@ export default function DataEngineeringPage() {
             <h2 className="h-lg">Enterprise Data Governance, Security, and Risk Mitigation</h2>
           </div>
 
-          <div className="rich measure rv">
-            <p>
-              Protecting corporate and customer information is a top priority for every board. Maintaining secure
-              storage folders and reliable pipelines supports brand reputation and growth.
-            </p>
-            <p>
-              We put a strong global data governance framework into every stage of our work. When we put security first,
-              all of your data is encrypted while it&rsquo;s being sent and stored, your privacy is protected
-              automatically, and there are clear audit logs.
-            </p>
-            <p>
-              Your company can see exactly how information moves and changes across the organization by establishing
-              clear ownership, automating quality checks, and clear data tracking.
-            </p>
-            <p>
-              Security is an integral part of your data platform. Our engineers make sure every pipeline follows strict
-              global rules, including privacy laws and local storage regulations, keeping your corporate data safe at
-              every step.
-            </p>
-            <p>
-              Corporate security demands a proactive, multi layered defense strategy. We embed rigorous protection
-              protocols directly into the foundation of your data architecture.
-            </p>
-            <p>
-              From automated privacy masking that protects sensitive customer identifiers to end to end encryption
-              during pipeline transmission, our security measures safeguard your corporate reputation. Your organization
-              maintains absolute confidence knowing that every byte of data complies with international privacy
-              frameworks and regional residency mandates.
-            </p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                Protecting corporate and customer information is a top priority for every board. Maintaining secure
+                storage folders and reliable pipelines supports brand reputation and growth.
+              </p>
+              <p>
+                We put a strong global data governance framework into every stage of our work. When we put security first,
+                all of your data is encrypted while it&rsquo;s being sent and stored, your privacy is protected
+                automatically, and there are clear audit logs.
+              </p>
+              <p>
+                Your company can see exactly how information moves and changes across the organization by establishing
+                clear ownership, automating quality checks, and clear data tracking.
+              </p>
+              <p>
+                Security is an integral part of your data platform. Our engineers make sure every pipeline follows strict
+                global rules, including privacy laws and local storage regulations, keeping your corporate data safe at
+                every step.
+              </p>
+              <p>
+                Corporate security demands a proactive, multi layered defense strategy. We embed rigorous protection
+                protocols directly into the foundation of your data architecture.
+              </p>
+              <p>
+                From automated privacy masking that protects sensitive customer identifiers to end to end encryption
+                during pipeline transmission, our security measures safeguard your corporate reputation. Your organization
+                maintains absolute confidence knowing that every byte of data complies with international privacy
+                frameworks and regional residency mandates.
+              </p>
+            </div>
+            <Figure src="/img/de-checks.svg" alt="Abstract grid of automated data quality checks with one anomaly flagged" />
           </div>
         </div>
       </section>
