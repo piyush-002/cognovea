@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Arrow, PageHero, breadcrumbSchema } from '@/components/Bits';
+import { Arrow, Figure, PageHero, breadcrumbSchema } from '@/components/Bits';
 import ContactForm from '@/components/ContactForm';
 import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
@@ -189,8 +189,17 @@ export default function ContactPage() {
             </article>
           </div>
 
-          <div className="s-head rv mt-3" style={{ marginBottom: '1.6rem' }}>
-            <h3 className="h-md">Our Locations</h3>
+          <div className="feature mt-3" style={{ marginBottom: '1.6rem' }}>
+            <div className="rv rv--left">
+              <h3 className="h-md">Our Locations</h3>
+              <p style={{ marginTop: '0.8em' }}>
+                A head office in Bengaluru and a development centre in Indore, working as one team.
+              </p>
+            </div>
+            <Figure
+              src="/img/ct-locations.svg"
+              alt="Abstract map motif linking two locations"
+            />
           </div>
 
           <div className="grid grid--2">

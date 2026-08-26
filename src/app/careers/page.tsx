@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Arrow, PageHero, breadcrumbSchema } from '@/components/Bits';
+import { Arrow, Figure, PageHero, breadcrumbSchema } from '@/components/Bits';
 import JsonLd from '@/components/JsonLd';
 import Tabs from '@/components/Tabs';
 import { site } from '@/lib/site';
@@ -188,12 +188,15 @@ export default function CareersPage() {
             ))}
           </div>
 
-          <div className="rich measure rv mt-3">
-            <p>
-              For people considering data consulting careers or AI consulting careers, this creates an environment where
-              the work itself remains central to the experience. It also gives candidates considering careers at a data
-              and AI company a clearer view of what their day to day contribution can involve.
-            </p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                For people considering data consulting careers or AI consulting careers, this creates an environment where
+                the work itself remains central to the experience. It also gives candidates considering careers at a data
+                and AI company a clearer view of what their day to day contribution can involve.
+              </p>
+            </div>
+            <Figure src="/img/cr-funnel.svg" alt="Abstract diagram of a narrowing selection process" />
           </div>
         </div>
       </section>
@@ -280,12 +283,15 @@ export default function CareersPage() {
             ))}
           </div>
 
-          <div className="rich measure rv mt-3">
-            <p>
-              For someone building careers in data and AI, this means being able to see more of the engagement than a
-              single technical task. You can gain context around how the work is assessed, developed, reviewed, and
-              eventually handed over, which gives the role a clearer connection to the wider outcome.
-            </p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                For someone building careers in data and AI, this means being able to see more of the engagement than a
+                single technical task. You can gain context around how the work is assessed, developed, reviewed, and
+                eventually handed over, which gives the role a clearer connection to the wider outcome.
+              </p>
+            </div>
+            <Figure src="/img/cr-phases.svg" alt="Abstract diagram of three delivery phases handing off to one another" />
           </div>
         </div>
       </section>

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Arrow, CtaBand, PageHero, breadcrumbSchema, serviceSchema } from '@/components/Bits';
+import { Arrow, CtaBand, Figure, PageHero, breadcrumbSchema, serviceSchema } from '@/components/Bits';
 import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
@@ -163,42 +163,45 @@ export default function DataModernizationPage() {
             <h2 className="h-lg">Partnering with Visionary Data Strategy Companies</h2>
           </div>
 
-          <div className="rich measure rv">
-            <p>
-              Every prosperous company ultimately hits a breaking point where its initial computer systems are unable to
-              meet the demands of the day. When your business originally started, those outdated configurations worked
-              just well for keeping track of goods or handling simple client information. But as your clientele grows
-              internationally, those same systems start to lag and cause extremely annoying bottlenecks for your staff.
-            </p>
-            <p>
-              Soon, employees are waiting for simple daily reports to load on their screens for hours at a time. These
-              technical delays directly affect your ability to serve clients quickly and make smart choices for the
-              future. To fix these growing pains gracefully, forward thinking leaders team up with expert data strategy
-              companies to plan a better path forward.
-            </p>
-            <p>
-              These specialized partners help you understand exactly what parts of your business need a digital upgrade.
-              They look deeply at your unique challenges and recommend new tools that actually solve your specific daily
-              problems. This intelligent partnership ensures that you are not just buying new technology for the sake of
-              it, but making a highly calculated investment that supports your actual business goals.
-            </p>
-            <p>
-              Cognovea takes immense pride in being that trusted technology guide for your organization. We walk right
-              beside you during this entire upgrade process, making sure every single step is crystal clear and very
-              easy to understand. We completely remove the technical confusion that usually surrounds massive corporate
-              upgrades.
-            </p>
-            <p>
-              Your workers may concentrate on their everyday responsibilities because our engineering team does all the
-              labor-intensive work in the background. When your organization finally has this new digital basis in
-              place, the positive effects are like a breath of fresh air.
-            </p>
-            <p>
-              Your marketing department can instantly see which promotional campaigns are winning over customers. Your
-              finance team can pull massive global revenue reports in a matter of seconds rather than days. Everything
-              just works beautifully and smoothly. This newly found speed and daily reliability gives your entire
-              workforce the absolute confidence they need to push your business toward incredible new financial heights.
-            </p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                Every prosperous company ultimately hits a breaking point where its initial computer systems are unable to
+                meet the demands of the day. When your business originally started, those outdated configurations worked
+                just well for keeping track of goods or handling simple client information. But as your clientele grows
+                internationally, those same systems start to lag and cause extremely annoying bottlenecks for your staff.
+              </p>
+              <p>
+                Soon, employees are waiting for simple daily reports to load on their screens for hours at a time. These
+                technical delays directly affect your ability to serve clients quickly and make smart choices for the
+                future. To fix these growing pains gracefully, forward thinking leaders team up with expert data strategy
+                companies to plan a better path forward.
+              </p>
+              <p>
+                These specialized partners help you understand exactly what parts of your business need a digital upgrade.
+                They look deeply at your unique challenges and recommend new tools that actually solve your specific daily
+                problems. This intelligent partnership ensures that you are not just buying new technology for the sake of
+                it, but making a highly calculated investment that supports your actual business goals.
+              </p>
+              <p>
+                Cognovea takes immense pride in being that trusted technology guide for your organization. We walk right
+                beside you during this entire upgrade process, making sure every single step is crystal clear and very
+                easy to understand. We completely remove the technical confusion that usually surrounds massive corporate
+                upgrades.
+              </p>
+              <p>
+                Your workers may concentrate on their everyday responsibilities because our engineering team does all the
+                labor-intensive work in the background. When your organization finally has this new digital basis in
+                place, the positive effects are like a breath of fresh air.
+              </p>
+              <p>
+                Your marketing department can instantly see which promotional campaigns are winning over customers. Your
+                finance team can pull massive global revenue reports in a matter of seconds rather than days. Everything
+                just works beautifully and smoothly. This newly found speed and daily reliability gives your entire
+                workforce the absolute confidence they need to push your business toward incredible new financial heights.
+              </p>
+            </div>
+            <Figure src="/img/dm-migration.svg" alt="Abstract diagram of legacy systems migrating batch by batch onto a cloud estate" />
           </div>
         </div>
       </section>
@@ -291,27 +294,30 @@ export default function DataModernizationPage() {
             <h2 className="h-lg">How Can Cloud Consulting Companies Expand Your Global Reach?</h2>
           </div>
 
-          <div className="rich measure rv">
-            <p>
-              Large organizations often discover that they need several different technology providers to achieve the
-              absolute best results. By acting as one of the most versatile cloud consulting companies available, we
-              connect all these different providers into one smooth network for you.
-            </p>
-            <p>
-              Using multiple providers allows you to pick the perfect tool for each specific job. For example, you might
-              want to use one provider for storing massive amounts of customer files, and you might need a totally
-              different provider to host your public website.
-            </p>
-            <p>
-              We build strong, invisible bridges between these different tools so information flows freely back and
-              forth. This connected approach gives your leadership team a single, clear view of the entire company.
-            </p>
-            <p>
-              Even if your files are spread across secure servers in completely different countries, your team can
-              manage everything from one simple control screen. This makes running an international business much easier
-              and highly efficient. Working across multiple providers also means you can negotiate better pricing,
-              keeping your business highly adaptable and financially healthy for the future.
-            </p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                Large organizations often discover that they need several different technology providers to achieve the
+                absolute best results. By acting as one of the most versatile cloud consulting companies available, we
+                connect all these different providers into one smooth network for you.
+              </p>
+              <p>
+                Using multiple providers allows you to pick the perfect tool for each specific job. For example, you might
+                want to use one provider for storing massive amounts of customer files, and you might need a totally
+                different provider to host your public website.
+              </p>
+              <p>
+                We build strong, invisible bridges between these different tools so information flows freely back and
+                forth. This connected approach gives your leadership team a single, clear view of the entire company.
+              </p>
+              <p>
+                Even if your files are spread across secure servers in completely different countries, your team can
+                manage everything from one simple control screen. This makes running an international business much easier
+                and highly efficient. Working across multiple providers also means you can negotiate better pricing,
+                keeping your business highly adaptable and financially healthy for the future.
+              </p>
+            </div>
+            <Figure src="/img/dm-cost.svg" alt="Abstract cost curve falling as off-peak capacity is released each night" />
           </div>
         </div>
       </section>
@@ -324,28 +330,31 @@ export default function DataModernizationPage() {
             <h2 className="h-lg">Structuring Data Governance for AI Readiness</h2>
           </div>
 
-          <div className="rich measure rv">
-            <p>
-              The most important thing for any business is to keep their customers&rsquo; private information safe. From
-              the very first day you use your new setup, we build strong protections right into it. This proactive step
-              ensures your valuable assets remain completely shielded from outside threats at all times.
-            </p>
-            <p>
-              A highly secure foundation is especially vital when you start using smart computer programs to analyze
-              your customers. Establishing clear data governance for ai ensures that your smart programs are only
-              allowed to read approved and totally safe information.
-            </p>
-            <p>
-              We set up strict boundaries that protect your brand reputation and keep all personal customer details
-              completely private. These boundaries prevent anyone from accessing sensitive folders unless they have
-              explicit corporate permission.
-            </p>
-            <p>
-              We also build automatic tracking logs that record exactly who viewed a file and when they looked at it.
-              These clean and perfectly organized records make passing industry security audits a completely stress free
-              event for your company. You can innovate boldly knowing your digital foundation is entirely secure and
-              heavily guarded.
-            </p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                The most important thing for any business is to keep their customers&rsquo; private information safe. From
+                the very first day you use your new setup, we build strong protections right into it. This proactive step
+                ensures your valuable assets remain completely shielded from outside threats at all times.
+              </p>
+              <p>
+                A highly secure foundation is especially vital when you start using smart computer programs to analyze
+                your customers. Establishing clear data governance for ai ensures that your smart programs are only
+                allowed to read approved and totally safe information.
+              </p>
+              <p>
+                We set up strict boundaries that protect your brand reputation and keep all personal customer details
+                completely private. These boundaries prevent anyone from accessing sensitive folders unless they have
+                explicit corporate permission.
+              </p>
+              <p>
+                We also build automatic tracking logs that record exactly who viewed a file and when they looked at it.
+                These clean and perfectly organized records make passing industry security audits a completely stress free
+                event for your company. You can innovate boldly knowing your digital foundation is entirely secure and
+                heavily guarded.
+              </p>
+            </div>
+            <Figure src="/img/de-checks.svg" alt="Abstract grid of automated validation checks with one exception flagged" />
           </div>
         </div>
       </section>

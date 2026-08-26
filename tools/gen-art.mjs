@@ -332,6 +332,326 @@ async function grain() {
   console.log('  grain.png');
 }
 
+
+/* ==========================================================================
+   Page motifs — one per inner-page subject.
+   Same frame() and palette as the homepage set, so they read as one family.
+   ========================================================================== */
+
+/** Layered cloud warehouse: raw → staged → modelled, queries landing on top. */
+function artWarehouse() {
+  const tiers = [
+    { y: 372, w: 640, label: 'raw', o: 0.2 },
+    { y: 300, w: 560, label: 'staged', o: 0.32 },
+    { y: 228, w: 470, label: 'modelled', o: 0.46 },
+  ];
+  const slabs = tiers
+    .map(
+      (t) =>
+        `<rect x="${(800 - t.w) / 2}" y="${t.y}" width="${t.w}" height="52" rx="10" fill="${C.violet}" fill-opacity="${t.o}" stroke="${C.violet}" stroke-opacity=".55" stroke-width="2"/>`,
+    )
+    .join('');
+  const risers = [0, 1].map((i) => {
+    const a = tiers[i];
+    const b = tiers[i + 1];
+    return `<line x1="400" y1="${a.y}" x2="400" y2="${b.y + 52}" stroke="${C.blue}" stroke-opacity=".5" stroke-width="2"/>`;
+  }).join('');
+  const queries = [280, 400, 520]
+    .map(
+      (x) =>
+        `<g><line x1="${x}" y1="228" x2="${x}" y2="150" stroke="${C.cyan}" stroke-opacity=".75" stroke-width="2"/><circle cx="${x}" cy="142" r="8" fill="${C.cyan}" fill-opacity=".9"/></g>`,
+    )
+    .join('');
+  return frame('warehouse', `${slabs}${risers}${queries}`);
+}
+
+/** Many source systems funnelled through orchestration into one warehouse. */
+function artPipeline() {
+  const src = [96, 176, 256, 336, 416];
+  const boxes = src
+    .map(
+      (y) =>
+        `<rect x="46" y="${y - 17}" width="112" height="34" rx="9" fill="${C.violet}" fill-opacity=".16" stroke="${C.violet}" stroke-opacity=".5" stroke-width="1.6"/>`,
+    )
+    .join('');
+  const lines = src
+    .map(
+      (y) =>
+        `<path d="M 158 ${y} C 250 ${y} 268 260 356 260" fill="none" stroke="${C.violet}" stroke-opacity=".45" stroke-width="2"/>`,
+    )
+    .join('');
+  const hub = `<rect x="356" y="206" width="108" height="108" rx="24" fill="url(#pipeline-stroke)" fill-opacity=".18" stroke="url(#pipeline-stroke)" stroke-width="2.4"/>
+    <circle cx="410" cy="260" r="8" fill="${C.blue}"/>
+    <circle cx="410" cy="260" r="26" fill="none" stroke="${C.blue}" stroke-opacity=".35" stroke-width="1.6"/>`;
+  const out = `<path d="M 464 260 L 596 260" fill="none" stroke="${C.cyan}" stroke-opacity=".8" stroke-width="2.6"/>
+    <rect x="596" y="214" width="150" height="92" rx="14" fill="${C.cyan}" fill-opacity=".14" stroke="${C.cyan}" stroke-opacity=".7" stroke-width="2"/>
+    ${[238, 260, 282].map((y) => `<line x1="618" y1="${y}" x2="724" y2="${y}" stroke="${C.cyan}" stroke-opacity=".55" stroke-width="2"/>`).join('')}`;
+  return frame('pipeline', `${lines}${boxes}${hub}${out}`);
+}
+
+/** Automated quality checks: a grid of passes with one anomaly flagged. */
+function artChecks() {
+  const r = rng(303);
+  let cells = '';
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 7; col++) {
+      const x = 108 + col * 86;
+      const y = 132 + row * 74;
+      const bad = row === 2 && col === 4;
+      cells += `<rect x="${x}" y="${y}" width="60" height="50" rx="10" fill="${bad ? C.cyan : C.violet}" fill-opacity="${bad ? 0.5 : 0.1 + r() * 0.12}" stroke="${bad ? C.cyan : C.violet}" stroke-opacity="${bad ? 1 : 0.4}" stroke-width="${bad ? 2.6 : 1.4}"/>`;
+      if (!bad) {
+        cells += `<path d="M ${x + 20} ${y + 26} l 7 8 l 14 -16" fill="none" stroke="${C.violet}" stroke-opacity=".7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+      } else {
+        cells += `<line x1="${x + 30}" y1="${y + 13}" x2="${x + 30}" y2="${y + 29}" stroke="${C.cyan}" stroke-width="3" stroke-linecap="round"/><circle cx="${x + 30}" cy="${y + 37}" r="2.6" fill="${C.cyan}"/>`;
+        cells += `<circle cx="${x + 30}" cy="${y + 25}" r="44" fill="none" stroke="${C.cyan}" stroke-opacity=".5" stroke-width="2"/>`;
+      }
+    }
+  }
+  return frame('checks', cells);
+}
+
+/** Concurrency: separate lanes running in parallel at steady throughput. */
+function artThroughput() {
+  const r = rng(77);
+  let lanes = '';
+  for (let i = 0; i < 6; i++) {
+    const y = 120 + i * 56;
+    lanes += `<line x1="70" y1="${y}" x2="730" y2="${y}" stroke="${C.ink}" stroke-opacity=".08" stroke-width="1"/>`;
+    const n = 5 + Math.round(r() * 4);
+    for (let k = 0; k < n; k++) {
+      const x = 84 + r() * 620;
+      const w = 26 + r() * 58;
+      lanes += `<rect x="${x.toFixed(1)}" y="${y - 9}" width="${w.toFixed(1)}" height="18" rx="9" fill="${k % 5 === 0 ? C.cyan : C.violet}" fill-opacity="${k % 5 === 0 ? 0.8 : 0.34 + r() * 0.26}"/>`;
+    }
+  }
+  return frame('throughput', lanes);
+}
+
+/** Legacy estate resolving into a cloud estate, batch by batch. */
+function artMigration() {
+  const old = [0, 1, 2, 3]
+    .map(
+      (i) =>
+        `<rect x="70" y="${140 + i * 64}" width="120" height="46" rx="6" fill="${C.ink}" fill-opacity=".1" stroke="${C.ink}" stroke-opacity=".28" stroke-width="1.6"/>`,
+    )
+    .join('');
+  const arcs = [0, 1, 2, 3]
+    .map((i) => {
+      const y1 = 163 + i * 64;
+      const y2 = 178 + i * 52;
+      return `<path d="M 190 ${y1} C 320 ${y1} 330 ${y2} 470 ${y2}" fill="none" stroke="url(#migration-stroke)" stroke-opacity="${0.85 - i * 0.14}" stroke-width="2.2" stroke-dasharray="${i === 3 ? '7 7' : 'none'}"/>`;
+    })
+    .join('');
+  const cloud = [0, 1, 2, 3]
+    .map(
+      (i) =>
+        `<rect x="470" y="${155 + i * 52}" width="130" height="42" rx="12" fill="${i === 3 ? C.cyan : C.violet}" fill-opacity="${i === 3 ? 0.18 : 0.24}" stroke="${i === 3 ? C.cyan : C.violet}" stroke-opacity="${i === 3 ? 0.6 : 0.75}" stroke-width="2" stroke-dasharray="${i === 3 ? '6 6' : 'none'}"/>`,
+    )
+    .join('');
+  return frame('migration', `${arcs}${old}${cloud}`);
+}
+
+/** Cost curve falling as off-peak capacity is released each night. */
+function artCost() {
+  const pts = [];
+  for (let i = 0; i <= 40; i++) {
+    const x = 70 + i * 17;
+    // y grows downward in SVG, so a FALLING cost means an INCREASING y.
+    // The first version subtracted and drew a rising sawtooth — the opposite
+    // of the story the section is telling.
+    const base = 178 + i * 3.2;
+    const duty = Math.sin(i / 1.55) > 0.15 ? 0 : 56; // nightly scale-down
+    pts.push([x, base + duty]);
+  }
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+  const area = `${line} L ${pts[pts.length - 1][0]} 150 L ${pts[0][0]} 150 Z`; // fill upward: the gap above the line is the saving
+  const grid = [0, 1, 2, 3]
+    .map((i) => `<line x1="60" y1="${150 + i * 72}" x2="750" y2="${150 + i * 72}" stroke="${C.ink}" stroke-opacity=".07"/>`)
+    .join('');
+  return frame(
+    'cost',
+    `${grid}<path d="${area}" fill="url(#cost-stroke)" fill-opacity=".16"/><path d="${line}" fill="none" stroke="url(#cost-stroke)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`,
+  );
+}
+
+/** RAG: a question retrieving from approved sources, answered with citations. */
+function artRag() {
+  const docs = [0, 1, 2, 3, 4]
+    .map((i) => {
+      const x = 300 + (i % 2) * 22;
+      const y = 132 + i * 52;
+      return `<rect x="${x}" y="${y}" width="104" height="40" rx="7" fill="${C.violet}" fill-opacity="${i === 1 || i === 3 ? 0.42 : 0.14}" stroke="${C.violet}" stroke-opacity="${i === 1 || i === 3 ? 0.9 : 0.4}" stroke-width="1.8"/>`;
+    })
+    .join('');
+  const q = `<circle cx="120" cy="260" r="30" fill="${C.blue}" fill-opacity=".18" stroke="${C.blue}" stroke-width="2.4"/>
+    <text x="120" y="269" text-anchor="middle" font-family="sans-serif" font-size="24" fill="${C.blue}">?</text>`;
+  const pull = [1, 3]
+    .map((i) => `<path d="M 150 260 C 230 260 240 ${152 + i * 52} 300 ${152 + i * 52}" fill="none" stroke="${C.blue}" stroke-opacity=".65" stroke-width="2.2"/>`)
+    .join('');
+  const push = [1, 3]
+    .map((i) => `<path d="M 426 ${152 + i * 52} C 500 ${152 + i * 52} 520 260 590 260" fill="none" stroke="${C.cyan}" stroke-opacity=".8" stroke-width="2.2"/>`)
+    .join('');
+  const answer = `<rect x="590" y="212" width="150" height="96" rx="14" fill="${C.cyan}" fill-opacity=".14" stroke="${C.cyan}" stroke-opacity=".8" stroke-width="2"/>
+    ${[238, 260, 282].map((y, i) => `<line x1="612" y1="${y}" x2="${i === 2 ? 690 : 718}" y2="${y}" stroke="${C.cyan}" stroke-opacity=".6" stroke-width="2.4"/>`).join('')}
+    <circle cx="726" cy="300" r="6" fill="${C.cyan}"/>`;
+  return frame('rag', `${pull}${push}${docs}${q}${answer}`);
+}
+
+/** An agent running a defined sequence, pausing at a human approval gate. */
+function artAgent() {
+  const xs = [92, 236, 380, 524, 668];
+  const nodes = xs
+    .map((x, i) => {
+      if (i === 3) {
+        return `<g><path d="M ${x} 224 L ${x + 42} 266 L ${x} 308 L ${x - 42} 266 Z" fill="${C.cyan}" fill-opacity=".22" stroke="${C.cyan}" stroke-width="2.6"/><circle cx="${x}" cy="266" r="7" fill="${C.cyan}"/></g>`;
+      }
+      return `<rect x="${x - 40}" y="${232}" width="80" height="68" rx="16" fill="${C.violet}" fill-opacity=".18" stroke="${C.violet}" stroke-opacity=".7" stroke-width="2"/><circle cx="${x}" cy="266" r="6" fill="${C.violet}"/>`;
+    })
+    .join('');
+  const links = xs
+    .slice(0, -1)
+    .map((x, i) => `<line x1="${x + (i === 2 ? 40 : 42)}" y1="266" x2="${xs[i + 1] - (i === 2 ? 42 : 40)}" y2="266" stroke="${C.blue}" stroke-opacity=".55" stroke-width="2.2"/>`)
+    .join('');
+  const human = `<circle cx="524" cy="152" r="16" fill="none" stroke="${C.cyan}" stroke-width="2.2"/><path d="M 500 196 a 24 24 0 0 1 48 0" fill="none" stroke="${C.cyan}" stroke-width="2.2"/><line x1="524" y1="196" x2="524" y2="222" stroke="${C.cyan}" stroke-opacity=".6" stroke-width="2" stroke-dasharray="5 5"/>`;
+  return frame('agent', `${links}${nodes}${human}`);
+}
+
+/** Documents parsed into structured fields, low-confidence rows escalated. */
+function artDocs() {
+  const doc = `<rect x="78" y="150" width="150" height="200" rx="10" fill="${C.violet}" fill-opacity=".12" stroke="${C.violet}" stroke-opacity=".55" stroke-width="2"/>
+    ${[186, 214, 242, 270, 298].map((y, i) => `<line x1="100" y1="${y}" x2="${i % 2 ? 190 : 208}" y2="${y}" stroke="${C.violet}" stroke-opacity=".45" stroke-width="3"/>`).join('')}`;
+  const rows = [0, 1, 2, 3]
+    .map((i) => {
+      const y = 162 + i * 58;
+      const flag = i === 2;
+      return `<rect x="420" y="${y}" width="300" height="42" rx="9" fill="${flag ? C.cyan : C.blue}" fill-opacity="${flag ? 0.2 : 0.12}" stroke="${flag ? C.cyan : C.blue}" stroke-opacity="${flag ? 0.9 : 0.45}" stroke-width="${flag ? 2.4 : 1.6}"/>
+      <line x1="440" y1="${y + 21}" x2="520" y2="${y + 21}" stroke="${flag ? C.cyan : C.blue}" stroke-opacity=".7" stroke-width="3"/>
+      <line x1="546" y1="${y + 21}" x2="${640 + (i % 2) * 40}" y2="${y + 21}" stroke="${flag ? C.cyan : C.blue}" stroke-opacity=".4" stroke-width="3"/>`;
+    })
+    .join('');
+  const arrows = [0, 1, 2, 3]
+    .map((i) => `<path d="M 234 250 C 320 250 330 ${183 + i * 58} 414 ${183 + i * 58}" fill="none" stroke="${C.blue}" stroke-opacity=".4" stroke-width="1.8"/>`)
+    .join('');
+  return frame('docs', `${arrows}${doc}${rows}`);
+}
+
+/** Impact-versus-effort scoring, with the build-first quadrant marked. */
+function artMatrix() {
+  const r = rng(451);
+  const x0 = 120;
+  const y0 = 110;
+  const w = 560;
+  const h = 300;
+  const axes = `<line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y0 + h}" stroke="${C.ink}" stroke-opacity=".25" stroke-width="1.6"/>
+    <line x1="${x0}" y1="${y0 + h}" x2="${x0 + w}" y2="${y0 + h}" stroke="${C.ink}" stroke-opacity=".25" stroke-width="1.6"/>
+    <line x1="${x0 + w / 2}" y1="${y0}" x2="${x0 + w / 2}" y2="${y0 + h}" stroke="${C.ink}" stroke-opacity=".1"/>
+    <line x1="${x0}" y1="${y0 + h / 2}" x2="${x0 + w}" y2="${y0 + h / 2}" stroke="${C.ink}" stroke-opacity=".1"/>`;
+  const quad = `<rect x="${x0}" y="${y0}" width="${w / 2}" height="${h / 2}" fill="${C.cyan}" fill-opacity=".12"/>`;
+  let dots = '';
+  for (let i = 0; i < 16; i++) {
+    const px = x0 + 20 + r() * (w - 44);
+    const py = y0 + 16 + r() * (h - 38);
+    const win = px < x0 + w / 2 && py < y0 + h / 2;
+    dots += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${win ? 10 : 6}" fill="${win ? C.cyan : C.violet}" fill-opacity="${win ? 0.95 : 0.45}"/>`;
+  }
+  return frame('matrix', `${quad}${axes}${dots}`);
+}
+
+/** Six phases on a timeline, each one gated before the next. */
+function artRoadmap() {
+  const xs = [70, 186, 302, 418, 534, 650];
+  const rail = `<line x1="70" y1="262" x2="726" y2="262" stroke="${C.ink}" stroke-opacity=".14" stroke-width="2"/>`;
+  const filled = `<line x1="70" y1="262" x2="418" y2="262" stroke="url(#roadmap-stroke)" stroke-width="4" stroke-linecap="round"/>`;
+  const marks = xs
+    .map((x, i) => {
+      const done = i < 3;
+      const bar = 40 + ((i * 37) % 90);
+      return `<rect x="${x + 6}" y="${262 - bar - 18}" width="60" height="${bar}" rx="8" fill="${done ? C.violet : C.blue}" fill-opacity="${done ? 0.34 : 0.14}" stroke="${done ? C.violet : C.blue}" stroke-opacity="${done ? 0.7 : 0.4}" stroke-width="1.6"/>
+      <circle cx="${x + 36}" cy="262" r="${done ? 9 : 7}" fill="${done ? C.violet : '#fff'}" stroke="${done ? C.violet : C.blue}" stroke-width="2.4"/>
+      <text x="${x + 36}" y="${300}" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="600" fill="${C.ink}" fill-opacity=".45">0${i + 1}</text>`;
+    })
+    .join('');
+  return frame('roadmap', `${rail}${filled}${marks}`);
+}
+
+/** Engagement ladder: each rung a larger commitment than the last. */
+function artLadder() {
+  const steps = [
+    { w: 150, h: 60 },
+    { w: 150, h: 104 },
+    { w: 150, h: 152 },
+    { w: 150, h: 206 },
+  ];
+  let out = '';
+  steps.forEach((s, i) => {
+    const x = 90 + i * 158;
+    const y = 400 - s.h;
+    out += `<rect x="${x}" y="${y}" width="${s.w}" height="${s.h}" rx="12" fill="${i === 0 ? C.cyan : C.violet}" fill-opacity="${i === 0 ? 0.28 : 0.12 + i * 0.08}" stroke="${i === 0 ? C.cyan : C.violet}" stroke-opacity="${i === 0 ? 0.9 : 0.55}" stroke-width="2"/>`;
+    if (i < steps.length - 1) {
+      out += `<path d="M ${x + s.w + 4} ${y + 14} l 0 -18 l -10 0 l 14 -16 l 14 16 l -10 0 l 0 18 z" fill="${C.blue}" fill-opacity=".55"/>`;
+    }
+  });
+  return frame('ladder', out);
+}
+
+/** Three delivery phases, each handing off to the next. */
+function artPhases() {
+  const xs = [130, 400, 670];
+  const rings = xs
+    .map(
+      (x, i) =>
+        `<circle cx="${x}" cy="260" r="72" fill="${i === 2 ? C.cyan : C.violet}" fill-opacity="${i === 2 ? 0.16 : 0.12}" stroke="${i === 2 ? C.cyan : C.violet}" stroke-opacity=".7" stroke-width="2.4"/>
+         <text x="${x}" y="272" text-anchor="middle" font-family="sans-serif" font-size="30" font-weight="600" fill="${i === 2 ? C.cyan : C.violet}" fill-opacity=".8">0${i + 1}</text>`,
+    )
+    .join('');
+  const links = [0, 1]
+    .map((i) => `<path d="M ${xs[i] + 78} 260 L ${xs[i + 1] - 84} 260" fill="none" stroke="${C.blue}" stroke-opacity=".5" stroke-width="2.4" marker-end=""/>
+      <path d="M ${xs[i + 1] - 92} 252 l 10 8 l -10 8" fill="none" stroke="${C.blue}" stroke-opacity=".7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`)
+    .join('');
+  return frame('phases', `${links}${rings}`);
+}
+
+/** A narrowing selection process. */
+function artFunnel() {
+  const rowsY = [130, 200, 270, 340];
+  const widths = [520, 400, 280, 168];
+  const out = rowsY
+    .map((y, i) => {
+      const w = widths[i];
+      const x = (800 - w) / 2;
+      return `<rect x="${x}" y="${y}" width="${w}" height="52" rx="12" fill="${i === 3 ? C.cyan : C.violet}" fill-opacity="${i === 3 ? 0.3 : 0.1 + i * 0.06}" stroke="${i === 3 ? C.cyan : C.violet}" stroke-opacity="${i === 3 ? 0.95 : 0.5}" stroke-width="2"/>`;
+    })
+    .join('');
+  const ties = [0, 1, 2]
+    .map((i) => {
+      const wA = widths[i];
+      const wB = widths[i + 1];
+      const xA = (800 - wA) / 2;
+      const xB = (800 - wB) / 2;
+      return `<path d="M ${xA + 12} ${rowsY[i] + 52} L ${xB + 12} ${rowsY[i + 1]} M ${xA + wA - 12} ${rowsY[i] + 52} L ${xB + wB - 12} ${rowsY[i + 1]}" stroke="${C.violet}" stroke-opacity=".28" stroke-width="1.6"/>`;
+    })
+    .join('');
+  return frame('funnel', `${ties}${out}`);
+}
+
+/** Two places, one team. */
+function artLocations() {
+  const a = [250, 300];
+  const b = [560, 210];
+  return frame(
+    'locations',
+    `<path d="M ${a[0]} ${a[1]} C ${a[0] + 90} ${a[1] - 90} ${b[0] - 90} ${b[1] + 90} ${b[0]} ${b[1]}" fill="none" stroke="url(#locations-stroke)" stroke-width="2.6" stroke-dasharray="8 8"/>
+     ${[a, b]
+       .map(
+         (p, i) =>
+           `<circle cx="${p[0]}" cy="${p[1]}" r="${i ? 13 : 16}" fill="${i ? C.cyan : C.violet}"/>
+            <circle cx="${p[0]}" cy="${p[1]}" r="${i ? 30 : 36}" fill="none" stroke="${i ? C.cyan : C.violet}" stroke-opacity=".45" stroke-width="2"/>
+            <circle cx="${p[0]}" cy="${p[1]}" r="${i ? 50 : 58}" fill="none" stroke="${i ? C.cyan : C.violet}" stroke-opacity=".2" stroke-width="1.6"/>`,
+       )
+       .join('')}`,
+  );
+}
+
 /* -------------------------------------------------------------------- run */
 
 console.log('generating public/img/');
@@ -347,6 +667,23 @@ write('ind-manufacturing.svg', I.mfg);
 write('ind-financial.svg', I.fin);
 write('ind-healthcare.svg', I.health);
 write('ind-energy.svg', I.energy);
+
+
+write('de-warehouse.svg', artWarehouse());
+write('de-pipeline.svg', artPipeline());
+write('de-checks.svg', artChecks());
+write('de-throughput.svg', artThroughput());
+write('dm-migration.svg', artMigration());
+write('dm-cost.svg', artCost());
+write('ai-rag.svg', artRag());
+write('ai-agent.svg', artAgent());
+write('ai-docs.svg', artDocs());
+write('as-matrix.svg', artMatrix());
+write('as-roadmap.svg', artRoadmap());
+write('dhc-ladder.svg', artLadder());
+write('cr-phases.svg', artPhases());
+write('cr-funnel.svg', artFunnel());
+write('ct-locations.svg', artLocations());
 
 await grain();
 console.log('done');

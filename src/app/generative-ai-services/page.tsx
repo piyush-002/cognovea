@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Arrow, CtaBand, PageHero, breadcrumbSchema, serviceSchema } from '@/components/Bits';
+import { Arrow, CtaBand, Figure, PageHero, breadcrumbSchema, serviceSchema } from '@/components/Bits';
 import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
@@ -294,17 +294,20 @@ export default function GenerativeAiPage() {
             <h2 className="h-lg">Why is the Correct Data Foundation Necessary for Generative AI?</h2>
           </div>
 
-          <div className="rich measure rv">
-            <p>
-              That&rsquo;s because business information is scattered over databases, papers, reports, applications, and
-              internal systems and a strong AI model is only one component of the solution. If the data is difficult to
-              access, inconsistent, out-of-date, or without any context, the AI may not be able to offer helpful
-              solutions.
-            </p>
-            <p>
-              This is why Cognovea brings data engineering, data analytics, and AI development together. The objective
-              is to build Generative AI solutions around the information your business actually uses.
-            </p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                That&rsquo;s because business information is scattered over databases, papers, reports, applications, and
+                internal systems and a strong AI model is only one component of the solution. If the data is difficult to
+                access, inconsistent, out-of-date, or without any context, the AI may not be able to offer helpful
+                solutions.
+              </p>
+              <p>
+                This is why Cognovea brings data engineering, data analytics, and AI development together. The objective
+                is to build Generative AI solutions around the information your business actually uses.
+              </p>
+            </div>
+            <Figure src="/img/ai-rag.svg" alt="Abstract diagram of a question retrieving from approved sources and returning a cited answer" />
           </div>
 
           <div className="grid grid--4 mt-3">
@@ -431,12 +434,15 @@ export default function GenerativeAiPage() {
             <h2 className="h-lg">LLM Development and Integration Services</h2>
           </div>
 
-          <div className="rich measure rv">
-            <p>
-              Not every Generative AI project needs a completely new application. In many cases, the better approach is
-              to add specific AI capabilities to software that already exists.
-            </p>
-            <p>Cognovea provides LLM development services and LLM application development for use cases such as:</p>
+          <div className="feature feature--copy">
+            <div className="rich rv rv--left">
+              <p>
+                Not every Generative AI project needs a completely new application. In many cases, the better approach is
+                to add specific AI capabilities to software that already exists.
+              </p>
+              <p>Cognovea provides LLM development services and LLM application development for use cases such as:</p>
+            </div>
+            <Figure src="/img/ai-agent.svg" alt="Abstract multi-step agent workflow pausing at a human approval gate" />
           </div>
 
           <ul className="chips rv" style={{ marginTop: '1.5rem' }}>

@@ -12,6 +12,22 @@ export function Arrow() {
 
 export type Crumb = { href: string; label: string };
 
+/**
+ * Artwork column for an editorial split. Pairs with a `.feature` wrapper whose
+ * other child holds the copy — the figure sits beside the text rather than
+ * above it, so it costs almost no vertical height and sections stay inside one
+ * screen.
+ */
+export function Figure({ src, alt, tall = false }: { src: string; alt: string; tall?: boolean }) {
+  return (
+    <div className="feature__media rv rv--right">
+      <div className={`figure ${tall ? 'figure--tall' : 'figure--wide'}`}>
+        <img src={src} alt={alt} width={800} height={520} loading="lazy" decoding="async" />
+      </div>
+    </div>
+  );
+}
+
 /** Compact hero for inner pages, with breadcrumbs. */
 export function PageHero({
   eyebrow,
