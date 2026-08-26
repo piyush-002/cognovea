@@ -1,0 +1,19 @@
+import type { MetadataRoute } from 'next';
+import { site } from '@/lib/site';
+
+/**
+ * Emits /robots.txt at build time.
+ *
+ * `force-static` is required: metadata routes compile to Route Handlers, and
+ * with `output: 'export'` Next refuses to build one unless it is explicitly
+ * static — there is no server at runtime to generate it.
+ */
+export const dynamic = 'force-static';
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [{ userAgent: '*', allow: '/' }],
+    sitemap: `${site.url}/sitemap.xml`,
+    host: site.url,
+  };
+}
