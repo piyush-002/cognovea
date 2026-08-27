@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="">
+
+  <defs>
+    <radialGradient id="rag-a" cx="30%" cy="28%" r="55%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity=".62"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rag-b" cx="76%" cy="70%" r="52%">
+      <stop offset="0%" stop-color="#4F6BF0" stop-opacity=".38"/>
+      <stop offset="100%" stop-color="#4F6BF0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rag-c" cx="88%" cy="20%" r="34%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rag-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="55%" stop-color="#4F6BF0"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+    <filter id="rag-blur" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="52"/>
+    </filter>
+  </defs>
+  <rect width="800" height="520" fill="#FFFFFF"/>
+  <g filter="url(#rag-blur)" opacity="0.85">
+    <rect width="800" height="520" fill="url(#rag-a)"/>
+    <rect width="800" height="520" fill="url(#rag-b)"/>
+    <rect width="800" height="520" fill="url(#rag-c)"/>
+  </g>
+  <path d="M 150 260 C 230 260 240 204 300 204" fill="none" stroke="#4F6BF0" stroke-opacity=".65" stroke-width="2.2"/><path d="M 150 260 C 230 260 240 308 300 308" fill="none" stroke="#4F6BF0" stroke-opacity=".65" stroke-width="2.2"/><path d="M 426 204 C 500 204 520 260 590 260" fill="none" stroke="#22D3EE" stroke-opacity=".8" stroke-width="2.2"/><path d="M 426 308 C 500 308 520 260 590 260" fill="none" stroke="#22D3EE" stroke-opacity=".8" stroke-width="2.2"/><rect x="300" y="132" width="104" height="40" rx="7" fill="#7C3AED" fill-opacity="0.14" stroke="#7C3AED" stroke-opacity="0.4" stroke-width="1.8"/><rect x="322" y="184" width="104" height="40" rx="7" fill="#7C3AED" fill-opacity="0.42" stroke="#7C3AED" stroke-opacity="0.9" stroke-width="1.8"/><rect x="300" y="236" width="104" height="40" rx="7" fill="#7C3AED" fill-opacity="0.14" stroke="#7C3AED" stroke-opacity="0.4" stroke-width="1.8"/><rect x="322" y="288" width="104" height="40" rx="7" fill="#7C3AED" fill-opacity="0.42" stroke="#7C3AED" stroke-opacity="0.9" stroke-width="1.8"/><rect x="300" y="340" width="104" height="40" rx="7" fill="#7C3AED" fill-opacity="0.14" stroke="#7C3AED" stroke-opacity="0.4" stroke-width="1.8"/><circle cx="120" cy="260" r="30" fill="#4F6BF0" fill-opacity=".18" stroke="#4F6BF0" stroke-width="2.4"/>
+    <text x="120" y="269" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#4F6BF0">?</text><rect x="590" y="212" width="150" height="96" rx="14" fill="#22D3EE" fill-opacity=".14" stroke="#22D3EE" stroke-opacity=".8" stroke-width="2"/>
+    <line x1="612" y1="238" x2="718" y2="238" stroke="#22D3EE" stroke-opacity=".6" stroke-width="2.4"/><line x1="612" y1="260" x2="718" y2="260" stroke="#22D3EE" stroke-opacity=".6" stroke-width="2.4"/><line x1="612" y1="282" x2="690" y2="282" stroke="#22D3EE" stroke-opacity=".6" stroke-width="2.4"/>
+    <circle cx="726" cy="300" r="6" fill="#22D3EE"/>
+</svg>
