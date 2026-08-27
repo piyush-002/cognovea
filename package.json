@@ -1,21 +1,39 @@
 {
   "name": "cognovea-website",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
-  "description": "Cognovea — SEO-friendly 10-page marketing site (Next.js App Router, static export).",
+  "description": "Cognovea \u2014 SEO-friendly 10-page marketing site (Next.js App Router, static export).",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "payload generate:importmap && next dev",
+    "devsafe": "rm -rf .next && payload generate:importmap && next dev",
+    "build": "payload generate:importmap && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "check:boundaries": "node tools/check-boundaries.mjs",
-    "art": "node tools/gen-art.mjs"
+    "art": "node tools/gen-art.mjs",
+    "payload": "payload",
+    "generate:types": "payload generate:types",
+    "generate:importmap": "payload generate:importmap",
+    "migrate:create": "payload migrate:create",
+    "migrate": "payload migrate",
+    "test:db-endpoint": "node tools/test-db-endpoint.mjs",
+    "test:sticky": "node tools/test-sticky.mjs",
+    "audit": "node tools/audit.mjs",
+    "test:media-url": "node tools/test-media-url.mjs"
   },
   "dependencies": {
-    "next": "15.1.9",
-    "react": "19.0.1",
-    "react-dom": "19.0.1"
+    "next": "~15.4.11",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "payload": "3.88.0",
+    "@payloadcms/next": "3.88.0",
+    "@payloadcms/db-postgres": "3.88.0",
+    "@payloadcms/richtext-lexical": "3.88.0",
+    "@payloadcms/storage-vercel-blob": "3.88.0",
+    "graphql": "^16.8.1",
+    "sharp": "^0.35.3"
   },
   "devDependencies": {
     "@types/node": "22.10.7",

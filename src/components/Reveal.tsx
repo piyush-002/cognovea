@@ -8,7 +8,7 @@ import { useEffect } from 'react';
  *
  * This component lives in the root layout, which does NOT remount on client-side
  * navigation. A mount-only effect would therefore observe the first page's
- * elements and never see any subsequent page's — leaving them stuck at opacity 0
+ * elements and never see any subsequent page's, leaving them stuck at opacity 0
  * until a hard refresh. Two things prevent that:
  *
  *   1. the effect re-runs on every pathname change, and
@@ -16,13 +16,31 @@ import { useEffect } from 'react';
  *      anything mounted late), so nothing depends on catching a single moment.
  *
  * `.rv` starts hidden in globals.css, and a <noscript> style in layout.tsx
- * cancels that when JavaScript is unavailable — so a JS-less reader gets the
+ * cancels that when JavaScript is unavailable, so a JS-less reader gets the
  * full page rather than a blank one.
  */
 export default function Reveal() {
   const pathname = usePathname();
 
   useEffect(() => {
+    // `html { scroll-behavior: smooth }` is wanted for in-page anchor links, but
+    // it also applies to the jump back to the top that Next performs on every
+    // route change. On a page several screens tall that turns an instant
+    // navigation into a visible glide, which feels like the site is lagging
+    // rather than animating. Suppress it for the moment of the route change,
+    // then hand it back so anchors keep their easing.
+    const root = document.documentElement;
+    root.style.scrollBehavior = 'auto';
+    const restore = window.setTimeout(() => {
+      root.style.scrollBehavior = '';
+    }, 120);
+
+    // Tells the CSS failsafe that JavaScript is alive, so it stays dormant.
+    // Set here rather than in the server HTML: mutating the DOM before
+    // hydration is what caused the `className="js"` mismatch earlier, and an
+    // effect runs after hydration, where DOM changes are safe.
+    document.documentElement.classList.add('rv-ready');
+
     const reduced =
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -82,13 +100,23 @@ export default function Reveal() {
     // Safety net: if a route change somehow leaves elements unobserved and the
     // user never scrolls, reveal whatever is already on screen.
     const settle = window.setTimeout(() => {
-      document.querySelectorAll<HTMLElement>('.rv:not(.is-in)').forEach((n) => {
+      // Two passes, deliberately. Reading a rect and then adding a class inside
+      // the same loop interleaves reads and writes: each class invalidates
+      // layout, so the next getBoundingClientRect forces a fresh layout pass.
+      // With ~36 revealable elements that is 36 synchronous layouts in one tick,
+      // which is most of the "forced reflow" Lighthouse reports. Collecting
+      // first and writing second costs one layout in total.
+      const nodes = [...document.querySelectorAll<HTMLElement>('.rv:not(.is-in)')];
+      const viewportHeight = window.innerHeight;
+      const onScreen = nodes.filter((n) => {
         const rect = n.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) n.classList.add('is-in');
+        return rect.top < viewportHeight && rect.bottom > 0;
       });
+      onScreen.forEach((n) => n.classList.add('is-in'));
     }, 600);
 
     return () => {
+      window.clearTimeout(restore);
       io.disconnect();
       mo.disconnect();
       window.clearTimeout(settle);

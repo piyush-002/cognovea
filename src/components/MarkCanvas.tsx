@@ -188,9 +188,21 @@ export default function MarkCanvas({ label }: { label: string }) {
       raf = null;
     }
 
+    // The canvas rect, cached. getBoundingClientRect forces layout, and calling
+    // it inside a mousemove handler does that at whatever rate the mouse
+    // reports, which on a 120Hz trackpad is a synchronous layout every 8ms
+    // while the pointer is anywhere near the hero. The rect only moves when the
+    // page scrolls or resizes, so it is measured then instead.
+    let rect: DOMRect | null = null;
+    const remeasure = () => {
+      rect = cv ? cv.getBoundingClientRect() : null;
+    };
+
     function track(e: MouseEvent) {
       if (!cv) return;
-      const b = cv.getBoundingClientRect();
+      if (!rect) remeasure();
+      const b = rect;
+      if (!b) return;
       const x = e.clientX - b.left;
       const y = e.clientY - b.top;
       pointer.on = x > -70 && y > -70 && x < b.width + 70 && y < b.height + 70;
@@ -201,7 +213,15 @@ export default function MarkCanvas({ label }: { label: string }) {
     }
 
     fit();
+    remeasure();
     start();
+
+    // Scroll and resize are the only things that move the canvas on the page.
+    const invalidate = () => {
+      rect = null;
+    };
+    window.addEventListener('scroll', invalidate, { passive: true });
+    window.addEventListener('resize', invalidate);
 
     let rt: number | undefined;
     const onResize = () => {
@@ -239,6 +259,8 @@ export default function MarkCanvas({ label }: { label: string }) {
       document.removeEventListener('visibilitychange', onVis);
       window.removeEventListener('mousemove', track);
       window.removeEventListener('mouseleave', onLeave);
+      window.removeEventListener('scroll', invalidate);
+      window.removeEventListener('resize', invalidate);
       io?.disconnect();
     };
   }, []);

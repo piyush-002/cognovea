@@ -40,7 +40,7 @@ export default function Counter({
         const start = performance.now();
         const tick = (now: number) => {
           const t = Math.min((now - start) / duration, 1);
-          // easeOutExpo — fast out of the gate, settles gently on the number
+          // easeOutExpo, fast out of the gate, settles gently on the number
           const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
           setValue(Math.round(to * eased));
           if (t < 1) requestAnimationFrame(tick);

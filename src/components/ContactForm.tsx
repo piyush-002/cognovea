@@ -1,17 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import { submitEnquiry } from '@/actions/enquiry';
 import { site } from '@/lib/site';
 
 /**
- * The site is a static export, so there is no server action behind this form.
+ * Submissions are saved to the `enquiries` collection and read in the admin.
  *
- * Set NEXT_PUBLIC_FORM_ENDPOINT to a form backend (Formspree, Basin, Web3Forms,
- * a Zapier catch hook, or your own API) and submissions POST there as JSON.
- * With no endpoint configured it falls back to opening a pre-filled email,
- * so the form is never a dead end.
+ * This used to open the visitor's mail client, because the site was a static
+ * export with nowhere to POST. That is no longer true, and mailto was always a
+ * poor deal: it depends on the visitor having a configured mail client, it
+ * exposes the enquiry to whatever they do next, and anyone on webmail simply
+ * loses the form. Now nothing depends on the sender's machine. The enquiry is
+ * in the database before they see a confirmation.
  */
-const ENDPOINT = process.env.NEXT_PUBLIC_FORM_ENDPOINT ?? '';
 
 const COMPANY_SIZES = ['1–20', '21–100', '101–500', '501–2,000', '2,000+'];
 
@@ -33,6 +35,7 @@ type Errors = Partial<Record<'fullName' | 'workEmail' | 'companyName', string>>;
 export default function ContactForm({ intent = '' }: { intent?: string }) {
   const [errors, setErrors] = useState<Errors>({});
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [serverError, setServerError] = useState('');
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -51,29 +54,21 @@ export default function ContactForm({ intent = '' }: { intent?: string }) {
       return;
     }
 
-    if (!ENDPOINT) {
-      const body = Object.entries(data)
-        .filter(([, v]) => v)
-        .map(([k, v]) => `${k}: ${v}`)
-        .join('\n');
-      window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(
-        `Website enquiry — ${data.companyName}`,
-      )}&body=${encodeURIComponent(body)}`;
-      setState('sent');
-      return;
-    }
-
     try {
       setState('sending');
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error(String(res.status));
+      // Pass the FormData through untouched. The action re-validates and
+      // sanitises server-side. The checks above are for the person filling
+      // the form in, not a security boundary.
+      const result = await submitEnquiry(new FormData(form));
+      if (!result.ok) {
+        setServerError(result.error);
+        setState('error');
+        return;
+      }
       form.reset();
       setState('sent');
     } catch {
+      setServerError('');
       setState('error');
     }
   }
@@ -82,7 +77,7 @@ export default function ContactForm({ intent = '' }: { intent?: string }) {
     return (
       <div className="form__done">
         <p className="h-md" style={{ color: 'var(--fg)' }}>
-          Thank you — your enquiry is on its way.
+          Thank you. Your enquiry is on its way.
         </p>
         <p style={{ marginTop: '0.7rem' }}>We&rsquo;ll get back to you within one business day.</p>
       </div>
@@ -94,6 +89,14 @@ export default function ContactForm({ intent = '' }: { intent?: string }) {
   return (
     <form className="form" onSubmit={onSubmit} noValidate>
       <input type="hidden" name="intent" value={intent} />
+
+      {/* Honeypot. Hidden from people and from screen readers, but a bot filling
+          every field will complete it, and the action then silently discards
+          the submission. */}
+      <div className="hp" aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
 
       <div className="form__row">
         <div className={cls('fullName')}>
@@ -190,7 +193,8 @@ export default function ContactForm({ intent = '' }: { intent?: string }) {
 
       {state === 'error' && (
         <p className="field__err">
-          Something went wrong sending that. Please email <a href={`mailto:${site.email}`}>{site.email}</a> instead.
+          {serverError || 'Something went wrong sending that.'} Please try again, or email{' '}
+          <a href={`mailto:${site.email}`}>{site.email}</a> instead.
         </p>
       )}
 

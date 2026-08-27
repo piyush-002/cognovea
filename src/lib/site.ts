@@ -6,7 +6,6 @@
 export const site = {
   name: 'Cognovea',
   tagline: 'Where Data Becomes Intelligence.',
-  // TODO: confirm the production domain before launch.
   url: 'https://cognovea.com',
   description:
     'Cognovea turns enterprise data into intelligence. Data analytics, business intelligence, data engineering and AI solutions that drive data-driven decision making.',
@@ -72,6 +71,7 @@ export const serviceLinks: NavLink[] = [
 ];
 
 export const companyLinks: NavLink[] = [
+  { href: '/insights', label: 'Insights' },
   { href: '/about-us', label: 'About Us' },
   { href: '/careers', label: 'Careers' },
   { href: '/contact', label: 'Contact' },
@@ -87,13 +87,14 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   { path: '/generative-ai-services', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/ai-strategy-consulting', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/data-health-check', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/insights', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/about-us', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/careers', priority: 0.6, changeFrequency: 'weekly' },
   { path: '/contact', priority: 0.8, changeFrequency: 'monthly' },
   { path: '/privacy-policy', priority: 0.3, changeFrequency: 'yearly' },
 ];
 
-/** Absolute URL helper — keeps canonicals and JSON-LD consistent. */
+/** Absolute URL helper, keeps canonicals and JSON-LD consistent. */
 export function abs(path: string): string {
   if (path === '/') return `${site.url}/`;
   return `${site.url}${path}/`;

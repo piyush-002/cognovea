@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 /**
- * Infinite horizontal scroll. Pure CSS — the track is rendered twice and
+ * Infinite horizontal scroll. Pure CSS. The track is rendered twice and
  * translated -50%, so the seam is invisible and no JavaScript runs.
  * Pauses on hover, and prefers-reduced-motion stops it entirely (globals.css).
  *
@@ -33,7 +33,7 @@ export default function Marquee({
         style={{ ['--marquee-duration' as string]: `${duration}s` }}
       >
         {run('a')}
-        {/* Duplicate is decorative — the first pass already carries the content. */}
+        {/* Duplicate is decorative. The first pass already carries the content. */}
         <span aria-hidden="true" style={{ display: 'contents' }}>
           {run('b')}
         </span>

@@ -1,6 +1,6 @@
-# Cognovea — website (V1, 10 pages)
+# Cognovea, website (V1, 10 pages)
 
-Next.js 15 (App Router) + TypeScript, exported as a fully static site. No database, no server, no CSS framework — one hand-written stylesheet and a handful of client components.
+Next.js 15 (App Router) + TypeScript, exported as a fully static site. No database, no server, no CSS framework, one hand-written stylesheet and a handful of client components.
 
 ## The design system
 
@@ -11,14 +11,14 @@ The colour budget is deliberate and worth keeping:
 
 | share | where |
 |---|---|
-| ~60% | white / very light — most bands |
-| ~25% | deep navy — hero, How We Work, closing CTA, footer |
-| ~10% | violet / blue — primary CTAs, links, key marks |
-| ~5% | cyan + gradient — micro accents only, never a fill |
+| ~60% | white / very light, most bands |
+| ~25% | deep navy, hero, How We Work, closing CTA, footer |
+| ~10% | violet / blue, primary CTAs, links, key marks |
+| ~5% | cyan + gradient, micro accents only, never a fill |
 
 **The gradient is rationed.** It appears on the logo mark, one word in the hero
 headline, the scroll-progress bar, and a 2px hairline on card hover. Nowhere
-else. Buttons, cards, icons and backgrounds are solid colour — a violet button
+else. Buttons, cards, icons and backgrounds are solid colour. A violet button
 next to a violet heading on a violet card is what makes a site read as a
 startup landing page rather than an enterprise one.
 
@@ -46,7 +46,7 @@ Deploy `out/` to Vercel, Netlify, Cloudflare Pages, S3 + CloudFront, or any stat
 
 ## Look at it without installing anything
 
-`preview/` holds a static HTML render of all 10 pages plus the 404. Open `preview/index.html` in a browser to see the design immediately. It is a **preview only** — no JavaScript runs, so the hero animation, tabs, accordions, mobile menu and form are inert there. The real behaviour needs `npm run dev`.
+`preview/` holds a static HTML render of all 10 pages plus the 404. Open `preview/index.html` in a browser to see the design immediately. It is a **preview only**, no JavaScript runs, so the hero animation, tabs, accordions, mobile menu and form are inert there. The real behaviour needs `npm run dev`.
 
 ## The 10 pages
 
@@ -67,11 +67,11 @@ Plus a 404 page, and `sitemap.xml` / `robots.txt` generated at build time.
 
 All page copy is taken verbatim from the source documents. Meta titles and descriptions are the ones specified in those documents.
 
-## Before you launch — the open items
+## Before you launch. The open items
 
 1. **Domain.** `src/lib/site.ts` → `site.url`. Everything else (canonicals, sitemap, JSON-LD, Open Graph) reads from it.
 2. **Social profiles.** `src/lib/site.ts` → `site.social`. The "Connect With Cognovea" block on `/contact` only renders the platforms that have a URL, so it stays hidden until you fill them in.
-3. **Form backend.** Set `NEXT_PUBLIC_FORM_ENDPOINT` (see `.env.example`). Without it, the form falls back to opening a pre-filled email to `hello@cognovea.com` — functional, but you lose lead capture in a CRM.
+3. **Form backend.** Set `NEXT_PUBLIC_FORM_ENDPOINT` (see `.env.example`). Without it, the form falls back to opening a pre-filled email to `hello@cognovea.com`, functional, but you lose lead capture in a CRM.
 4. **Privacy policy.** `/privacy-policy` is a working draft written to match how this site actually behaves. Have counsel review it against the DPDP Act 2023 and the GDPR, and appoint a named grievance officer. The `TODO` comments in `src/app/privacy-policy/page.tsx` mark every gap.
 5. **Open Graph image.** No `og:image` is set yet. Add a 1200×630 PNG to `public/` and reference it in `src/app/layout.tsx`.
 6. **Analytics.** None is installed. If you add one, update the cookies section of the privacy policy and add a consent banner.
@@ -101,14 +101,14 @@ src/
     JsonLd.tsx
   lib/
     site.ts               domain, contact details, nav, route list
-    schema.ts             FaqItem + faqSchema — see the boundary note below
+    schema.ts             FaqItem + faqSchema. See the boundary note below
   components/ (continued)
     Marquee.tsx           infinite CSS logo/tech scroll (server component)
     Counter.tsx           count-up on scroll into view                   (client)
     Rotator.tsx           cycling word inside a headline                 (client)
     Scroller.tsx          horizontal card carousel with arrows           (client)
 public/
-  img/                    generated artwork — see below
+  img/                    generated artwork. See below
 tools/
     check-boundaries.mjs  guards the server/client split
     gen-art.mjs           regenerates public/img (npm run art)
@@ -116,7 +116,7 @@ tools/
 
 ## One section, one screen
 
-The hero is `min-height: calc(100svh - var(--nav-h))` — one screen with the nav
+The hero is `min-height: calc(100svh - var(--nav-h))`, one screen with the nav
 excluded. `min-height`, not `height`, so very short viewports or large text zoom
 make it grow rather than clip. `svh` rather than `vh` so mobile browser chrome
 doesn't cause a jump.
@@ -133,14 +133,14 @@ that work:
 
 Measured at 1440×900, every section lands between 0.74 and 0.98 screens. At
 1280×800 the tightest two sit at ~1.02. On a phone only the hero, the entry
-strip, the marquee, Industries and the closing CTA fit one screen — the rest
+strip, the marquee, Industries and the closing CTA fit one screen. The rest
 carry several hundred words of verbatim source copy and cannot, short of
 cutting text or shrinking it below a readable size.
 
 ### Footer grid
 
 The columns are explicit breakpoints, not `minmax(0, 1.5fr) + repeat(auto-fit,
-…)`. That mix produced phantom 0px tracks at wide sizes and — the real bug — let
+…)`. That mix produced phantom 0px tracks at wide sizes and. The real bug, let
 the first column shrink below the lockup's intrinsic width. The lockup can't go
 under ~236px (34px mark + gap + "DATA + AI SOLUTIONS" at 0.3em tracking), so it
 overflowed its cell and printed on top of the next column at 430px, 620px and
@@ -156,7 +156,7 @@ respects that minimum or permission to wrap. `.c-foot .logo` has
 The drawer's link typography is scoped to `.c-drawer__group a`, deliberately not
 `.c-drawer__body a`. The looser selector also matched the CTA and beat `.btn` on
 specificity (class + type vs class), replacing `inline-flex` with `display:
-block` and 15px with 1.3rem — which dropped the button's arrow onto a second
+block` and 15px with 1.3rem, which dropped the button's arrow onto a second
 line. If you add anything else to the drawer body, scope its styles the same way.
 
 The CTA is full width with centred content: it reads as intentional on a phone
@@ -165,7 +165,7 @@ comfortable tap target.
 
 ### Horizontal overflow
 
-`html` carries `overflow-x: clip` as a backstop — `clip` rather than `hidden`,
+`html` carries `overflow-x: clip` as a backstop, `clip` rather than `hidden`,
 because `hidden` would make `<html>` a scroll container and can break the sticky
 nav. It is only a backstop: real overflow is fixed at source.
 
@@ -173,7 +173,7 @@ The one that bit: `.rv--left` / `.rv--right` translate content 26px sideways
 before revealing, but the page gutter on a phone is ~18px, so a `.rv--right`
 element sat ~8px past the viewport edge until it animated in. Chrome hid it via
 `body { overflow-x: hidden }`; iOS Safari still panned. Below 900px those
-variants now fall back to the vertical reveal — the columns are stacked there
+variants now fall back to the vertical reveal. The columns are stacked there
 anyway, so a left/right reveal carries no meaning.
 
 If you ever chase a horizontal-scroll bug here, measure with the clipping
@@ -194,7 +194,7 @@ Two things to know if you edit this:
 ## The mark
 
 `src/components/Mark.tsx` (small lockup, SVG) and `src/components/MarkCanvas.tsx`
-(hero, canvas) render the same object: the particle **C** from cognovea.com — an
+(hero, canvas) render the same object: the particle **C** from cognovea.com. An
 open ring of points, dense along the stroke, fraying at the tips and dissolving
 outward toward the aperture, which faces right. Colour reads diagonally: violet
 top-left, through the mid blue, to cyan at the lower-right.
@@ -207,8 +207,8 @@ Two knobs matter: `count` and `rScale`. The hero runs at 400px+ where the native
 point sizes are right; the 34px lockup needs roughly half the points at ~3× the
 radius, or it degrades into a grey smudge.
 
-The hero animation is ported from the live page — scatter → resolve, idle drift,
-and the cursor parting the swarm — with three changes: it pauses when scrolled
+The hero animation is ported from the live page, scatter → resolve, idle drift,
+and the cursor parting the swarm, with three changes: it pauses when scrolled
 out of view as well as when the tab hides, every listener and frame is torn down
 on unmount (this is a route now, not a single static page), and reduced motion
 paints the resolved mark once without animating.
@@ -221,7 +221,7 @@ and marks.
 ## The artwork
 
 `public/img/*.svg` is generated by `tools/gen-art.mjs`, not drawn by hand.
-Every piece is deterministic — same code, same bytes — so it diffs cleanly in
+Every piece is deterministic, same code, same bytes, so it diffs cleanly in
 git instead of arriving as opaque binaries. Change the palette at the top of
 that file and run:
 
@@ -242,12 +242,12 @@ locations mark.
 
 Long-copy sections use `.feature--copy`: the prose takes 1.55fr to the art's
 1fr, top-aligned, with the figure `position: sticky`. A 1:1 centred split
-narrows nine paragraphs by ~30% — making them ~30% taller — and leaves the
+narrows nine paragraphs by ~30%, making them ~30% taller. And leaves the
 figure floating in the middle of a tall column.
 
 **These are placeholders for photography, not a substitute for it.** The People
 section on the homepage has a marked slot (`TEAM PHOTOGRAPHY SLOT` in
-`src/app/page.tsx`) — drop a 4:5 image at `public/img/team.jpg`, swap the `src`,
+`src/app/page.tsx`), drop a 4:5 image at `public/img/team.jpg`, swap the `src`,
 write real alt text. A photograph of the actual team will outperform any
 abstract art.
 
@@ -257,14 +257,14 @@ The reference sites lean heavily on client logo walls, analyst badges, case
 study tiles and testimonials. None of that exists for Cognovea yet and none of
 it is faked here. What the marquee shows is the **technology stack** named in
 the source documents, and the counters show **durations and starting prices**
-from those documents — not results. When real logos, awards and case studies
+from those documents, not results. When real logos, awards and case studies
 arrive, the layouts they belong in are already built.
 
 ### The server/client boundary
 
 Page files are Server Components. A Server Component can **render** a Client
 Component, but it cannot **call** a function exported from a `'use client'`
-module — Next.js compiles those exports into client references, and calling one
+module, Next.js compiles those exports into client references, and calling one
 throws at runtime:
 
 ```
@@ -284,7 +284,7 @@ whenever you add a helper to a component file.
 
 ### Content lives at the top of each page file
 
-Every page keeps its copy in plain arrays and objects above the component. To change wording, edit the data — you rarely need to touch JSX.
+Every page keeps its copy in plain arrays and objects above the component. To change wording, edit the data. You rarely need to touch JSX.
 
 ### SEO
 
@@ -308,14 +308,14 @@ block in `layout.tsx` cancels that when JavaScript is unavailable, so a JS-less
 reader gets the full page rather than a blank one.
 
 That safety net is deliberately **not** an inline script stamping a class on
-`<html>` — the usual trick. That script mutates the DOM before React hydrates,
+`<html>`. The usual trick. That script mutates the DOM before React hydrates,
 so the server HTML and the client DOM differ and React reports a hydration
 mismatch. `<noscript>` is byte-identical on both sides. If you ever need
 pre-hydration DOM state here, you will also need `suppressHydrationWarning`;
 prefer a CSS-only solution instead.
 
 The same "layout doesn't remount" rule applies to anything else you add to the
-layout that touches the DOM — give it a `pathname` dependency.
+layout that touches the DOM, give it a `pathname` dependency.
 
 ### Accessibility
 

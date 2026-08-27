@@ -1,7 +1,7 @@
 /**
  * Generates the site's abstract artwork into public/img/.
  *
- * Everything here is deterministic — same input, same file — so the art is
+ * Everything here is deterministic, same input, same file, so the art is
  * reproducible and reviewable in git rather than a pile of opaque binaries.
  * Run:  node tools/gen-art.mjs
  *
@@ -128,7 +128,7 @@ ${softBlobs(id)}
   ${inner}
 </svg>`;
 
-/** See the business clearly — a radar sweep resolving scattered points. */
+/** See the business clearly. A radar sweep resolving scattered points. */
 function artClarity() {
   const r = rng(21);
   const cx = 400;
@@ -150,7 +150,7 @@ function artClarity() {
   return frame('clarity', `${rings}${spokes}${sweep}${pts}`);
 }
 
-/** Know what's next — history resolving into a forecast cone. */
+/** Know what's next, history resolving into a forecast cone. */
 function artPredict() {
   const pts = [];
   const r = rng(33);
@@ -193,7 +193,7 @@ function artPredict() {
   );
 }
 
-/** Work smarter — scattered inputs routed through a pipeline into one output. */
+/** Work smarter, scattered inputs routed through a pipeline into one output. */
 function artAutomate() {
   const inY = [110, 190, 270, 350, 430];
   const inputs = inY.map((y) => `<rect x="52" y="${y - 16}" width="96" height="32" rx="9" fill="${C.violet}" fill-opacity=".14" stroke="${C.violet}" stroke-opacity=".38"/>`).join('');
@@ -211,7 +211,7 @@ function artAutomate() {
   return frame('automate', `${paths}${outs}${inputs}${hub}${outBoxes}`);
 }
 
-/** Move with confidence — many uncertain paths converging on one decision. */
+/** Move with confidence, many uncertain paths converging on one decision. */
 function artConfidence() {
   const r = rng(55);
   const target = [640, 270];
@@ -239,7 +239,7 @@ const ind = (id, inner) => frame(id, inner, 600, 400, 0.55);
 function industryArt() {
   const r = rng(91);
 
-  // Retail — basket of demand curves
+  // Retail, basket of demand curves
   const retail = ind(
     'ind-retail',
     Array.from({ length: 5 }, (_, i) => {
@@ -249,7 +249,7 @@ function industryArt() {
     }).join(''),
   );
 
-  // Manufacturing — a line with one bottleneck flagged
+  // Manufacturing. A line with one bottleneck flagged
   const mfg = ind(
     'ind-mfg',
     `${Array.from({ length: 7 }, (_, i) => `<rect x="${58 + i * 74}" y="170" width="52" height="60" rx="14" fill="${i === 4 ? C.amber : C.violet}" fill-opacity="${i === 4 ? '.55' : '.26'}" stroke="${i === 4 ? C.amber : C.violet}" stroke-opacity="${i === 4 ? '1' : '.7'}" stroke-width="3"/>`).join('')}
@@ -257,7 +257,7 @@ function industryArt() {
   <circle cx="${58 + 4 * 74 + 26}" cy="200" r="46" fill="none" stroke="${C.amber}" stroke-opacity=".85" stroke-width="4"/>`,
   );
 
-  // Financial — risk band around a trend
+  // Financial, risk band around a trend
   const fin = ind(
     'ind-fin',
     (() => {
@@ -277,7 +277,7 @@ function industryArt() {
     })(),
   );
 
-  // Healthcare — a steady trace
+  // Healthcare. A steady trace
   const health = ind(
     'ind-health',
     (() => {
@@ -291,7 +291,7 @@ function industryArt() {
     })(),
   );
 
-  // Energy — load curve on a grid
+  // Energy, load curve on a grid
   const energy = ind(
     'ind-energy',
     `${Array.from({ length: 6 }, (_, i) => `<line x1="50" y1="${90 + i * 44}" x2="550" y2="${90 + i * 44}" stroke="${C.ink}" stroke-opacity=".07"/>`).join('')}
@@ -313,7 +313,7 @@ async function grain() {
   try {
     sharp = require('sharp');
   } catch {
-    console.log('  (sharp not installed — keeping the existing grain.png)');
+    console.log('  (sharp not installed, keeping the existing grain.png)');
     return;
   }
   const size = 220;
@@ -334,7 +334,7 @@ async function grain() {
 
 
 /* ==========================================================================
-   Page motifs — one per inner-page subject.
+   Page motifs, one per inner-page subject.
    Same frame() and palette as the homepage set, so they read as one family.
    ========================================================================== */
 
@@ -457,7 +457,7 @@ function artCost() {
   for (let i = 0; i <= 40; i++) {
     const x = 70 + i * 17;
     // y grows downward in SVG, so a FALLING cost means an INCREASING y.
-    // The first version subtracted and drew a rising sawtooth — the opposite
+    // The first version subtracted and drew a rising sawtooth. The opposite
     // of the story the section is telling.
     const base = 178 + i * 3.2;
     const duty = Math.sin(i / 1.55) > 0.15 ? 0 : 56; // nightly scale-down
@@ -652,10 +652,30 @@ function artLocations() {
   );
 }
 
+/** One person's work, connected into the wider engagement rather than isolated. */
+function artTeam() {
+  const r = rng(808);
+  const cx = 400, cy = 262;
+  const ring = [0, 1, 2, 3, 4, 5].map((i) => {
+    const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
+    return [cx + Math.cos(a) * 168, cy + Math.sin(a) * 138];
+  });
+  const spokes = ring
+    .map((p) => `<line x1="${cx}" y1="${cy}" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="${C.violet}" stroke-opacity=".38" stroke-width="1.8"/>`)
+    .join('');
+  const rim = ring
+    .map((p, i) => `<line x1="${p[0].toFixed(1)}" y1="${p[1].toFixed(1)}" x2="${ring[(i + 1) % 6][0].toFixed(1)}" y2="${ring[(i + 1) % 6][1].toFixed(1)}" stroke="${C.blue}" stroke-opacity=".22" stroke-width="1.4"/>`)
+    .join('');
+  const dots = ring
+    .map((p, i) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${i === 0 ? 17 : 12}" fill="${i === 0 ? C.cyan : C.violet}" fill-opacity="${i === 0 ? 0.95 : 0.4 + r() * 0.2}"/>` + (i === 0 ? `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="32" fill="none" stroke="${C.cyan}" stroke-opacity=".5" stroke-width="2"/>` : ''))
+    .join('');
+  const core = `<circle cx="${cx}" cy="${cy}" r="30" fill="url(#team-stroke)" fill-opacity=".2" stroke="url(#team-stroke)" stroke-width="2.4"/><circle cx="${cx}" cy="${cy}" r="8" fill="${C.violet}"/>`;
+  return frame('team', `${rim}${spokes}${dots}${core}`);
+}
+
 /* -------------------------------------------------------------------- run */
 
 console.log('generating public/img/');
-write('mesh-hero.svg', heroMesh());
 write('art-clarity.svg', artClarity());
 write('art-predict.svg', artPredict());
 write('art-automate.svg', artAutomate());
@@ -681,9 +701,9 @@ write('ai-docs.svg', artDocs());
 write('as-matrix.svg', artMatrix());
 write('as-roadmap.svg', artRoadmap());
 write('dhc-ladder.svg', artLadder());
+write('cr-team.svg', artTeam());
 write('cr-phases.svg', artPhases());
 write('cr-funnel.svg', artFunnel());
 write('ct-locations.svg', artLocations());
 
-await grain();
 console.log('done');
