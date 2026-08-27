@@ -5,8 +5,7 @@ import { notFound } from 'next/navigation';
 import { CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
 import JsonLd from '@/components/JsonLd';
 import RichText from '@/components/RichText';
-import { formatDate, getPost, getPosts } from '@/lib/content';
-import { toSameOriginPath } from '@/lib/media-url';
+import { formatDate, getPost, getPosts, toPostSummary } from '@/lib/content';
 import { articleSchema } from '@/lib/schema';
 
 export const revalidate = 300;
@@ -63,29 +62,11 @@ export default async function InsightPage({ params }: Props) {
     { href: `/insights/${slug}`, label: post.title },
   ];
 
-  const summary = {
-    id: String(post.id),
-    title: post.title,
-    slug: post.slug,
-    excerpt: post.excerpt ?? '',
-    publishedAt: post.publishedAt ?? null,
-    readingMinutes: post.readingMinutes ?? null,
-    tags: Array.isArray(post.tags) ? post.tags.map((t: { tag?: string }) => t?.tag).filter(Boolean) : [],
-    // Through the same normaliser as every other upload: Payload returns an
-    // absolute URL and next/image rejects hosts outside remotePatterns. Note
-    // this is only for the on-page <Image>; the Open Graph tags above keep the
-    // absolute URL, because a social crawler has no origin to resolve a
-    // relative path against.
-    heroImage: post.heroImage?.url
-      ? {
-          url: toSameOriginPath(post.heroImage.url, process.env.NEXT_PUBLIC_SERVER_URL),
-          alt: post.heroImage.alt ?? '',
-          width: post.heroImage.width,
-          height: post.heroImage.height,
-        }
-      : null,
-    updatedAt: post.updatedAt ?? null,
-  };
+  // Built by the same helper the index uses, rather than a second inline copy.
+  // The duplicate was how this page ended up bypassing media-URL normalisation
+  // earlier, and how its tags typed as (string | undefined)[] and failed the
+  // build while the index compiled fine.
+  const summary = toPostSummary(post);
 
   return (
     <>

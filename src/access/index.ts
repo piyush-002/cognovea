@@ -1,10 +1,20 @@
-import type { Access } from 'payload';
+import type { Access, PayloadRequest } from 'payload';
 
 /** Fully public. Used for reading published content. */
 export const anyone: Access = () => true;
 
 /** Any logged-in admin user. */
 export const authenticated: Access = ({ req: { user } }) => Boolean(user);
+
+/**
+ * The same rule, typed for the `admin` access property.
+ *
+ * `admin` controls who may open the admin panel at all, and its signature is
+ * narrower than `Access`: it must return a plain boolean, where `Access` may
+ * also return a `Where` query. Reusing `authenticated` there type-checked only
+ * until the real Payload types were generated.
+ */
+export const canAccessAdmin = ({ req: { user } }: { req: PayloadRequest }): boolean => Boolean(user);
 
 /**
  * The important one. An anonymous request gets a *query constraint* rather than

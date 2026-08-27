@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload';
-import { authenticated } from '@/access';
+import { authenticated, canAccessAdmin } from '@/access';
 
 /**
  * Admin users. `auth: true` gives Payload its login, sessions, password reset
@@ -26,7 +26,7 @@ export const Users: CollectionConfig = {
     read: authenticated,
     update: authenticated,
     delete: authenticated,
-    admin: authenticated,
+    admin: canAccessAdmin,
   },
   fields: [
     {

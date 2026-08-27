@@ -51,7 +51,14 @@ export async function getSiteSettings(): Promise<ResolvedSettings> {
   return safeQuery(
     async () => {
       const payload = await getPayloadClient();
-      const doc = (await payload.findGlobal({ slug: 'site-settings', depth: 0 })) as Record<string, unknown>;
+      // Via `unknown`: the generated `SiteSetting` type has no index
+      // signature, so TypeScript rejects the direct cast. The reads below are
+      // all defensive and fall back field by field, so treating it as a bag of
+      // unknowns is honest about what this function actually does with it.
+      const doc = (await payload.findGlobal({
+        slug: 'site-settings',
+        depth: 0,
+      })) as unknown as Record<string, unknown>;
 
       // Every field falls back individually. A half-filled global should degrade
       // field by field rather than dropping the whole site back to defaults.

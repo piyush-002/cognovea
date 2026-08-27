@@ -37,7 +37,8 @@ function media(m: MediaLike): Img {
   };
 }
 
-function summarise(doc: Record<string, any>): PostSummary {
+/** Shared so the article page cannot drift from the index. */
+export function toPostSummary(doc: Record<string, any>): PostSummary {
   return {
     id: String(doc.id),
     title: doc.title,
@@ -46,7 +47,14 @@ function summarise(doc: Record<string, any>): PostSummary {
     publishedAt: doc.publishedAt ?? null,
     updatedAt: doc.updatedAt ?? null,
     readingMinutes: doc.readingMinutes ?? null,
-    tags: Array.isArray(doc.tags) ? doc.tags.map((t: { tag?: string }) => t?.tag).filter(Boolean) : [],
+    // A type predicate, not `.filter(Boolean)`. The latter removes the empty
+    // values at runtime but leaves the type as (string | undefined)[], which is
+    // what broke the build.
+    tags: Array.isArray(doc.tags)
+      ? doc.tags
+          .map((t: { tag?: string }) => t?.tag)
+          .filter((t: string | undefined): t is string => typeof t === 'string' && t.length > 0)
+      : [],
     heroImage: media(doc.heroImage),
   };
 }
@@ -66,7 +74,7 @@ export async function getPosts(limit = 24): Promise<PostSummary[]> {
         where: { _status: { equals: 'published' } },
         overrideAccess: false,
       });
-      return res.docs.map(summarise);
+      return res.docs.map(toPostSummary);
     },
     [],
     'getPosts',
