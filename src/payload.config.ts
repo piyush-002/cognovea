@@ -1,3 +1,4 @@
+import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -16,6 +17,7 @@ import { Testimonials } from '@/collections/Testimonials';
 import { Users } from '@/collections/Users';
 import { SiteSettings } from '@/globals/SiteSettings';
 import { chooseConnection } from '@/lib/db-endpoint';
+import { allowedOrigins, canonicalServerUrl } from '@/lib/origins';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -48,8 +50,65 @@ endpoint.warnings.forEach((w) => console.warn(w));
 
 const connectionString = endpoint.connectionString;
 
+/**
+ * Every hostname this deployment answers on. VERCEL_PROJECT_PRODUCTION_URL and
+ * VERCEL_URL are injected by Vercel at runtime and cover the custom domain and
+ * the per-deployment preview URL respectively, neither of which the build-time
+ * NEXT_PUBLIC_SERVER_URL can know about.
+ */
+const isProduction = process.env.NODE_ENV === 'production';
+
+/**
+ * In development, every IPv4 address this machine answers on.
+ *
+ * `next dev` prints a "Network" URL alongside localhost, and that is a separate
+ * origin. Without it here, logging into the admin from a phone or a second
+ * laptop on the same wifi fails the CSRF check and bounces back to the login
+ * screen. Never computed in production, where the hostnames are known.
+ */
+const localAddresses = isProduction
+  ? []
+  : Object.values(os.networkInterfaces())
+      // flatMap with a nullish fallback rather than .flat(): os.networkInterfaces()
+      // is typed as possibly-undefined per interface, and a type predicate using
+      // Boolean(i) does not narrow, which TypeScript rightly rejected.
+      .flatMap((interfaces) => interfaces ?? [])
+      .filter((i) => i.family === 'IPv4' && !i.internal)
+      .map((i) => i.address);
+
+const originEnv = {
+  serverUrl: process.env.NEXT_PUBLIC_SERVER_URL,
+  vercelProductionUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+  vercelUrl: process.env.VERCEL_URL,
+  extra: process.env.EXTRA_ORIGINS,
+  devPort: isProduction ? undefined : process.env.PORT || '3000',
+  localAddresses,
+  // True on any Vercel deployment, including previews.
+  isDeployed: Boolean(process.env.VERCEL),
+};
+
+const origins = allowedOrigins(originEnv);
+
+if (process.env.VERCEL && /localhost|127\.0\.0\.1/.test(process.env.NEXT_PUBLIC_SERVER_URL ?? '')) {
+  console.warn(
+    '[payload] NEXT_PUBLIC_SERVER_URL is set to a localhost address on a deployed\n' +
+      '          environment. Falling back to the deployment hostname so media URLs\n' +
+      '          are not minted as http://localhost:3000. Fix the variable in the\n' +
+      '          Vercel project settings.',
+  );
+}
+
+if (origins.length === 0) {
+  console.warn(
+    '[payload] No allowed origins resolved. Admin login will fail: the session\n' +
+      '          cookie is set and then every authenticated request is rejected,\n' +
+      '          which looks like the login page simply reloading. Set\n' +
+      '          NEXT_PUBLIC_SERVER_URL to the origin the site is served from.',
+  );
+}
+
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  serverURL: canonicalServerUrl(originEnv),
 
   admin: {
     user: Users.slug,
@@ -84,11 +143,13 @@ export default buildConfig({
   // Powers the image sizes declared in the Media collection.
   sharp,
 
-  // CORS/CSRF: only this site may call the API with credentials. Without this,
-  // any origin could drive the authenticated API using a logged-in admin's
-  // cookie.
-  cors: process.env.NEXT_PUBLIC_SERVER_URL ? [process.env.NEXT_PUBLIC_SERVER_URL] : [],
-  csrf: process.env.NEXT_PUBLIC_SERVER_URL ? [process.env.NEXT_PUBLIC_SERVER_URL] : [],
+  // Only origins we own may call the API with credentials, so a third-party
+  // site cannot drive the authenticated API using a logged-in admin's cookie.
+  // Still an allowlist, just one that covers every hostname this app is
+  // actually served from rather than only the configured one. See
+  // src/lib/origins.ts for why a single entry silently broke admin login.
+  cors: origins,
+  csrf: origins,
 
   plugins: [
     // Serverless filesystems are ephemeral. A file written during one request

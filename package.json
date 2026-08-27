@@ -21,7 +21,8 @@
     "test:db-endpoint": "node tools/test-db-endpoint.mjs",
     "test:sticky": "node tools/test-sticky.mjs",
     "audit": "node tools/audit.mjs",
-    "test:media-url": "node tools/test-media-url.mjs"
+    "test:media-url": "node tools/test-media-url.mjs",
+    "test:origins": "node tools/test-origins.mjs"
   },
   "dependencies": {
     "next": "~15.4.11",
