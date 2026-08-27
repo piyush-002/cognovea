@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload';
 import { anyone, authenticated } from '@/access';
+import { mediaHooks } from '@/lib/revalidate';
 
 /**
  * Uploads. Sizes are generated on upload so `next/image` can serve a sensibly
@@ -45,6 +46,9 @@ export const Media: CollectionConfig = {
       admin: { description: 'Optional. Shown under the image where the layout supports it.' },
     },
   ],
+  // A replaced file could be on any page, so a media change refreshes the
+  // whole site rather than guessing which pages referenced it.
+  hooks: mediaHooks,
 };
 
 export default Media;

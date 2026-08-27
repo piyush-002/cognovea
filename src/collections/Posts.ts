@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 import { authenticated, publishedOrAuthenticated } from '@/access';
 import { slugField } from '@/fields/slug';
+import { postHooks } from '@/lib/revalidate';
 
 /**
  * Insights. The blog. This is the content the sitemap you supplied is full of,
@@ -132,6 +133,9 @@ export const Posts: CollectionConfig = {
         return data;
       },
     ],
+    // Publishing rebuilds the index, the article's own page and the sitemap,
+    // so a new post is live on a refresh rather than on the revalidate window.
+    ...postHooks,
   },
 };
 
