@@ -45,6 +45,30 @@ function normalise(value: string): string | null {
   }
 }
 
+/**
+ * `www.example.com` and `example.com` are different origins to a browser, and
+ * therefore to a CSRF check. Whichever one is configured, the other is added.
+ *
+ * This is not a loosening worth worrying about: reaching www of a domain you
+ * own requires controlling that domain's DNS, and anyone who does has already
+ * won. Leaving it out, meanwhile, produces a 403 on every authenticated request
+ * the moment the site is served from the variant nobody configured.
+ */
+function withHostVariant(origin: string): string[] {
+  try {
+    const url = new URL(origin);
+    if (url.hostname === 'localhost' || /^[\d.]+$/.test(url.hostname)) return [origin];
+
+    const paired = new URL(origin);
+    paired.hostname = url.hostname.startsWith('www.')
+      ? url.hostname.slice(4)
+      : `www.${url.hostname}`;
+    return [origin, paired.origin];
+  } catch {
+    return [origin];
+  }
+}
+
 export function allowedOrigins(env: OriginEnv): string[] {
   const devHosts = env.devPort
     ? ['localhost', '127.0.0.1', ...(env.localAddresses ?? [])].map((h) => `http://${h}:${env.devPort}`)
@@ -62,7 +86,8 @@ export function allowedOrigins(env: OriginEnv): string[] {
   for (const candidate of candidates) {
     if (!candidate) continue;
     const origin = normalise(candidate);
-    if (origin) seen.add(origin);
+    if (!origin) continue;
+    for (const variant of withHostVariant(origin)) seen.add(variant);
   }
   return [...seen];
 }
