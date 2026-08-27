@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload';
 import { authenticated, publishedOrAuthenticated } from '@/access';
+import { revalidateMarketing, revalidateMarketingOnDelete } from '@/lib/revalidate';
 
 /**
  * Client testimonials.
@@ -28,6 +29,12 @@ export const Testimonials: CollectionConfig = {
     delete: authenticated,
   },
   versions: { drafts: true },
+  // Publishing rebuilds the pages that show this content, so an editor
+  // sees the change on the site rather than waiting out the revalidate.
+  hooks: {
+    afterChange: [revalidateMarketing],
+    afterDelete: [revalidateMarketingOnDelete],
+  },
   defaultSort: 'order',
   fields: [
     {

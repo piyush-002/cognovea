@@ -56,6 +56,15 @@ try {
  */
 const isDev = process.env.NODE_ENV !== 'production';
 
+/**
+ * Vercel injects its comment/feedback toolbar from vercel.live on preview
+ * deployments. It is a production build, so `isDev` is false there and the
+ * script is blocked, which is correct for the live site and merely noisy on a
+ * preview. VERCEL_ENV distinguishes the two: 'production' only on the real
+ * deployment, 'preview' on every branch build.
+ */
+const isPreview = Boolean(process.env.VERCEL) && process.env.VERCEL_ENV !== 'production';
+
 const siteCsp = [
   "default-src 'self'",
   [
@@ -65,6 +74,8 @@ const siteCsp = [
     // GA4 loads gtag.js from googletagmanager.com.
     'https://www.googletagmanager.com',
     'https://www.google-analytics.com',
+    // Vercel's preview toolbar. Never on the live site.
+    isPreview ? 'https://vercel.live' : '',
   ]
     .filter(Boolean)
     .join(' '),
@@ -84,10 +95,13 @@ const siteCsp = [
     // also serves on the LAN address it prints as "Network", and the websocket
     // then connects to that host, not to localhost.
     isDev ? 'ws: wss:' : '',
+    isPreview ? 'https://vercel.live wss://vercel.live' : '',
   ]
     .filter(Boolean)
     .join(' '),
   "frame-ancestors 'none'",
+  // The preview toolbar renders in an iframe it injects itself.
+  isPreview ? "frame-src 'self' https://vercel.live" : '',
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",

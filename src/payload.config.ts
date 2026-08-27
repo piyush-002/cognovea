@@ -116,6 +116,13 @@ export default buildConfig({
     meta: {
       titleSuffix: ' · Cognovea',
     },
+    // Payload's default is 'gravatar', which sends a hash of the signed-in
+    // user's email to gravatar.com on every admin page load. That is a
+    // third-party request from inside an authenticated session, made to render
+    // a placeholder silhouette, and it is the same reason the admin gets no
+    // analytics origins. Turning it off removes the request rather than adding
+    // gravatar.com to the policy to permit it.
+    avatar: 'default',
   },
 
   collections: [Posts, Jobs, Testimonials, Clients, Enquiries, Media, Users],

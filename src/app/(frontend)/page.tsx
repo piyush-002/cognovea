@@ -10,6 +10,15 @@ import Scroller from '@/components/Scroller';
 import Tabs from '@/components/Tabs';
 import Testimonial from '@/components/Testimonial';
 
+/* Statically generated, and this page shows client logos and a testimonial,
+   both of which are published from the admin long after the build. Without a
+   revalidate the page keeps serving the HTML from the last deploy, so a logo
+   published today would not appear until the next one. Five minutes, matching
+   careers and insights; `src/lib/revalidate.ts` also refreshes it on publish so
+   the usual wait is none at all. */
+export const revalidate = 300;
+
+
 export const metadata: Metadata = {
   title: 'Cognovea | Data Analytics and AI Solutions',
   description:

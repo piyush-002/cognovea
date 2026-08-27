@@ -7,6 +7,15 @@ import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
 import Rail from '@/components/Rail';
 
+/* Statically generated, and this page shows client logos and a testimonial,
+   both of which are published from the admin long after the build. Without a
+   revalidate the page keeps serving the HTML from the last deploy, so a logo
+   published today would not appear until the next one. Five minutes, matching
+   careers and insights; `src/lib/revalidate.ts` also refreshes it on publish so
+   the usual wait is none at all. */
+export const revalidate = 300;
+
+
 const PATH = '/data-modernization-services';
 
 export const metadata: Metadata = {
