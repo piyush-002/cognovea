@@ -320,7 +320,10 @@ export default function DataEngineeringPage() {
                 as transaction volumes multiply across all global markets.
               </p>
             </div>
-            <Figure src="/img/de-throughput.svg" alt="Abstract concurrency lanes running in parallel at steady throughput" />
+            <Figure
+              src="/img/de-throughput.jpg"
+              alt="Data centre aisle with streams of traffic flowing along the racks"
+            />
           </div>
         </div>
       </section>
@@ -365,7 +368,10 @@ export default function DataEngineeringPage() {
                 the freedom to utilize the specialized tools of each cloud provider.
               </p>
             </div>
-            <Figure src="/img/de-pipeline.svg" alt="Abstract diagram of many source systems orchestrated into one warehouse" />
+            <Figure
+              src="/img/de-multicloud.jpg"
+              alt="Data centre with a globe of live data and dashboards suspended above the floor"
+            />
           </div>
 
           <ul className="chips rv mt-3">
