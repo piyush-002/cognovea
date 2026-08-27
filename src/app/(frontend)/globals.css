@@ -1940,16 +1940,6 @@ html:not(.rv-ready) .rv {
   gap: clamp(1.5rem, 4vw, 3.5rem);
 }
 
-@media (max-width: 860px) {
-  .rail {
-    grid-template-columns: 1fr;
-  }
-
-  .rail__nav {
-    display: none;
-  }
-}
-
 .rail__nav {
   position: sticky;
   top: calc(var(--nav-h) + 1.75rem);
@@ -2000,6 +1990,27 @@ html:not(.rv-ready) .rv {
 
 .rail__panel {
   scroll-margin-top: 120px;
+}
+
+/* Below the base rules, not above them.
+ *
+ * This block used to sit directly under `.rail`, before `.rail__nav` was
+ * declared. Both selectors have the same specificity, so the later one won
+ * regardless of the media query, and `display: flex` in the base rule beat
+ * `display: none` here at every width. The rail was never hidden on a phone:
+ * it stacked above the content as a sticky bar with the page sliding behind
+ * it. A media query that loses to the rule it is meant to override fails
+ * silently, which is why this is now last in the section. */
+@media (max-width: 860px) {
+  .rail {
+    grid-template-columns: 1fr;
+  }
+
+  /* The panels carry their own headings, so nothing is lost by dropping the
+     nav. A horizontal chip row would just be a second, worse set of them. */
+  .rail__nav {
+    display: none;
+  }
 }
 
 /* ==========================================================================
