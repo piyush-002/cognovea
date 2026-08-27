@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Logo from '@/components/Logo';
+import CookieSettings from '@/components/CookieSettings';
 import { companyLinks, legalLinks, serviceLinks, site } from '@/lib/site';
 
 export default function Footer() {
@@ -18,7 +19,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4>What We Do</h4>
+            <h2>What We Do</h2>
             <ul>
               {serviceLinks.map((l) => (
                 <li key={l.href}>
@@ -29,7 +30,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4>Company</h4>
+            <h2>Company</h2>
             <ul>
               {companyLinks.map((l) => (
                 <li key={l.href}>
@@ -43,7 +44,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4>Get in Touch</h4>
+            <h2>Get in Touch</h2>
             <ul>
               <li>
                 <a href={`mailto:${site.email}`}>{site.email}</a>
@@ -70,6 +71,7 @@ export default function Footer() {
                 {l.label}
               </Link>
             ))}
+            <CookieSettings />
             <span>Bengaluru · Indore</span>
           </div>
         </div>

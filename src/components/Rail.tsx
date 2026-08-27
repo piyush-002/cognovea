@@ -10,7 +10,7 @@ export type RailItem = {
 
 /**
  * A sticky side rail that highlights the section currently in view and scrolls
- * to it on click — used for the multi-phase process sections, which are long
+ * to it on click, used for the multi-phase process sections, which are long
  * and otherwise hard to navigate.
  *
  * On narrow screens the rail is hidden by CSS and the panels simply stack.

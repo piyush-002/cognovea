@@ -1,5 +1,5 @@
 /**
- * The Cognovea mark: an open ring of points that reads as a C — dense along the
+ * The Cognovea mark: an open ring of points that reads as a C, dense along the
  * stroke, fraying and dissolving outward toward the aperture, which faces right.
  *
  * Ported from the live cognovea.com coming-soon page so the mark on this site is

@@ -22,9 +22,18 @@ export default function ScrollProgress() {
 
     let ticking = false;
 
+    // Cached, because reading scrollHeight forces the browser to lay the whole
+    // document out. Doing that on every scroll frame is a forced reflow per
+    // frame for the entire duration of a scroll, for a number that only changes
+    // when the page does. A ResizeObserver on <body> catches the cases that
+    // actually move it: images loading, fonts swapping, a section revealing.
+    let max = 0;
+    const measure = () => {
+      max = document.documentElement.scrollHeight - window.innerHeight;
+    };
+
     const update = () => {
       ticking = false;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
       const p = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
       el.style.setProperty('--p', p.toFixed(4));
     };
@@ -35,12 +44,26 @@ export default function ScrollProgress() {
       requestAnimationFrame(update);
     };
 
+    const onResize = () => {
+      measure();
+      onScroll();
+    };
+
+    measure();
     update();
+
+    const ro = new ResizeObserver(() => {
+      measure();
+      onScroll();
+    });
+    ro.observe(document.body);
+
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('resize', onResize);
     return () => {
+      ro.disconnect();
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('resize', onResize);
     };
   }, [pathname]);
 

@@ -1,7 +1,7 @@
 import { buildMark } from '@/lib/mark';
 
 /**
- * The small lockup mark — an SVG rendering of the same particle C used on the
+ * The small lockup mark. An SVG rendering of the same particle C used on the
  * hero canvas, sized for the nav, drawer and footer.
  *
  * SVG rather than canvas here because there are several instances on every

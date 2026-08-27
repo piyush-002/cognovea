@@ -50,7 +50,7 @@ export default function Tabs({ tabs }: { tabs: Tab[] }) {
       </div>
 
       {/* Every panel is rendered and inactive ones are `hidden`, rather than
-          mounting only the active one. Tab copy is real page content — if it
+          mounting only the active one. Tab copy is real page content, if it
           only enters the DOM on click, crawlers never see it and neither does
           in-page browser search. */}
       {tabs.map((tab, i) => (

@@ -14,7 +14,7 @@ export type Crumb = { href: string; label: string };
 
 /**
  * Artwork column for an editorial split. Pairs with a `.feature` wrapper whose
- * other child holds the copy — the figure sits beside the text rather than
+ * other child holds the copy. The figure sits beside the text rather than
  * above it, so it costs almost no vertical height and sections stay inside one
  * screen.
  */
@@ -35,15 +35,20 @@ export function PageHero({
   intro,
   crumbs,
   children,
+  compact,
 }: {
   eyebrow: string;
   title: ReactNode;
   intro?: ReactNode;
   crumbs: Crumb[];
   children?: ReactNode;
+  /** Drops the full-screen floor. For pages people open to read one specific
+      thing (the privacy policy), a full-height hero would push the actual
+      content entirely below the fold. */
+  compact?: boolean;
 }) {
   return (
-    <section className="c-phero">
+    <section className={compact ? 'c-phero c-phero--compact' : 'c-phero'}>
       <div className="wrap c-phero__in">
         <nav aria-label="Breadcrumb">
           <ol className="crumbs">
@@ -65,6 +70,15 @@ export function PageHero({
         {intro && <p className="lede" style={{ marginTop: '1.3em' }}>{intro}</p>}
         {children}
       </div>
+
+      {!compact && (
+      <span className="c-phero__cue" aria-hidden="true">
+        Scroll
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7">
+          <path d="M8 2v12M3 9l5 5 5-5" />
+        </svg>
+      </span>
+      )}
     </section>
   );
 }

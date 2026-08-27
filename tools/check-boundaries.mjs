@@ -61,7 +61,7 @@ for (const file of files) {
     if (!target || !isClient.get(target)) continue;
 
     const braced = clause.match(/\{([^}]*)\}/);
-    if (!braced) continue; // default import only — always fine
+    if (!braced) continue; // default import only, always fine
 
     for (const raw of braced[1].split(',')) {
       const name = raw.trim();

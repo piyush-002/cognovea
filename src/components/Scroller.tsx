@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 
 /**
- * Horizontal card scroller with arrow controls — the pattern Tiger, Tredence
+ * Horizontal card scroller with arrow controls. The pattern Tiger, Tredence
  * and Kyndryl all use for industries and insights.
  *
  * Native overflow scrolling does the work, so it stays swipeable on touch and
