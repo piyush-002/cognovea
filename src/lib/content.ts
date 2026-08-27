@@ -1,5 +1,6 @@
 import { toSameOriginPath } from './media-url';
 import { getPayloadClient, safeQuery } from './payload';
+import { pickIndex } from '@/lib/testimonial-pick';
 
 /**
  * Content queries for the Payload-backed routes.
@@ -271,13 +272,14 @@ function toTestimonial(d: Record<string, any>): Testimonial {
  * showing nothing.
  */
 export async function getTestimonials(
-  { service, limit = 1 }: { service?: string; limit?: number } = {},
+  { service, limit = 1, pageKey }: { service?: string; limit?: number; pageKey?: string } = {},
 ): Promise<Testimonial[]> {
   return safeQuery(
     async () => {
       const payload = await getPayloadClient();
       const base = [{ _status: { equals: 'published' } }];
 
+      // A quote tagged for this page always wins.
       if (service) {
         const targeted = await payload.find({
           collection: 'testimonials',
@@ -290,17 +292,29 @@ export async function getTestimonials(
         if (targeted.docs.length) return targeted.docs.map(toTestimonial);
       }
 
+      // Nothing tagged. Read the whole featured pool rather than the first
+      // row, so the page can take a different one from its neighbours instead
+      // of every page on the site showing the identical quote. See
+      // src/lib/testimonial-pick.ts.
       const res = await payload.find({
         collection: 'testimonials',
-        limit,
+        limit: 50,
         depth: 1,
         sort: 'order',
-        where: { and: [...base, ...(service ? [] : [{ featured: { equals: true } }])] },
+        where: { and: [...base, { featured: { equals: true } }] },
         overrideAccess: false,
       });
-      return res.docs.map(toTestimonial);
+
+      const pool = res.docs.map(toTestimonial);
+      if (pool.length === 0) return [];
+
+      // Callers asking for more than one want the pool itself, in order.
+      if (limit > 1) return pool.slice(0, limit);
+
+      const start = pickIndex(pageKey ?? service ?? 'home', pool.length);
+      return [pool[start]];
     },
     [],
-    `getTestimonials(${service ?? 'any'})`,
+    `getTestimonials(${service ?? pageKey ?? 'any'})`,
   );
 }
