@@ -52,19 +52,30 @@ const eq = (name, got, want) => {
 };
 
 eq(
-  'configured URL alone',
+  'configured URL brings its www counterpart',
   allowedOrigins({ serverUrl: 'https://cognovea.com' }),
-  ['https://cognovea.com'],
+  ['https://cognovea.com', 'https://www.cognovea.com'],
+);
+
+eq(
+  'a www URL brings the apex',
+  allowedOrigins({ serverUrl: 'https://www.nextlooptechology.com' }),
+  ['https://www.nextlooptechology.com', 'https://nextlooptechology.com'],
 );
 
 // The case that caused this: served from a domain the config did not name.
 eq(
-  'custom domain plus configured URL',
+  'custom domain plus configured URL, both with www variants',
   allowedOrigins({
     serverUrl: 'https://cognovea.com',
     vercelProductionUrl: 'nextlooptechology.com',
   }),
-  ['https://cognovea.com', 'https://nextlooptechology.com'],
+  [
+    'https://cognovea.com',
+    'https://www.cognovea.com',
+    'https://nextlooptechology.com',
+    'https://www.nextlooptechology.com',
+  ],
 );
 
 eq(
@@ -73,19 +84,24 @@ eq(
     serverUrl: 'https://cognovea.com',
     vercelUrl: 'cognovea-git-feat-abc123.vercel.app',
   }),
-  ['https://cognovea.com', 'https://cognovea-git-feat-abc123.vercel.app'],
+  [
+    'https://cognovea.com',
+    'https://www.cognovea.com',
+    'https://cognovea-git-feat-abc123.vercel.app',
+    'https://www.cognovea-git-feat-abc123.vercel.app',
+  ],
 );
 
 eq(
   'a trailing slash does not create a mismatch',
   allowedOrigins({ serverUrl: 'https://cognovea.com/' }),
-  ['https://cognovea.com'],
+  ['https://cognovea.com', 'https://www.cognovea.com'],
 );
 
 eq(
   'a pasted path is reduced to its origin',
   allowedOrigins({ serverUrl: 'https://cognovea.com/admin' }),
-  ['https://cognovea.com'],
+  ['https://cognovea.com', 'https://www.cognovea.com'],
 );
 
 eq(
@@ -96,12 +112,18 @@ eq(
 
 eq(
   'extra domains, comma separated and untrimmed',
-  allowedOrigins({ serverUrl: 'https://cognovea.com', extra: ' www.cognovea.com , https://staging.cognovea.com ' }),
-  ['https://cognovea.com', 'https://www.cognovea.com', 'https://staging.cognovea.com'],
+  allowedOrigins({ serverUrl: 'https://cognovea.com', extra: ' https://staging.cognovea.com ' }),
+  [
+    'https://cognovea.com',
+    'https://www.cognovea.com',
+    'https://staging.cognovea.com',
+    'https://www.staging.cognovea.com',
+  ],
 );
 
-eq('duplicates collapse', allowedOrigins({ serverUrl: 'https://cognovea.com', extra: 'cognovea.com' }), [
+eq('duplicates collapse', allowedOrigins({ serverUrl: 'https://cognovea.com', extra: 'www.cognovea.com' }), [
   'https://cognovea.com',
+  'https://www.cognovea.com',
 ]);
 
 eq('nothing configured yields an empty list', allowedOrigins({}), []);
@@ -114,7 +136,7 @@ eq('canonical is undefined when nothing is set', canonicalServerUrl({}), undefin
 // --- development: the LAN "Network" URL is a separate origin ---------------
 
 eq(
-  'dev adds localhost and loopback',
+  'dev adds localhost and loopback, with no www nonsense',
   allowedOrigins({ serverUrl: 'http://localhost:3000', devPort: '3000' }),
   ['http://localhost:3000', 'http://127.0.0.1:3000'],
 );
@@ -134,7 +156,13 @@ eq(
 eq(
   'production adds no local origins',
   allowedOrigins({ serverUrl: 'https://cognovea.com', localAddresses: ['192.168.0.174'] }),
-  ['https://cognovea.com'],
+  ['https://cognovea.com', 'https://www.cognovea.com'],
+);
+
+eq(
+  'a bare IP gets no www variant',
+  allowedOrigins({ devPort: '3000', localAddresses: ['192.168.0.174'] }),
+  ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://192.168.0.174:3000'],
 );
 
 // --- a localhost serverURL must never survive onto a deployment ------------
