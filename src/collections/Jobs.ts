@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 import { authenticated, publishedOrAuthenticated } from '@/access';
 import { slugField } from '@/fields/slug';
+import { jobHooks } from '@/lib/revalidate';
 
 /**
  * Job openings for the careers page.
@@ -132,6 +133,9 @@ export const Jobs: CollectionConfig = {
       },
     },
   ],
+  // Publishing a role rebuilds the careers page immediately rather than after
+  // the revalidate window, which matters most when a role is closed.
+  hooks: jobHooks,
 };
 
 export default Jobs;

@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload';
 import { anyone, authenticated } from '@/access';
+import { siteSettingsHooks } from '@/lib/revalidate';
 
 /**
  * Site-wide values that currently live as constants in `src/lib/site.ts`.
@@ -18,6 +19,8 @@ export const SiteSettings: GlobalConfig = {
   label: 'Site Settings',
   admin: { group: 'Admin', description: 'Contact details, offices and social profiles.' },
   access: { read: anyone, update: authenticated },
+  // These values sit in the header and footer of every page.
+  hooks: siteSettingsHooks,
   fields: [
     {
       type: 'tabs',
