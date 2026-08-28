@@ -28,7 +28,8 @@
     "test:testimonial-pick": "node tools/test-testimonial-pick.mjs",
     "check:content": "node tools/check-content.mjs",
     "test:hero": "node tools/test-hero.mjs",
-    "test:errors": "node tools/test-error-describe.mjs"
+    "test:errors": "node tools/test-error-describe.mjs",
+    "test:push-guard": "node tools/test-push-guard.mjs"
   },
   "dependencies": {
     "next": "~15.4.11",

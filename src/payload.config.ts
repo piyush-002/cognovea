@@ -107,6 +107,62 @@ if (origins.length === 0) {
   );
 }
 
+/**
+ * Whether Payload may rewrite the database schema to match this config.
+ *
+ * `push` compares the config to the live schema on every dev boot and alters
+ * the database to match. That is exactly what you want against a scratch
+ * database and exactly what you do not want against one holding real content,
+ * because "alter to match" includes dropping a table or column it cannot
+ * account for. Drizzle asks first, but it asks in a terminal, at the end of a
+ * long boot log, with a y/N prompt that is easy to answer by reflex.
+ *
+ * It used to be on for every non-production NODE_ENV, which meant on for every
+ * local dev server. This project spent most of its life with local and the
+ * deployed site pointed at ONE Neon database, so "local dev" and "the live
+ * content" were the same rows. A single reflexive Y would have taken the
+ * published logos, testimonials and articles with it.
+ *
+ * So it is now opt-in and off by default. Set ALLOW_SCHEMA_PUSH=1 in
+ * .env.local when you are certain the connection string points somewhere
+ * disposable — your own Neon branch, or a local Postgres. Without it, schema
+ * changes go through a migration, which writes a file you can read before it
+ * touches anything:
+ *
+ *     npm run migrate:create   # writes SQL to src/migrations, review it
+ *     npm run migrate          # applies it
+ *
+ * The cost of the default being off is one extra command when you add a
+ * collection. The cost of it being on was the whole database.
+ */
+const allowPush = process.env.NODE_ENV !== 'production' && process.env.ALLOW_SCHEMA_PUSH === '1';
+
+if (process.env.NODE_ENV !== 'production' && !allowPush) {
+  console.log(
+    '[payload] Schema push is off. If the config and the database have drifted,\n' +
+      '          queries will fail until you run:\n' +
+      '            npm run migrate:create   (writes SQL to src/migrations — read it)\n' +
+      '            npm run migrate          (applies it)\n' +
+      '          Set ALLOW_SCHEMA_PUSH=1 in .env.local to push instead, but only\n' +
+      '          when DATABASE_URI points at a database you can afford to lose.',
+  );
+}
+
+if (allowPush) {
+  console.warn(
+    '[payload] ALLOW_SCHEMA_PUSH=1 — this dev server may ALTER OR DROP tables in\n' +
+      `          the database at ${(() => {
+        try {
+          return new URL(connectionString ?? '').hostname;
+        } catch {
+          return 'the configured connection';
+        }
+      })()}\n` +
+      '          Make sure that is not the database the live site reads from.',
+  );
+}
+
+
 export default buildConfig({
   serverURL: canonicalServerUrl(originEnv),
 
@@ -140,11 +196,7 @@ export default buildConfig({
 
   db: postgresAdapter({
     pool: { connectionString },
-    // Neon requires TLS. `push` is left on only outside production so schema
-    // changes appear instantly in development; production uses real migrations
-    // (`npm run migrate:create` then `npm run migrate`) so a deploy can never
-    // silently alter or drop a column on live data.
-    push: process.env.NODE_ENV !== 'production',
+    push: allowPush,
   }),
 
   // Powers the image sizes declared in the Media collection.
