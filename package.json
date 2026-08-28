@@ -26,7 +26,8 @@
     "test:reveal": "node tools/test-reveal.mjs",
     "test:css-order": "node tools/test-css-order.mjs",
     "test:testimonial-pick": "node tools/test-testimonial-pick.mjs",
-    "check:content": "node tools/check-content.mjs"
+    "check:content": "node tools/check-content.mjs",
+    "test:hero": "node tools/test-hero.mjs"
   },
   "dependencies": {
     "next": "~15.4.11",
