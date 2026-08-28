@@ -69,7 +69,17 @@ export default function Reveal() {
           io.unobserve(el);
         });
       },
-      { rootMargin: '0px 0px -12% 0px', threshold: 0.08 },
+      // threshold MUST stay 0. It is a fraction of the ELEMENT's own area, not
+      // of the viewport, so any positive value silently fails for anything
+      // taller than the screen: a long article body is one `.rv` element
+      // thousands of pixels tall, of which the viewport can only ever show a
+      // few percent, so the callback never fires and the text sits at opacity 0
+      // forever. It broke on phones first because the same article is roughly
+      // twice as tall at a phone's line length, which is exactly the width
+      // where nobody was testing. The negative bottom margin is what delays the
+      // reveal until the element is properly on screen; it does that job
+      // without any dependence on how tall the element happens to be.
+      { rootMargin: '0px 0px -10% 0px', threshold: 0 },
     );
 
     const observeAll = () => {
@@ -108,9 +118,12 @@ export default function Reveal() {
       // first and writing second costs one layout in total.
       const nodes = [...document.querySelectorAll<HTMLElement>('.rv:not(.is-in)')];
       const viewportHeight = window.innerHeight;
+      // A viewport's worth of slack below the fold. The failure this guards
+      // against is content that never appears at all, and revealing something
+      // one screen early is a far cheaper mistake than never revealing it.
       const onScreen = nodes.filter((n) => {
         const rect = n.getBoundingClientRect();
-        return rect.top < viewportHeight && rect.bottom > 0;
+        return rect.top < viewportHeight * 2 && rect.bottom > -viewportHeight;
       });
       onScreen.forEach((n) => n.classList.add('is-in'));
     }, 600);

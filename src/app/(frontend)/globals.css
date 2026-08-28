@@ -1481,7 +1481,14 @@ html:not(.rv-ready) .rv {
   isolation: isolate;
   min-height: calc(100svh - var(--nav-h));
   display: grid;
-  align-content: center;
+  /* Two rows: the copy, then the scroll cue. The cue used to be absolutely
+     positioned at the bottom of the section, which put it outside the flow and
+     therefore outside anything the layout knew about. On a short phone the
+     centred copy grew down into it and the cue printed straight through the
+     hero buttons. Measured at 360x640 it overlapped by 9px, and an iPhone SE
+     cleared it by 3. Giving it a row of its own means the copy cannot reach it
+     however long the headline gets. */
+  grid-template-rows: 1fr auto;
   padding-block: clamp(1.5rem, 4vh, 3rem);
   /* Identical to .c-hero, so a visitor moving from the homepage into a service
      page sees one continuous treatment rather than two different sites. The
@@ -1543,9 +1550,10 @@ html:not(.rv-ready) .rv {
 /* Signals there is more below a full-height hero. Decorative only. The nav and
    the content itself are the real affordances. */
 .c-phero__cue {
-  position: absolute;
-  left: var(--pad);
-  bottom: clamp(1rem, 3vh, 2rem);
+  /* In flow, in row 2. Not absolute: see the note on .c-phero above. */
+  justify-self: start;
+  margin-inline-start: var(--pad);
+  margin-block-start: clamp(1rem, 3vh, 2rem);
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -1571,6 +1579,9 @@ html:not(.rv-ready) .rv {
 
 .c-phero__in {
   max-width: 58rem;
+  /* Centred inside row 1 rather than inside the whole section, which is what
+     keeps the hero looking unchanged wherever there is room to spare. */
+  align-self: center;
 }
 
 .crumbs {
@@ -1940,16 +1951,6 @@ html:not(.rv-ready) .rv {
   gap: clamp(1.5rem, 4vw, 3.5rem);
 }
 
-@media (max-width: 860px) {
-  .rail {
-    grid-template-columns: 1fr;
-  }
-
-  .rail__nav {
-    display: none;
-  }
-}
-
 .rail__nav {
   position: sticky;
   top: calc(var(--nav-h) + 1.75rem);
@@ -2000,6 +2001,27 @@ html:not(.rv-ready) .rv {
 
 .rail__panel {
   scroll-margin-top: 120px;
+}
+
+/* Below the base rules, not above them.
+ *
+ * This block used to sit directly under `.rail`, before `.rail__nav` was
+ * declared. Both selectors have the same specificity, so the later one won
+ * regardless of the media query, and `display: flex` in the base rule beat
+ * `display: none` here at every width. The rail was never hidden on a phone:
+ * it stacked above the content as a sticky bar with the page sliding behind
+ * it. A media query that loses to the rule it is meant to override fails
+ * silently, which is why this is now last in the section. */
+@media (max-width: 860px) {
+  .rail {
+    grid-template-columns: 1fr;
+  }
+
+  /* The panels carry their own headings, so nothing is lost by dropping the
+     nav. A horizontal chip row would just be a second, worse set of them. */
+  .rail__nav {
+    display: none;
+  }
 }
 
 /* ==========================================================================

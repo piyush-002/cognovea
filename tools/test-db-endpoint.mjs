@@ -45,8 +45,8 @@ async function load() {
 
 const { chooseConnection, isMigrationCommand } = await load();
 
-const POOLED   = 'postgresql://u:p@ep-cool-1234-pooler.ap-south-1.aws.neon.tech/cognovea?sslmode=require';
-const DIRECT   = 'postgresql://u:p@ep-cool-1234.ap-south-1.aws.neon.tech/cognovea?sslmode=require';
+const POOLED   = 'postgresql://USER:PLACEHOLDER_NOT_A_REAL_PASSWORD@ep-cool-1234-pooler.ap-south-1.aws.neon.tech/cognovea?sslmode=require';
+const DIRECT   = 'postgresql://USER:PLACEHOLDER_NOT_A_REAL_PASSWORD@ep-cool-1234.ap-south-1.aws.neon.tech/cognovea?sslmode=require';
 const argv = (...rest) => ['/usr/bin/node', '/app/payload', ...rest];
 
 let pass = 0, fail = 0;
@@ -89,14 +89,14 @@ check('ignores path containing "migrate"',
 
 // A non-Neon Postgres (local docker, RDS) must not be nagged about pooling
 {
-  const local = 'postgresql://postgres:postgres@localhost:5432/cognovea';
+  const local = 'postgresql://USER:PLACEHOLDER_NOT_A_REAL_PASSWORD@localhost:5432/cognovea';
   const r = chooseConnection({ argv: argv('dev'), pooled: local, unpooled: undefined });
   check('local postgres is not warned about', r.warnings.length === 0);
 }
 
 // "-pooler" appearing in a password must not be mistaken for a pooled host
 {
-  const tricky = 'postgresql://u:has-pooler.inside@ep-cool-1234.ap-south-1.aws.neon.tech/db';
+  const tricky = 'postgresql://USER:PLACEHOLDER_NOT_A_REAL_PASSWORD@ep-cool-1234.ap-south-1.aws.neon.tech/db';
   const r = chooseConnection({ argv: argv('dev'), pooled: tricky, unpooled: undefined });
   check('password containing "-pooler." does not fool the host check', r.warnings.length === 1);
 }
