@@ -22,7 +22,11 @@
     "test:sticky": "node tools/test-sticky.mjs",
     "audit": "node tools/audit.mjs",
     "test:media-url": "node tools/test-media-url.mjs",
-    "test:origins": "node tools/test-origins.mjs"
+    "test:origins": "node tools/test-origins.mjs",
+    "test:reveal": "node tools/test-reveal.mjs",
+    "test:css-order": "node tools/test-css-order.mjs",
+    "test:testimonial-pick": "node tools/test-testimonial-pick.mjs",
+    "check:content": "node tools/check-content.mjs"
   },
   "dependencies": {
     "next": "~15.4.11",
