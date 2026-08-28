@@ -18,34 +18,12 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { requirePlaywright } from './lib/playwright.mjs';
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const root = path.join(here, '..');
 
-/**
- * Resolve Playwright from the project first, then from the global npm root.
- * A test that only runs where it was written proves nothing, and a bare
- * `import('playwright')` finds only a local install.
- */
-async function loadPlaywright() {
-  try {
-    return await import('playwright');
-  } catch {}
-  try {
-    const { execSync } = await import('node:child_process');
-    const globalRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
-    return await import(`file://${path.join(globalRoot, 'playwright', 'index.mjs')}`);
-  } catch {}
-  return null;
-}
-
-const pw = await loadPlaywright();
-if (!pw) {
-  console.log('SKIP  Playwright is not available here (checked the project and the global npm root).');
-  console.log('      npm i -D playwright && npx playwright install chromium');
-  process.exit(0);
-}
-const { chromium } = pw;
+const { chromium, launchOpts } = await requirePlaywright('test-reveal');
 
 // --- read the real options out of the component -----------------------------
 const reveal = fs.readFileSync(path.join(root, 'src/components/Reveal.tsx'), 'utf8');
@@ -102,7 +80,7 @@ const page = (paragraphs) => `<!doctype html><html><head><meta charset="utf-8">
   </script>
 </body></html>`;
 
-const browser = await chromium.launch();
+const browser = await chromium.launch(launchOpts);
 
 async function revealsAt(width, height, paragraphs) {
   const ctx = await browser.newContext({ viewport: { width, height } });

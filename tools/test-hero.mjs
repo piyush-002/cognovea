@@ -18,29 +18,12 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
+import { requirePlaywright } from './lib/playwright.mjs';
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const root = path.join(here, '..');
 
-async function loadPlaywright() {
-  try {
-    return await import('playwright');
-  } catch {}
-  try {
-    const globalRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
-    return await import(`file://${path.join(globalRoot, 'playwright', 'index.mjs')}`);
-  } catch {}
-  return null;
-}
-
-const pw = await loadPlaywright();
-if (!pw) {
-  console.log('SKIP  Playwright is not available here (checked the project and the global npm root).');
-  console.log('      npm i -D playwright && npx playwright install chromium');
-  process.exit(0);
-}
-const { chromium } = pw;
+const { chromium, launchOpts } = await requirePlaywright('test-hero');
 
 const css = fs.readFileSync(path.join(root, 'src/app/(frontend)/globals.css'), 'utf8');
 
@@ -120,7 +103,7 @@ const VIEWPORTS = [
   [430, 932], [414, 896], [390, 844], [375, 667], [360, 640], [320, 568],
 ];
 
-const browser = await chromium.launch();
+const browser = await chromium.launch(launchOpts);
 let pass = 0;
 let fail = 0;
 
