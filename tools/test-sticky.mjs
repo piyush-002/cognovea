@@ -11,6 +11,7 @@ import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
+import { requirePlaywright } from './lib/playwright.mjs';
 
 const require = createRequire(import.meta.url);
 
@@ -19,24 +20,7 @@ const require = createRequire(import.meta.url);
  * A test that only runs on the machine it was written on proves nothing, so if
  * it is genuinely unavailable this skips loudly instead of failing.
  */
-let chromium;
-try {
-  ({ chromium } = require('playwright'));
-} catch {
-  try {
-    ({ chromium } = require('/home/claude/.npm-global/lib/node_modules/playwright'));
-  } catch {
-    console.log('SKIP  Playwright is not installed.');
-    console.log('      npm i -D playwright && npx playwright install chromium');
-    process.exit(0);
-  }
-}
-
-// The bundled browser path differs per install; let Playwright find its own
-// unless a sandbox has pinned one.
-const launchOpts = fs.existsSync('/opt/pw-browsers/chromium')
-  ? { executablePath: '/opt/pw-browsers/chromium' }
-  : {};
+const { chromium, launchOpts } = await requirePlaywright('test-sticky');
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const dir = path.resolve(here, '..', '..', 'preview');

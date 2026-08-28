@@ -71,10 +71,61 @@ All page copy is taken verbatim from the source documents. Meta titles and descr
 
 1. **Domain.** `src/lib/site.ts` → `site.url`. Everything else (canonicals, sitemap, JSON-LD, Open Graph) reads from it.
 2. **Social profiles.** `src/lib/site.ts` → `site.social`. The "Connect With Cognovea" block on `/contact` only renders the platforms that have a URL, so it stays hidden until you fill them in.
-3. **Form backend.** Set `NEXT_PUBLIC_FORM_ENDPOINT` (see `.env.example`). Without it, the form falls back to opening a pre-filled email to `hello@cognovea.com`, functional, but you lose lead capture in a CRM.
-4. **Privacy policy.** `/privacy-policy` is a working draft written to match how this site actually behaves. Have counsel review it against the DPDP Act 2023 and the GDPR, and appoint a named grievance officer. The `TODO` comments in `src/app/privacy-policy/page.tsx` mark every gap.
-5. **Open Graph image.** No `og:image` is set yet. Add a 1200×630 PNG to `public/` and reference it in `src/app/layout.tsx`.
-6. **Analytics.** None is installed. If you add one, update the cookies section of the privacy policy and add a consent banner.
+3. **Privacy policy.** `/privacy-policy` is a working draft written to match how this site actually behaves. Have counsel review it against the DPDP Act 2023 and the GDPR, and appoint a named grievance officer. The `TODO` comments in `src/app/(frontend)/privacy-policy/page.tsx` mark every gap.
+4. **Email transport.** Nothing is configured, so admin password resets do not arrive and nobody is notified when an enquiry comes in. Enquiries are still saved and readable in the admin; they just sit there unannounced.
+5. **A second admin account.** One admin plus no working email is a permanent lockout waiting to happen.
+6. **Migrations.** `src/migrations` is empty and `push` is off in production, so a collection added in development does not exist on the live database until `npm run migrate:create` and `npm run migrate` have been run.
+
+## Secrets
+
+No credential is committed. Every one is read from the environment:
+
+| Variable | Used by | Reaches the browser |
+| --- | --- | --- |
+| `PAYLOAD_SECRET` | signs admin session tokens | no |
+| `DATABASE_URI` | Postgres, pooled | no |
+| `DATABASE_URI_UNPOOLED` | Postgres, migrations only | no |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob uploads | no |
+| `ALLOW_SCHEMA_PUSH` | opt-in for schema push in development | no |
+| `EXTRA_ORIGINS` | additional CORS/CSRF origins | no |
+| `NEXT_PUBLIC_SERVER_URL` | canonical origin | **yes** |
+| `NEXT_PUBLIC_GA_ID` | GA4 measurement id | **yes** |
+
+Anything named `NEXT_PUBLIC_*` is compiled into the JavaScript sent to every
+visitor. It is not a configuration convention, it is publication. Both of the
+public values above are meant to be public: the site's own address, and a GA4
+measurement id, which is visible in the network tab of any site running
+Analytics and grants nothing on its own. **Never add the prefix to reach a
+value from client code.** If a component needs something secret, the work
+belongs on the server.
+
+`.env` and `.env.*` are gitignored, with `.env.example` the single exception.
+`npm run scan:secrets` checks the source, the git history, the browser-exposed
+variables and the logging paths; it refuses to report a clean result if it
+scanned nothing.
+
+### Rotate anything that was ever committed
+
+A secret removed from the code is still in the git history, and history is in
+every clone, fork and CI cache that ever pulled the repository. Deleting the
+line does not unpublish it. The only fix is to issue a new credential and
+retire the old one.
+
+At the time of writing, `npm run scan:secrets` finds no credential in this
+repository's history, and no `.env` file has ever been committed. If that ever
+changes, or if you inherit this repository from somewhere it might have:
+
+- **`PAYLOAD_SECRET`** — generate a new one with `openssl rand -base64 32`.
+  Changing it invalidates every admin session, which is the point.
+- **`DATABASE_URI` / `DATABASE_URI_UNPOOLED`** — reset the role's password in
+  the Neon console. The connection string embeds it, so the string changes too.
+- **`BLOB_READ_WRITE_TOKEN`** — revoke and reissue in the Vercel dashboard.
+- Update every place each one is set: `.env.local`, and the Vercel project
+  settings for Production, Preview and Development separately.
+
+Rewriting history with `git filter-repo` or BFG removes the value from future
+clones, but it does not reach anyone who already has one. Rotate first; rewrite
+afterwards if you want to, not instead.
 
 ## How it's put together
 

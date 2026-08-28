@@ -1,5 +1,6 @@
 import { toSameOriginPath } from './media-url';
 import { getPayloadClient, safeQuery } from './payload';
+import { pickIndex } from '@/lib/testimonial-pick';
 
 /**
  * Content queries for the Payload-backed routes.
@@ -271,13 +272,14 @@ function toTestimonial(d: Record<string, any>): Testimonial {
  * showing nothing.
  */
 export async function getTestimonials(
-  { service, limit = 1 }: { service?: string; limit?: number } = {},
+  { service, limit = 1, pageKey }: { service?: string; limit?: number; pageKey?: string } = {},
 ): Promise<Testimonial[]> {
   return safeQuery(
     async () => {
       const payload = await getPayloadClient();
       const base = [{ _status: { equals: 'published' } }];
 
+      // A quote tagged for this page always wins.
       if (service) {
         const targeted = await payload.find({
           collection: 'testimonials',
@@ -290,17 +292,42 @@ export async function getTestimonials(
         if (targeted.docs.length) return targeted.docs.map(toTestimonial);
       }
 
+      // Nothing tagged. Read the whole published pool rather than the first
+      // row, so the page can take a different one from its neighbours instead
+      // of every page on the site showing the identical quote. See
+      // src/lib/testimonial-pick.ts.
+      //
+      // Not filtered to `featured`. That checkbox means "eligible for the
+      // homepage", and gating every page on it means unticking one quote can
+      // empty a service page entirely, which is a surprising amount of damage
+      // for a box whose label mentions only the homepage. Featured quotes are
+      // preferred below instead, which honours the field without letting it
+      // silently delete a section.
       const res = await payload.find({
         collection: 'testimonials',
-        limit,
+        limit: 50,
         depth: 1,
         sort: 'order',
-        where: { and: [...base, ...(service ? [] : [{ featured: { equals: true } }])] },
+        where: { and: base },
         overrideAccess: false,
       });
-      return res.docs.map(toTestimonial);
+
+      if (res.docs.length === 0) return [];
+
+      // Featured first, each group still in `order`. So the homepage takes a
+      // featured quote whenever one exists, and a page that runs past the end
+      // of the featured group falls onto a real quote rather than nothing.
+      const featured = res.docs.filter((d: Record<string, any>) => d.featured).map(toTestimonial);
+      const rest = res.docs.filter((d: Record<string, any>) => !d.featured).map(toTestimonial);
+      const pool = [...featured, ...rest];
+
+      // Callers asking for more than one want the pool itself, in order.
+      if (limit > 1) return pool.slice(0, limit);
+
+      const start = pickIndex(pageKey ?? service ?? 'home', pool.length);
+      return [pool[start]];
     },
     [],
-    `getTestimonials(${service ?? 'any'})`,
+    `getTestimonials(${service ?? pageKey ?? 'any'})`,
   );
 }

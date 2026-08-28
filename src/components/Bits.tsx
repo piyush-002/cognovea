@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { abs, site } from '@/lib/site';
@@ -19,10 +20,34 @@ export type Crumb = { href: string; label: string };
  * screen.
  */
 export function Figure({ src, alt, tall = false }: { src: string; alt: string; tall?: boolean }) {
+  // SVG and raster want opposite treatment. The line-art figures are a couple
+  // of kilobytes each and already resolution-independent, so running them
+  // through the image optimiser would cost a request and return something
+  // larger. Photographs are the reverse: a 140KB JPEG served at its full size
+  // to a phone is exactly the kind of weight the Core Web Vitals work went
+  // after, and next/image turns it into an AVIF a fraction of the size at the
+  // width actually needed.
+  const isVector = src.endsWith('.svg');
+
   return (
     <div className="feature__media rv rv--right">
       <div className={`figure ${tall ? 'figure--tall' : 'figure--wide'}`}>
-        <img src={src} alt={alt} width={800} height={520} loading="lazy" decoding="async" />
+        {isVector ? (
+          <img src={src} alt={alt} width={800} height={520} loading="lazy" decoding="async" />
+        ) : (
+          <Image
+            src={src}
+            alt={alt}
+            width={1344}
+            height={768}
+            // The figure is roughly half the content column on a desktop and
+            // the full width of it on a phone. Without this the optimiser
+            // assumes full viewport width and ships a needlessly large file.
+            sizes="(min-width: 900px) 46vw, 92vw"
+            loading="lazy"
+            quality={72}
+          />
+        )}
       </div>
     </div>
   );
