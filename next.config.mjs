@@ -6,6 +6,8 @@
  * package.json, because Payload requires them to match; `npm install` is now
  * enough on a fresh clone.
  */
+import { hostRedirects } from './src/lib/host-redirect.mjs';
+
 let withPayload;
 try {
   ({ withPayload } = await import('@payloadcms/next/withPayload'));
@@ -179,6 +181,28 @@ const nextConfig = {
   // Emits a smaller standalone server bundle and skips shipping source maps of
   // server code to the client.
   productionBrowserSourceMaps: false,
+
+  /**
+   * One canonical host. The other 308s to it, path and query preserved.
+   *
+   * Without this both www and the apex answer 200 with identical HTML and the
+   * same canonical tag, so search engines have to pick one and any link
+   * equity splits across the pair. It is also why an admin session could
+   * behave differently depending on which spelling of the domain someone
+   * typed: the cookie set on one host is not sent to the other.
+   *
+   * Which host is canonical comes from NEXT_PUBLIC_SERVER_URL, so this needs
+   * no code change per environment. Off on previews, whose hostnames are
+   * generated per deployment.
+   */
+  async redirects() {
+    return hostRedirects({
+      serverUrl: process.env.NEXT_PUBLIC_SERVER_URL,
+      vercelProductionUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+      isDeployed: Boolean(process.env.VERCEL),
+      isPreview: Boolean(process.env.VERCEL) && process.env.VERCEL_ENV !== 'production',
+    });
+  },
 
   async headers() {
     return [

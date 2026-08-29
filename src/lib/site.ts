@@ -1,3 +1,4 @@
+import { CANONICAL_URL } from './host-redirect.mjs';
 /**
  * Single source of truth for site-wide values: URLs, contact details, nav.
  * Change the domain here once and canonicals, sitemap, robots and JSON-LD follow.
@@ -6,7 +7,11 @@
 export const site = {
   name: 'Cognovea',
   tagline: 'Where Data Becomes Intelligence.',
-  url: 'https://cognovea.com',
+  /* Imported, not restated. next.config.mjs needs the same value for the www
+     redirect and cannot import a .ts module, so it lives in host-redirect.mjs
+     and both read it from there. Two copies of this string is exactly the bug
+     being fixed: canonicals said the apex while every real URL was www. */
+  url: CANONICAL_URL,
   description:
     'Cognovea turns enterprise data into intelligence. Data analytics, business intelligence, data engineering and AI solutions that drive data-driven decision making.',
   email: 'hello@cognovea.com',
@@ -71,6 +76,7 @@ export const serviceLinks: NavLink[] = [
 ];
 
 export const companyLinks: NavLink[] = [
+  { href: '/case-studies', label: 'Case Studies' },
   { href: '/insights', label: 'Insights' },
   { href: '/about-us', label: 'About Us' },
   { href: '/careers', label: 'Careers' },
@@ -87,6 +93,7 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   { path: '/generative-ai-services', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/ai-strategy-consulting', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/data-health-check', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/case-studies', priority: 0.8, changeFrequency: 'weekly' },
   { path: '/insights', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/about-us', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/careers', priority: 0.6, changeFrequency: 'weekly' },
