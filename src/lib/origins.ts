@@ -14,7 +14,7 @@
  */
 
 export type OriginEnv = {
-  /** The canonical public URL, e.g. https://cognovea.com */
+  /** The canonical public URL, e.g. https://www.cognovea.com */
   serverUrl?: string;
   /** Vercel's production domain for the project, without a scheme. */
   vercelProductionUrl?: string;

@@ -68,12 +68,12 @@ export default function ContactPage() {
             '@type': 'ContactPage',
             name: 'Contact Cognovea',
             url: abs(PATH),
-            mainEntity: {
-              '@type': 'Organization',
-              name: site.name,
-              email: site.email,
-              telephone: site.phones,
-            },
+            /* A reference, not a second Organization. Declaring one again
+               here with a subset of the fields describes a different entity
+               that happens to share a name, which is how a knowledge panel
+               ends up split between two half-populated records. The full one
+               is in the root layout under this @id. */
+            mainEntity: { '@id': `${site.url}/#organization` },
           },
         ]}
       />

@@ -8,6 +8,18 @@
  *
  * The hero is static text, so it is rendered for real here rather than as grey
  * boxes; only the part that depends on the database is a placeholder.
+ *
+ * IF YOU FOUND THIS STRING IN THE PAGE SOURCE: that is expected, and it does
+ * not mean the post list is rendered in the browser. Next treats this file as
+ * a Suspense fallback and STREAMS it first, then streams the resolved server
+ * markup afterwards, in the same HTTP response. Both are therefore in the raw
+ * HTML, the placeholder above the posts. The posts being there at all is the
+ * proof: a client-hydrated list would put no post content in the source.
+ *
+ * /insights is an async server component that awaits getPosts() before it
+ * renders, has no client boundary, and fetches nothing from the browser.
+ * tools/test-ssr.mjs asserts all three, so the next audit that raises this can
+ * be answered by running it.
  */
 export default function Loading() {
   return (

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     'Cognovea turns enterprise data into intelligence. Data analytics, business intelligence, data engineering and AI solutions that drive data-driven decision making.',
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'Cognovea | Where Data Becomes Intelligence',
+    title: 'Cognovea | Data Analytics and AI Solutions',
     description:
       'Data engineering, analytics, business intelligence and applied AI for businesses that need to trust their own numbers.',
     url: '/',
@@ -56,7 +56,13 @@ const STACK = [
 /* Durations and starting points from the documents, deliberately not results. */
 const FACTS: { n: number; prefix?: string; suffix?: string; label: string }[] = [
   { n: 2, suffix: ' wks', label: 'A Data Health Check runs two weeks, start to findings report.' },
-  { n: 150000, prefix: '₹', label: 'Where the Data Health Check starts, scope depending.' },
+  // "Rs", not the ₹ glyph, because the three other places this figure appears
+  // are prose taken from the source documents and all of them read "Rs
+  // 1,50,000". This counter was the only one rendering it differently, and it
+  // is the only one of the four that is not document copy — so it moves, and
+  // the wording stays untouched. Flipping all four to ₹ would read better and
+  // means editing that copy, which is your call rather than mine.
+  { n: 150000, prefix: 'Rs ', label: 'Where the Data Health Check starts, scope depending.' },
   { n: 90, suffix: ' days', label: 'Window in which part of the audit fee credits toward future work.' },
   { n: 8, prefix: '4–', label: 'A Managed Data Department runs as a team of four to eight.' },
 ];

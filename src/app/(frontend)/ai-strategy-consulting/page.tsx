@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     'Looking for a trusted ai consultancy? We provide a clear AI adoption roadmap and a secure AI governance framework to help your business grow safely.',
   alternates: { canonical: `${PATH}/` },
   openGraph: {
-    title: 'AI Strategy and Consulting Services | Enterprise AI Consulting',
+    title: 'AI Strategy and Consulting Services | Cognovea',
     description:
       'Looking for a trusted ai consultancy? We provide a clear AI adoption roadmap and a secure AI governance framework to help your business grow safely.',
     url: `${PATH}/`,

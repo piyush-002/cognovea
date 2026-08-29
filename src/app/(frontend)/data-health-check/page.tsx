@@ -19,7 +19,7 @@ export const revalidate = 300;
 const PATH = '/data-health-check';
 
 export const metadata: Metadata = {
-  title: 'Book a Two Week Data Health Check',
+  title: 'Book a Two Week Data Health Check | Cognovea',
   description:
     'A focused two week audit of your infrastructure, pipelines, BI, data quality and cloud costs, with a written findings report and a prioritized roadmap.',
   alternates: { canonical: `${PATH}/` },

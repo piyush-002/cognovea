@@ -40,10 +40,15 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: {
-    default: 'Cognovea | Data Analytics and AI Solutions',
-    template: '%s | Cognovea',
-  },
+  /* No `template`. It was '%s | Cognovea', which Next appends to every child
+     page's title — including the seven whose titles, taken from the source
+     documents, already end in the brand. Those rendered as
+     "… | Cognovea | Cognovea". The duplication is invisible in a page file,
+     because half of it comes from here.
+
+     The document-specified title is now what renders, exactly. The four pages
+     whose titles do not carry the brand say so themselves. */
+  title: 'Cognovea | Data Analytics and AI Solutions',
   description: site.description,
   applicationName: site.name,
   authors: [{ name: site.name, url: site.url }],
@@ -53,7 +58,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: site.name,
-    title: 'Cognovea | Where Data Becomes Intelligence',
+    title: 'Cognovea | Data Analytics and AI Solutions',
     description: 'Data Depth. AI Power. Real Impact.',
     url: site.url,
     locale: 'en_IN',
@@ -68,7 +73,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Cognovea | Where Data Becomes Intelligence',
+    title: 'Cognovea | Data Analytics and AI Solutions',
     description: 'Data Depth. AI Power. Real Impact.',
     images: ['/og.png'],
   },
@@ -94,6 +99,11 @@ export const viewport = {
   initialScale: 1,
 };
 
+/** Only the profiles that have actually been filled in. */
+const socialProfiles = (Object.values(site.social) as string[]).filter(
+  (url) => typeof url === 'string' && url.trim().length > 0,
+);
+
 /** Organization + WebSite schema, emitted once for the whole site. */
 const orgSchema = {
   '@context': 'https://schema.org',
@@ -105,6 +115,17 @@ const orgSchema = {
       url: abs('/'),
       email: site.email,
       slogan: site.tagline,
+      /* Google needs a logo it can display beside the organisation, and
+         og.png is a 1200x630 social card rather than one. public/logo.png is
+         the supplied brand lockup, trimmed to the artwork and re-padded square
+         so it is not letterboxed differently wherever it is shown. */
+      logo: {
+        '@type': 'ImageObject',
+        url: abs('/logo.png').replace(/\/$/, ''),
+        width: 512,
+        height: 512,
+      },
+      image: abs('/logo.png').replace(/\/$/, ''),
       description:
         'Cognovea is a data analytics and AI company providing data engineering, business intelligence, predictive analytics and AI solutions.',
       telephone: site.phones[0],
@@ -116,6 +137,12 @@ const orgSchema = {
         postalCode: site.locations.hq.postalCode,
         addressCountry: site.locations.hq.country,
       },
+      /* Profiles Cognovea controls, which is how a search engine confirms
+         this entity is the same one it sees elsewhere. Built from site.social
+         and omitted entirely while those are empty: a sameAs pointing at a
+         handle that does not exist is a worse signal than no sameAs, and
+         shipping placeholder URLs would claim profiles we do not have. */
+      ...(socialProfiles.length > 0 ? { sameAs: socialProfiles } : {}),
       location: [
         {
           '@type': 'Place',

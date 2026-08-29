@@ -19,12 +19,12 @@ export const revalidate = 300;
 const PATH = '/data-engineering-services';
 
 export const metadata: Metadata = {
-  title: 'Data Engineering Services and Solutions',
+  title: 'Data Engineering Services and Solutions | Cognovea',
   description:
     'Accelerate your business growth with Cognovea data engineering consultants. We build reliable data warehouses and automated pipelines.',
   alternates: { canonical: `${PATH}/` },
   openGraph: {
-    title: 'Enterprise Data Engineering Consulting Services and Solutions | Cognovea',
+    title: 'Data Engineering Services and Solutions | Cognovea',
     description:
       'Accelerate your business growth with Cognovea data engineering consultants. We build reliable data warehouses and automated pipelines.',
     url: `${PATH}/`,

@@ -79,6 +79,32 @@ function describe(error: unknown): string {
   return e.stack ? `${summary}\n${e.stack}` : summary;
 }
 
+/**
+ * Whether a failure is the schema and the config having drifted apart.
+ *
+ * The Postgres code is not on the error that reaches us: Drizzle wraps the
+ * driver's error, so `error.code` is undefined and `error.cause.code` is the
+ * one that matters. The first version of this checked only the top level, so
+ * the remedy never printed for the exact case it was written for — a missing
+ * column after a field was added. The message said `code=42703` and then
+ * offered no advice, which is a peculiar way to fail.
+ *
+ * 42P01 is an undefined table, 42703 an undefined column.
+ */
+function isSchemaDrift(error: unknown): boolean {
+  const CODES = new Set(['42P01', '42703']);
+  let current: unknown = error;
+  // Bounded, because a cause chain can be circular.
+  for (let depth = 0; current && depth < 8; depth++) {
+    const code = (current as { code?: unknown }).code;
+    if (typeof code === 'string' && CODES.has(code)) return true;
+    const next = (current as { cause?: unknown }).cause;
+    if (next === current) break;
+    current = next;
+  }
+  return false;
+}
+
 export async function safeQuery<T>(fn: () => Promise<T>, fallback: T, label: string): Promise<T> {
   try {
     return await fn();
@@ -89,13 +115,18 @@ export async function safeQuery<T>(fn: () => Promise<T>, fallback: T, label: str
     // The most common cause by far is that the schema and the collections have
     // drifted apart after a collection was added or a field renamed, and the
     // error for that is unhelpful unless you already know to look for it.
-    const code = (error as { code?: string } | null)?.code;
-    if (code === '42P01' || code === '42703') {
+    if (isSchemaDrift(error)) {
       console.error(
         `[payload] ${label}: the database is missing a table or column the config expects.\n` +
-          '          A collection or field was added without the schema catching up. Run:\n' +
-          '            npm run migrate:create && npm run migrate\n' +
-          '          In development, restarting `npm run dev` pushes the schema instead.',
+          '          A collection or field was added and the schema has not caught up.\n' +
+          '\n' +
+          '            npm run migrate:create   # writes SQL to src/migrations — READ IT\n' +
+          '            npm run migrate          # applies it\n' +
+          '\n' +
+          '          Read the generated SQL before applying it. Adding a field should\n' +
+          '          produce only ALTER TABLE ... ADD COLUMN. Any DROP means the config\n' +
+          '          and the database disagree about something else as well, and this\n' +
+          '          database is shared with the deployed site.',
       );
     }
 

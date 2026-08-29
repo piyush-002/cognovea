@@ -19,7 +19,7 @@ export const revalidate = 300;
 const PATH = '/data-modernization-services';
 
 export const metadata: Metadata = {
-  title: 'Data Modernization Services and Cloud Upgrades',
+  title: 'Data Modernization Services and Cloud Upgrades | Cognovea',
   description:
     'Build a cloud data modernization strategy with Cognovea. Our data architecture modernization consulting services prepare your enterprise for AI success.',
   alternates: { canonical: `${PATH}/` },
