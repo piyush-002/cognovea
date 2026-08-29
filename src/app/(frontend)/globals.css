@@ -3600,7 +3600,29 @@ tbody tr:hover {
   transform: scale(1.08);
 }
 
+/* Clicking the slider was drawing the shared `.field input:focus` ring around
+   the whole control — a violet box around a track, which is not what focus on
+   a slider looks like.
+ *
+ * The ring is removed from the control and moved onto the thumb, not deleted.
+ * A control with no visible focus state is unusable by keyboard, and this one
+ * is operated with arrow keys, so the indicator has to be somewhere. On the
+ * thumb it also says something true: the thumb is the part that moves.
+ *
+ * :focus-visible rather than :focus, so it appears for keyboard users and not
+ * for the mouse click that prompted this. */
+.calc__slider input[type='range']:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
 .calc__slider input[type='range']:focus-visible::-webkit-slider-thumb {
   border-color: var(--violet);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--violet) 22%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--violet) 30%, transparent);
+}
+
+.calc__slider input[type='range']:focus-visible::-moz-range-thumb {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--violet) 30%, transparent);
 }
