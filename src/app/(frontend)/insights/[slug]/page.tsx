@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
 import JsonLd from '@/components/JsonLd';
+import Byline from '@/components/Byline';
 import RichText from '@/components/RichText';
 import { formatDate, getPost, getPosts, toPostSummary } from '@/lib/content';
 import { articleSchema } from '@/lib/schema';
@@ -86,6 +87,8 @@ export default async function InsightPage({ params }: Props) {
         <p className="eyebrow" style={{ marginTop: '1.4em' }}>
           {formatDate(post.publishedAt)}
           {post.readingMinutes ? ` · ${post.readingMinutes} min read` : ''}
+          {' · '}
+          <Byline author={summary.author} compact />
         </p>
       </PageHero>
 
@@ -107,6 +110,17 @@ export default async function InsightPage({ params }: Props) {
           <div className="rv measure">
             <RichText data={post.content} />
           </div>
+
+          {/* The full card sits after the article rather than before it: a
+              reader deciding whether to trust the piece does that once they
+              have read some of it, and a bio above the first paragraph is
+              just an obstacle. Omitted entirely for the company byline, which
+              the line under the title already carried. */}
+          {!summary.author.isCompany && (
+            <div className="rv measure" style={{ marginTop: '2.4rem' }}>
+              <Byline author={summary.author} />
+            </div>
+          )}
 
           {summary.tags.length > 0 && (
             <ul className="chips rv" style={{ marginTop: '2rem' }}>

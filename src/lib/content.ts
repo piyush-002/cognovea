@@ -19,6 +19,17 @@ export type PostSummary = {
   readingMinutes: number | null;
   tags: string[];
   heroImage: { url: string; alt: string; width?: number; height?: number } | null;
+  author: Author;
+};
+
+export type Author = {
+  name: string;
+  role: string | null;
+  bio: string | null;
+  url: string | null;
+  photo: Img;
+  /** True when no person was named and the company byline is being used. */
+  isCompany: boolean;
 };
 
 type MediaLike = { url?: string; alt?: string; width?: number; height?: number } | string | null | undefined;
@@ -57,6 +68,30 @@ export function toPostSummary(doc: Record<string, any>): PostSummary {
           .filter((t: string | undefined): t is string => typeof t === 'string' && t.length > 0)
       : [],
     heroImage: media(doc.heroImage),
+    author: toAuthor(doc.author),
+  };
+}
+
+/**
+ * The byline for a post.
+ *
+ * An unnamed author is not a missing value to paper over: plenty of the writing
+ * here is genuinely the company's rather than one person's, and saying so is
+ * more honest than attaching a name to it. `isCompany` lets the page render the
+ * two cases differently instead of pretending they are the same.
+ */
+export function toAuthor(group: Record<string, any> | null | undefined): Author {
+  const name = typeof group?.name === 'string' ? group.name.trim() : '';
+  if (!name) {
+    return { name: 'The Cognovea Team', role: null, bio: null, url: null, photo: null, isCompany: true };
+  }
+  return {
+    name,
+    role: group?.role?.trim() || null,
+    bio: group?.bio?.trim() || null,
+    url: group?.url?.trim() || null,
+    photo: media(group?.photo),
+    isCompany: false,
   };
 }
 

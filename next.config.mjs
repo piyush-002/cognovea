@@ -235,6 +235,18 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'no-store, max-age=0' },
         ],
       },
+      {
+        // Static assets. Excluded from the page rule by its negative lookahead
+        // so that rule and this one cannot both apply, which left them with no
+        // headers at all: a scanner that happens to request a .js bundle sees a
+        // response carrying nothing, and nosniff genuinely matters on a file
+        // whose content type a browser might otherwise guess at.
+        //
+        // No CSP: these are the assets a CSP governs, not documents that need
+        // one, and a policy here would apply to nothing.
+        source: '/_next/:path*',
+        headers: baseHeaders,
+      },
     ];
   },
 };

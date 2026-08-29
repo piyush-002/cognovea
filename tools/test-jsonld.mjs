@@ -101,7 +101,7 @@ console.log(`        (${filled.length} of ${declared.length} social profiles fil
  * resolve. Everywhere else an @id reference keeps one entity instead of
  * several partial ones.
  */
-const INLINE_OK = /(author|publisher|hiringOrganization)\s*:\s*\{/;
+const INLINE_OK = /(author|publisher|hiringOrganization)\s*:/;
 const unexpected = [];
 for (const f of sources) {
   const rel = path.relative(root, f);

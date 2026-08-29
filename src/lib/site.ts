@@ -76,7 +76,6 @@ export const serviceLinks: NavLink[] = [
 ];
 
 export const companyLinks: NavLink[] = [
-  { href: '/case-studies', label: 'Case Studies' },
   { href: '/insights', label: 'Insights' },
   { href: '/about-us', label: 'About Us' },
   { href: '/careers', label: 'Careers' },
@@ -93,7 +92,6 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   { path: '/generative-ai-services', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/ai-strategy-consulting', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/data-health-check', priority: 0.9, changeFrequency: 'monthly' },
-  { path: '/case-studies', priority: 0.8, changeFrequency: 'weekly' },
   { path: '/insights', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/about-us', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/careers', priority: 0.6, changeFrequency: 'weekly' },

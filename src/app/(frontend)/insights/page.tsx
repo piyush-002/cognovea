@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
+import Byline from '@/components/Byline';
 import JsonLd from '@/components/JsonLd';
 import { formatDate, getPosts } from '@/lib/content';
 import { abs } from '@/lib/site';
@@ -97,6 +98,8 @@ export default async function InsightsPage() {
                   <p className="eyebrow">
                     {formatDate(p.publishedAt)}
                     {p.readingMinutes ? ` · ${p.readingMinutes} min read` : ''}
+                    {' · '}
+                    <Byline author={p.author} compact />
                   </p>
 
                   <h2 className="h-sm" style={{ marginTop: '0.7rem' }}>
