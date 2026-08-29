@@ -34,7 +34,8 @@
     "test:titles": "node tools/test-titles.mjs",
     "test:currency": "node tools/test-currency.mjs",
     "test:jsonld": "node tools/test-jsonld.mjs",
-    "test:headers": "node tools/test-headers.mjs"
+    "test:headers": "node tools/test-headers.mjs",
+    "test:ssr": "node tools/test-ssr.mjs"
   },
   "dependencies": {
     "next": "~15.4.11",
