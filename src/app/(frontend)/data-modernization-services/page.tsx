@@ -6,6 +6,7 @@ import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
 import Rail from '@/components/Rail';
+import { pageMetadata } from '@/lib/seo';
 
 /* Statically generated, and this page shows client logos and a testimonial,
    both of which are published from the admin long after the build. Without a
@@ -18,18 +19,12 @@ export const revalidate = 300;
 
 const PATH = '/data-modernization-services';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Data Modernization Services and Cloud Upgrades | Cognovea',
   description:
     'Build a cloud data modernization strategy with Cognovea. Our data architecture modernization consulting services prepare your enterprise for AI success.',
-  alternates: { canonical: `${PATH}/` },
-  openGraph: {
-    title: 'Data Modernization Services and Cloud Upgrades | Cognovea',
-    description:
-      'Build a cloud data modernization strategy with Cognovea. Our data architecture modernization consulting services prepare your enterprise for AI success.',
-    url: `${PATH}/`,
-  },
-};
+  path: '/data-modernization-services',
+});
 
 const CRUMBS = [{ href: PATH, label: 'Data Modernization Services' }];
 

@@ -71,6 +71,11 @@ export const metadata: Metadata = {
       },
     ],
   },
+  /* The fallback for a page that declares no twitter block of its own. Every
+     page now goes through pageMetadata(), which always declares one, so this
+     should never be what a real page serves — but a site-wide default that
+     contradicts the site-wide title is how the whole site ended up advertising
+     one social headline regardless of the page. */
   twitter: {
     card: 'summary_large_image',
     title: 'Cognovea | Data Analytics and AI Solutions',

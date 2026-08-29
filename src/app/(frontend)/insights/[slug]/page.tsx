@@ -8,6 +8,7 @@ import Byline from '@/components/Byline';
 import RichText from '@/components/RichText';
 import { formatDate, getPost, getPosts, toPostSummary } from '@/lib/content';
 import { articleSchema } from '@/lib/schema';
+import { pageMetadata } from '@/lib/seo';
 
 export const revalidate = 300;
 
@@ -37,23 +38,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = post.metaDescription || post.excerpt;
   const image = post.heroImage?.url;
 
-  return {
+  return pageMetadata({
     title,
     description,
-    alternates: { canonical: `/insights/${slug}/` },
-    // Lets an editor keep a published article out of search without unpublishing it.
+    path: `/insights/${slug}`,
+    type: 'article',
+    image: image ? { url: image, alt: post.heroImage?.alt ?? title } : null,
     robots: post.noindex ? { index: false, follow: true } : undefined,
-    openGraph: {
-      type: 'article',
-      title,
-      description,
-      url: `/insights/${slug}/`,
-      publishedTime: post.publishedAt ?? undefined,
-      modifiedTime: post.updatedAt ?? undefined,
-      images: image ? [{ url: image, alt: post.heroImage?.alt ?? title }] : undefined,
-    },
-    twitter: { card: 'summary_large_image', title, description, images: image ? [image] : undefined },
-  };
+    publishedTime: post.publishedAt ?? undefined,
+    modifiedTime: post.updatedAt ?? undefined,
+  });
 }
 
 export default async function InsightPage({ params }: Props) {

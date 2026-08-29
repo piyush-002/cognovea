@@ -1,62 +1,27 @@
 /**
- * Resolves what each page's <title> and og:title actually become, and checks
- * they agree and read sensibly.
+ * A page's title, description and URL must agree across every tag that carries
+ * them.
  *
- * Two things make this worth automating rather than reading. Next applies the
- * root layout's `title.template` to every child page's title, so what a page
- * file says is not what the browser tab shows — a page whose own title already
- * ends in the brand gets the brand appended a second time, and nothing in the
- * page file hints at it. And og:title is declared separately from title, so
- * the two drift apart silently; platforms pick whichever they prefer, so a
- * link can preview under a different headline than the page ranks under.
+ * Three separate faults have come out of this area. A `title.template` in the
+ * root layout appended the brand to titles that already ended in it, so seven
+ * pages rendered "… | Cognovea | Cognovea". og:title was written out by hand
+ * beside the title and drifted from it. And twitter:title was declared only in
+ * the root layout, so every page inherited one site-wide social headline
+ * regardless of its subject — Data Engineering served three different titles
+ * across its three tags.
+ *
+ * The last one is why this test now reads the resolved output rather than the
+ * page files: nothing in a page file showed the wrong twitter title, because
+ * the page file said nothing about twitter at all.
  *
  *   node tools/test-titles.mjs
  */
 import fs from 'node:fs';
 import path from 'node:path';
 
-const here = path.dirname(new URL(import.meta.url).pathname);
-const root = path.join(here, '..');
+const root = path.join(path.dirname(new URL(import.meta.url).pathname), '..');
 const pagesDir = path.join(root, 'src/app/(frontend)');
-
-/** The template and default from the root layout. */
-function rootMetadata() {
-  const src = fs.readFileSync(path.join(pagesDir, 'layout.tsx'), 'utf8');
-  const template = src.match(/template:\s*'([^']+)'/)?.[1] ?? '%s';
-  const fallback = src.match(/default:\s*'([^']+)'/)?.[1] ?? '';
-  const ogTitle = src.match(/openGraph:\s*\{[\s\S]*?title:\s*'([^']+)'/)?.[1] ?? null;
-  return { template, fallback, ogTitle };
-}
-
-/** Every page's own declared title and og:title. */
-function pages() {
-  const out = [];
-  const walk = (dir) => {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) walk(full);
-      else if (entry.name === 'page.tsx') {
-        const src = fs.readFileSync(full, 'utf8');
-        const route = '/' + path.relative(pagesDir, dir).replace(/\\/g, '/');
-
-        // Only statically declared metadata; a generateMetadata page is
-        // resolved per document and cannot be checked from source.
-        const block = src.match(/export const metadata: Metadata = \{[\s\S]*?\n\};/)?.[0];
-        if (!block) continue;
-
-        const title = block.match(/^\s{2}title:\s*'([^']+)'/m)?.[1] ?? null;
-        const og = block.match(/openGraph:\s*\{[\s\S]*?title:\s*'([^']+)'/)?.[1] ?? null;
-        out.push({ route: route === '/.' ? '/' : route, title, og });
-      }
-    }
-  };
-  walk(pagesDir);
-  return out.sort((a, b) => a.route.localeCompare(b.route));
-}
-
-const { template, fallback, ogTitle: rootOg } = rootMetadata();
 const BRAND = 'Cognovea';
-const list = pages();
 
 let pass = 0;
 let fail = 0;
@@ -68,46 +33,81 @@ const ok = (name, cond, detail = '') => {
   }
 };
 
-const resolve = (t) => (t ? template.replace('%s', t) : fallback);
+/* --- the root layout must not re-append the brand -------------------------- */
+const layout = fs.readFileSync(path.join(pagesDir, 'layout.tsx'), 'utf8');
+ok(
+  'the root layout declares no title.template',
+  !/template:\s*'/.test(layout),
+  "a template appends the brand to page titles that already carry it, which is invisible in every page file",
+);
 
-console.log(`Root template: ${JSON.stringify(template)}\n`);
-console.log('route                          resolved <title>');
-console.log('-'.repeat(96));
-for (const p of list) {
-  const r = resolve(p.title);
-  console.log(`${p.route.padEnd(30)} ${r}`);
+/* --- every page goes through the one helper -------------------------------- */
+const pages = [];
+const walk = (dir) => {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) walk(full);
+    else if (e.name === 'page.tsx') pages.push(full);
+  }
+};
+walk(pagesDir);
+
+for (const full of pages) {
+  const rel = '/' + (path.relative(pagesDir, path.dirname(full)) || '');
+  const src = fs.readFileSync(full, 'utf8');
+
+  ok(
+    `${rel}: builds its metadata with pageMetadata()`,
+    /pageMetadata\(/.test(src),
+    'a hand-written metadata object is how title, og:title and twitter:title drift apart',
+  );
+
+  // Nothing may set these individually any more; that is the drift.
+  const hasOwnOg = /openGraph:\s*\{[\s\S]*?title:/.test(src);
+  const hasOwnTwitter = /twitter:\s*\{[\s\S]*?title:/.test(src);
+  ok(`${rel}: does not hand-write its own og:title`, !hasOwnOg);
+  ok(`${rel}: does not hand-write its own twitter:title`, !hasOwnTwitter);
+
+  const title = src.match(/pageMetadata\(\{\s*\n\s*title:\s*'([^']+)'/)?.[1];
+  if (title) {
+    const count = title.split(BRAND).length - 1;
+    ok(`${rel}: the brand appears at most once`, count <= 1, `"${title}"`);
+    ok(`${rel}: fits what search results display`, title.length <= 62, `${title.length} chars: "${title}"`);
+  }
+
+  // A relative canonical resolves against metadataBase, which is what makes the
+  // domain a one-line change instead of twelve.
+  const p = src.match(/path:\s*'([^']*)'/)?.[1];
+  if (p !== undefined) {
+    ok(`${rel}: the canonical path is relative, not absolute`, !/^https?:/.test(p), p);
+  }
 }
-console.log('');
 
-for (const p of list) {
-  const resolved = resolve(p.title);
-
-  // The brand appearing twice in one title tag. Invisible in the page file,
-  // because half of it comes from the layout.
-  const occurrences = resolved.split(BRAND).length - 1;
-  ok(
-    `${p.route}: the brand appears at most once in the title`,
-    occurrences <= 1,
-    `resolved to "${resolved}" (${occurrences}x "${BRAND}")`,
-  );
-
-  // Google truncates around 60 characters. Longer is not an error, but a
-  // title whose distinguishing half is cut off is not doing its job.
-  ok(
-    `${p.route}: the title fits what search results display`,
-    resolved.length <= 62,
-    `${resolved.length} chars: "${resolved}"`,
-  );
-
-  // og:title against the resolved title. A page with no og:title inherits the
-  // layout's, which is fine only if it matches.
-  const effectiveOg = p.og ?? rootOg;
-  ok(
-    `${p.route}: og:title matches the title`,
-    effectiveOg === resolved,
-    `title:    "${resolved}"\n        og:title: "${effectiveOg}"`,
-  );
+/* --- the helper itself must expand all three ------------------------------- */
+const seo = fs.readFileSync(path.join(root, 'src/lib/seo.ts'), 'utf8');
+for (const [name, re] of [
+  ['a title', /^\s*title,$/m],
+  ['og:title', /openGraph:\s*\{[\s\S]*?title,/],
+  ['twitter:title', /twitter:\s*\{[\s\S]*?title,/],
+  ['a description', /^\s*description,$/m],
+  ['og:description', /openGraph:\s*\{[\s\S]*?description,/],
+  ['twitter:description', /twitter:\s*\{[\s\S]*?description,/],
+  ['a canonical', /alternates:\s*\{\s*canonical/],
+  ['og:url', /openGraph:\s*\{[\s\S]*?url,/],
+]) {
+  ok(`pageMetadata sets ${name} from the single value`, re.test(seo));
 }
+
+ok(
+  'pageMetadata keeps the canonical relative',
+  !/canonical:\s*`?https?:/.test(seo),
+  'an absolute canonical would need editing on every page when the domain changes',
+);
+ok(
+  'pageMetadata gives the canonical a trailing slash',
+  /\$\{path\}\/`/.test(seo),
+  'trailingSlash is on, so the other spelling redirects and must not be named as canonical',
+);
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);

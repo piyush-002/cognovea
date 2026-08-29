@@ -6,6 +6,7 @@ import Byline from '@/components/Byline';
 import JsonLd from '@/components/JsonLd';
 import { formatDate, getPosts } from '@/lib/content';
 import { abs } from '@/lib/site';
+import { pageMetadata } from '@/lib/seo';
 
 const PATH = '/insights';
 
@@ -16,18 +17,12 @@ const PATH = '/insights';
  */
 export const revalidate = 300;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Insights | Data, Analytics and AI Perspectives',
   description:
     'Perspectives from the Cognovea team on data engineering, analytics, business intelligence and applied AI.',
-  alternates: { canonical: `${PATH}/` },
-  openGraph: {
-    title: 'Insights | Data, Analytics and AI Perspectives',
-    description:
-      'Perspectives from the Cognovea team on data engineering, analytics, business intelligence and applied AI.',
-    url: `${PATH}/`,
-  },
-};
+  path: '/insights',
+});
 
 const CRUMBS = [{ href: PATH, label: 'Insights' }];
 

@@ -9,6 +9,7 @@ import Rotator from '@/components/Rotator';
 import Scroller from '@/components/Scroller';
 import Tabs from '@/components/Tabs';
 import Testimonial from '@/components/Testimonial';
+import { pageMetadata } from '@/lib/seo';
 
 /* Statically generated, and this page shows client logos and a testimonial,
    both of which are published from the admin long after the build. Without a
@@ -19,18 +20,12 @@ import Testimonial from '@/components/Testimonial';
 export const revalidate = 300;
 
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Cognovea | Data Analytics and AI Solutions',
   description:
     'Cognovea turns enterprise data into intelligence. Data analytics, business intelligence, data engineering and AI solutions that drive data-driven decision making.',
-  alternates: { canonical: '/' },
-  openGraph: {
-    title: 'Cognovea | Data Analytics and AI Solutions',
-    description:
-      'Data engineering, analytics, business intelligence and applied AI for businesses that need to trust their own numbers.',
-    url: '/',
-  },
-};
+  path: '/',
+});
 
 /* --------------------------------------------------------------------------
    Band rhythm across this page, holding the colour budget:

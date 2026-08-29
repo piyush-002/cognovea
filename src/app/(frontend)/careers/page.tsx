@@ -5,6 +5,7 @@ import JsonLd from '@/components/JsonLd';
 import Scroller from '@/components/Scroller';
 import { abs, site } from '@/lib/site';
 import JobOpenings from '@/components/JobOpenings';
+import { pageMetadata } from '@/lib/seo';
 
 /* Revalidated every five minutes so a role published in the admin appears here
    without a redeploy. Everything else on this page is unchanged and still
@@ -13,18 +14,12 @@ export const revalidate = 300;
 
 const PATH = '/careers';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Cognovea Careers | Open Data & AI Roles',
   description:
     'Explore open data engineering, analytics and AI roles at Cognovea, with real client exposure, senior mentorship and defined project work.',
-  alternates: { canonical: `${PATH}/` },
-  openGraph: {
-    title: 'Cognovea Careers | Open Data & AI Roles',
-    description:
-      'Explore open data engineering, analytics and AI roles at Cognovea, with real client exposure, senior mentorship and defined project work.',
-    url: `${PATH}/`,
-  },
-};
+  path: '/careers',
+});
 
 const CRUMBS = [{ href: PATH, label: 'Careers' }];
 
