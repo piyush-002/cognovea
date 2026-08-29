@@ -115,10 +115,10 @@ const orgSchema = {
       url: abs('/'),
       email: site.email,
       slogan: site.tagline,
-      /* Google needs a logo it can display beside the organisation. og.png is
-         a 1200x630 social card, which is not one. public/logo.png is the same
-         particle mark the site draws, generated from the same seeded function
-         in src/lib/mark.ts, so it is the real thing rather than a stand-in. */
+      /* Google needs a logo it can display beside the organisation, and
+         og.png is a 1200x630 social card rather than one. public/logo.png is
+         the supplied brand lockup, trimmed to the artwork and re-padded square
+         so it is not letterboxed differently wherever it is shown. */
       logo: {
         '@type': 'ImageObject',
         url: abs('/logo.png').replace(/\/$/, ''),

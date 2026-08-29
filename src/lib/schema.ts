@@ -64,7 +64,7 @@ export function articleSchema(post: PostSummary & { updatedAt?: string | null })
       '@type': 'Organization',
       name: site.name,
       url: abs('/'),
-      // The logo, not the social card. See the note in layout.tsx.
+      // The brand lockup, not the social card. See the note in layout.tsx.
       logo: { '@type': 'ImageObject', url: abs('/logo.png').replace(/\/$/, ''), width: 512, height: 512 },
     },
   };
