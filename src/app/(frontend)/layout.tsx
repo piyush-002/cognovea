@@ -99,6 +99,11 @@ export const viewport = {
   initialScale: 1,
 };
 
+/** Only the profiles that have actually been filled in. */
+const socialProfiles = (Object.values(site.social) as string[]).filter(
+  (url) => typeof url === 'string' && url.trim().length > 0,
+);
+
 /** Organization + WebSite schema, emitted once for the whole site. */
 const orgSchema = {
   '@context': 'https://schema.org',
@@ -110,6 +115,17 @@ const orgSchema = {
       url: abs('/'),
       email: site.email,
       slogan: site.tagline,
+      /* Google needs a logo it can display beside the organisation. og.png is
+         a 1200x630 social card, which is not one. public/logo.png is the same
+         particle mark the site draws, generated from the same seeded function
+         in src/lib/mark.ts, so it is the real thing rather than a stand-in. */
+      logo: {
+        '@type': 'ImageObject',
+        url: abs('/logo.png').replace(/\/$/, ''),
+        width: 512,
+        height: 512,
+      },
+      image: abs('/logo.png').replace(/\/$/, ''),
       description:
         'Cognovea is a data analytics and AI company providing data engineering, business intelligence, predictive analytics and AI solutions.',
       telephone: site.phones[0],
@@ -121,6 +137,12 @@ const orgSchema = {
         postalCode: site.locations.hq.postalCode,
         addressCountry: site.locations.hq.country,
       },
+      /* Profiles Cognovea controls, which is how a search engine confirms
+         this entity is the same one it sees elsewhere. Built from site.social
+         and omitted entirely while those are empty: a sameAs pointing at a
+         handle that does not exist is a worse signal than no sameAs, and
+         shipping placeholder URLs would claim profiles we do not have. */
+      ...(socialProfiles.length > 0 ? { sameAs: socialProfiles } : {}),
       location: [
         {
           '@type': 'Place',

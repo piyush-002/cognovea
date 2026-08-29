@@ -51,7 +51,8 @@ export function articleSchema(post: PostSummary & { updatedAt?: string | null })
       '@type': 'Organization',
       name: site.name,
       url: abs('/'),
-      logo: { '@type': 'ImageObject', url: abs('/og.png') },
+      // The logo, not the social card. See the note in layout.tsx.
+      logo: { '@type': 'ImageObject', url: abs('/logo.png').replace(/\/$/, ''), width: 512, height: 512 },
     },
   };
 }
