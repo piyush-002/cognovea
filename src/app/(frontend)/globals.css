@@ -3436,3 +3436,164 @@ tbody tr:hover {
   color: var(--fg-3);
   font-weight: 400;
 }
+
+/* Calculator: empty state, submit row, and the slider ---------------------- */
+
+.calc__submit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
+  margin-block-start: 0.4rem;
+}
+
+.calc__submit-note {
+  font-size: 13px;
+  color: var(--fg-3);
+  max-inline-size: 22rem;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  /* No transform on a disabled control: a button that moves under the cursor
+     reads as clickable, which is the opposite of what disabled means. */
+  transform: none;
+}
+
+.calc__empty {
+  padding: clamp(1.4rem, 3.5vw, 2.2rem);
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--line);
+  background: var(--paper-2);
+}
+
+.calc__empty-lead {
+  margin-block-start: 0.7rem;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--fg-2);
+}
+
+.calc__empty-list {
+  margin-block-start: 1.1rem;
+  display: grid;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.calc__empty-list li {
+  position: relative;
+  padding-inline-start: 1.3rem;
+  font-size: 14px;
+  color: var(--fg-3);
+}
+
+.calc__empty-list li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.55em;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+}
+
+/* --- the slider ---------------------------------------------------------- */
+
+.calc__slider-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.calc__slider-head label {
+  margin: 0;
+}
+
+.calc__slider-val {
+  font-family: var(--f-head);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--blue-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.calc__slider-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-block-start: 0.4rem;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* A range input styled to show how far along it is. The default control gives
+   a position with nothing to read it against, which is why the percentage and
+   the scale labels are both here. --pos is set inline from the value. */
+.calc__slider input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  inline-size: 100%;
+  block-size: 34px;
+  margin-block-start: 0.7rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.calc__slider input[type='range']::-webkit-slider-runnable-track {
+  block-size: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--violet) 0%,
+    var(--blue) var(--pos, 50%),
+    color-mix(in srgb, var(--line) 70%, transparent) var(--pos, 50%)
+  );
+}
+
+.calc__slider input[type='range']::-moz-range-track {
+  block-size: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--violet) 0%,
+    var(--blue) var(--pos, 50%),
+    color-mix(in srgb, var(--line) 70%, transparent) var(--pos, 50%)
+  );
+}
+
+.calc__slider input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  inline-size: 22px;
+  block-size: 22px;
+  margin-block-start: -8px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--blue);
+  box-shadow: 0 1px 6px rgb(16 24 40 / 0.18);
+  transition: transform 0.15s var(--ease), border-color 0.2s;
+}
+
+.calc__slider input[type='range']::-moz-range-thumb {
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--blue);
+  box-shadow: 0 1px 6px rgb(16 24 40 / 0.18);
+}
+
+.calc__slider input[type='range']:hover::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+
+.calc__slider input[type='range']:focus-visible::-webkit-slider-thumb {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--violet) 22%, transparent);
+}
