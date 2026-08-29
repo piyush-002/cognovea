@@ -36,7 +36,8 @@
     "test:jsonld": "node tools/test-jsonld.mjs",
     "test:headers": "node tools/test-headers.mjs",
     "test:ssr": "node tools/test-ssr.mjs",
-    "test:overflow": "node tools/test-overflow.mjs"
+    "test:overflow": "node tools/test-overflow.mjs",
+    "test:calculator": "node tools/test-calculator.mjs"
   },
   "dependencies": {
     "next": "~15.4.11",
