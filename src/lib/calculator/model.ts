@@ -106,22 +106,33 @@ export function calculate(raw: Partial<Inputs>): Result {
   const hoursPerYear = i.people * i.hoursPerWeek * weeks;
   const labourCost = hoursPerYear * i.hourlyCost;
 
-  /**
-   * Error cost.
-   *
-   * Not "x% of everything is wrong, so x% of the cost is wasted". The published
-   * rate is per formula, and what it buys you is the likelihood that a given
-   * report carries a wrong number. The cost modelled is redoing the work: the
-   * report is rebuilt and the time spent on it is spent again.
-   *
-   * This is the conservative reading. It counts only errors somebody catches,
-   * and says nothing about the cost of a decision taken on a wrong number,
-   * which is the expensive case and is not estimable from these inputs.
-   */
   const reportsPerYear = i.reportsPerMonth * 12;
-  const hoursPerReport = reportsPerYear > 0 ? hoursPerYear / reportsPerYear : 0;
-  const reportsCarryingAnError = reportsPerYear * CELL_ERROR_RATE.value;
-  const errorCost = reportsCarryingAnError * hoursPerReport * i.hourlyCost;
+
+  /**
+   * Error cost: a share of the reporting effort that gets done twice.
+   *
+   * This used to be expressed as reports-carrying-an-error × hours-per-report ×
+   * rate, which reads as though it depends on how many reports there are. It
+   * does not. Substitute hours-per-report = hours ÷ reports and the report
+   * count cancels out of its own formula:
+   *
+   *     (reports × rate) × (hours / reports) × cost  ≡  rate × hours × cost
+   *
+   * The elaborate version produced two false impressions and one real defect.
+   * It implied the report count mattered when 1 a month and 500 a month gave
+   * byte-identical output, and it broke discontinuously at zero, where
+   * hours-per-report was defined as 0 and the whole term collapsed — so going
+   * from 0 reports to 1 jumped the rework cost from nothing to its full value
+   * and then never moved again.
+   *
+   * Written as what it actually is. A fixed share of the work is wrong and gets
+   * redone; how that work is parcelled into reports has nothing to do with it.
+   *
+   * Still the conservative reading: it counts only errors somebody catches, and
+   * says nothing about a decision taken on a wrong number, which is the
+   * expensive case and is not estimable from these inputs.
+   */
+  const errorCost = hoursPerYear * CELL_ERROR_RATE.value * i.hourlyCost;
 
   /**
    * Decision lag.

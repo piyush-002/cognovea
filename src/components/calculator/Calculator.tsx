@@ -52,8 +52,16 @@ const EMPTY: Draft = {
   timeReduction: TIME_REDUCTION.value.default,
 };
 
-/** The four the arithmetic cannot proceed without. */
-const REQUIRED = ['people', 'hoursPerWeek', 'hourlyCost', 'reportsPerMonth'] as const;
+/**
+ * The three the arithmetic cannot proceed without.
+ *
+ * Reports a month is NOT among them, and used to be. It drives one thing: the
+ * number of late decisions, which is only ever converted to money if the
+ * visitor supplies a day value in the optional fields. Demanding it before
+ * showing any answer meant gating the tool on a figure that, for most people,
+ * changes nothing on screen.
+ */
+const REQUIRED = ['people', 'hoursPerWeek', 'hourlyCost'] as const;
 
 function toInputs(d: Draft): Partial<Inputs> {
   const n = (s: string) => (s.trim() === '' ? undefined : Number(s));
@@ -241,7 +249,14 @@ export default function Calculator() {
 
         <div className="form__row">
           <div className="field">
-            <label htmlFor="reports">Recurring reports a month</label>
+            <label htmlFor="reports">
+              Recurring reports a month
+              <InfoTip label="reports a month">
+                Optional. It does not change the cost of the time or the rework — a fixed share of the work is redone
+                however it is parcelled up. It sets how many decisions are made on stale data, which becomes a cost
+                only if you say what a day of delay is worth.
+              </InfoTip>
+            </label>
             <input id="reports" type="number" inputMode="numeric" min={0} max={LIMITS.reportsPerMonth[1]} {...field('reportsPerMonth', 'e.g. 12')} />
           </div>
           <div className="field">
@@ -322,7 +337,7 @@ export default function Calculator() {
             </button>
           )}
           {!calculated && !complete ? (
-            <p className="calc__submit-note">Fill in the four figures above and the result appears here.</p>
+            <p className="calc__submit-note">Fill in the three figures above and the result appears here.</p>
           ) : null}
           {calculated ? <p className="calc__submit-note">Change anything above and the result updates as you go.</p> : null}
         </div>

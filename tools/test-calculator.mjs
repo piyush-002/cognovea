@@ -124,6 +124,30 @@ const near = (a, b, tol = 0.5) => Math.abs(a - b) <= tol;
   ok('and it raises the total', withValue.totalKnownCost > r.totalKnownCost);
 }
 
+/* --- the report count must only affect what it actually affects ----------- */
+{
+  // It looked like an input and behaved like a decoration. The old formula
+  // multiplied by the report count and then divided by it, so 1 a month and
+  // 500 a month produced identical output — and zero produced a different one,
+  // because hours-per-report was defined as 0 there and collapsed the term.
+  const at = (reportsPerMonth) => calculate({ people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth, decisionLagDays: 3 });
+  const counts = [0, 1, 2, 5, 12, 30, 100, 500];
+  const rework = counts.map((n) => at(n).errorCost);
+  ok(
+    'the rework cost is the same at every report count, including zero',
+    rework.every((v) => near(v, rework[0], 0.01)),
+    counts.map((n, i) => `${n}: ${Math.round(rework[i])}`).join(', '),
+  );
+  ok('and there is no cliff between no reports and one', near(at(0).errorCost, at(1).errorCost, 0.01));
+  ok('the labour cost never depended on it either', near(at(0).labourCost, at(500).labourCost));
+  ok('so the headline is unchanged by it', near(at(1).totalKnownCost, at(500).totalKnownCost));
+
+  // The one thing it does change.
+  const priced = (n) => calculate({ people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth: n, decisionLagDays: 3, costPerDayOfDelay: 5000 }).delayCost;
+  ok('but it does scale the delay, which is the only thing it drives', priced(100) > priced(1) * 50);
+  ok('and it still reports the decision count', at(12).staleDecisionsPerYear === 144);
+}
+
 /* --- decision lag: the two bugs a user found by driving it ---------------- */
 {
   // Reported case: a day value and a lag were entered, and both were silently

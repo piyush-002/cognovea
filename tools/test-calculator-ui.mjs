@@ -91,11 +91,14 @@ const fill = async (page, id, value) => {
 
   await fill(page, 'people', 4);
   await fill(page, 'hours', 8);
-  await fill(page, 'cost', 1600);
-  ok('still disabled with three of the four', await page.locator('button[type=submit]').isDisabled());
+  ok('still disabled with two of the three', await page.locator('button[type=submit]').isDisabled());
 
-  await fill(page, 'reports', 12);
-  ok('enabled once the fourth is in', await page.locator('button[type=submit]').isEnabled());
+  await fill(page, 'cost', 1600);
+  ok('enabled once the third is in', await page.locator('button[type=submit]').isEnabled());
+
+  // Reports a month is deliberately not required: it changes nothing on screen
+  // unless the optional day value is also given.
+  ok('reports a month is not required to calculate', await page.locator('button[type=submit]').isEnabled());
 
   ok('and still nothing has been calculated', (await page.locator('.calc-res').count()) === 0,
     'a result appearing before it is asked for is the behaviour this replaced');

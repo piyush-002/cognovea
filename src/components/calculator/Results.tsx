@@ -102,10 +102,19 @@ export default function Results({
               </p>
             ) : (
               <p className="calc-bar__note">
-                Decisions here are being made on data <strong>{result.decisionLagDays} working days old</strong>,
-                around {result.staleDecisionsPerYear.toLocaleString('en-IN')} times a year. We have not put a number
-                on that: what a day of delay costs depends entirely on the decision, and any figure we supplied would
-                be a guess about your business. Add yours in the optional fields and it joins the total.
+                {result.staleDecisionsPerYear > 0 ? (
+                  <>
+                    Decisions here are being made on data <strong>{result.decisionLagDays} working days old</strong>,
+                    around {result.staleDecisionsPerYear.toLocaleString('en-IN')} times a year.{' '}
+                  </>
+                ) : (
+                  <>
+                    Add your reports a month above and this shows how often decisions are made on stale data.{' '}
+                  </>
+                )}
+                We have not put a number on it: what a day of delay costs depends entirely on the decision, and any
+                figure we supplied would be a guess about your business. Add yours in the optional fields and it joins
+                the total.
               </p>
             )}
           </div>
