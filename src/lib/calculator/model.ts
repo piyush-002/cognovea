@@ -40,8 +40,15 @@ export type Result = {
   hoursPerYear: number;
   labourCost: number;
   errorCost: number;
-  /** Null when the visitor has not said what a day of delay is worth. */
+  /** Null when the delay has not been, or cannot be, priced. */
   delayCost: number | null;
+  /**
+   * Why it is null, so the page can explain rather than print nothing.
+   * 'unvalued'  — no day value supplied, which is the default and fine.
+   * 'no-cycles' — a day value was supplied but there are no recurring reports,
+   *               so there is no count of late decisions to apply it to.
+   */
+  delayUnpricedBecause: 'unvalued' | 'no-cycles' | null;
   /** Always present: the delay expressed as a fact rather than a cost. */
   decisionLagDays: number;
   staleDecisionsPerYear: number;
@@ -126,11 +133,24 @@ export function calculate(raw: Partial<Inputs>): Result {
    * sceptical reader attacks first. So the tool states the finding — decisions
    * are being made on data this many days old, this many times a year — and
    * leaves the valuation to whoever knows the business.
+   *
+   * The value entered is PER DECISION, and the arithmetic is shown on the page
+   * so nobody has to guess. That matters because this term compounds fast:
+   * three days at Rs 20,000 across 144 decisions is Rs 86 lakh, several times
+   * the labour cost. That may be true for a business where a late decision is
+   * genuinely expensive, but it must be visibly the visitor's own arithmetic
+   * rather than something the tool did quietly on their behalf.
+   *
+   * There is deliberately no cap. An earlier version clamped the decision count
+   * at 365, which meant 30 reports a month and 100 reports a month produced
+   * nearly identical figures — the output stopped responding to an input and
+   * said nothing about it. A silent ceiling is worse than a large number: the
+   * large number can be argued with.
    */
   const staleDecisionsPerYear = reportsPerYear;
   const delayCost =
-    i.costPerDayOfDelay && i.costPerDayOfDelay > 0
-      ? i.decisionLagDays * i.costPerDayOfDelay * Math.min(staleDecisionsPerYear, 365)
+    i.costPerDayOfDelay && i.costPerDayOfDelay > 0 && staleDecisionsPerYear > 0
+      ? i.decisionLagDays * i.costPerDayOfDelay * staleDecisionsPerYear
       : null;
 
   const totalKnownCost = labourCost + errorCost + (delayCost ?? 0);
@@ -150,11 +170,19 @@ export function calculate(raw: Partial<Inputs>): Result {
       ? (i.investment / annualSaving) * 12
       : null;
 
+  const delayUnpricedBecause: Result['delayUnpricedBecause'] =
+    delayCost !== null
+      ? null
+      : i.costPerDayOfDelay && i.costPerDayOfDelay > 0
+        ? 'no-cycles'
+        : 'unvalued';
+
   return {
     hoursPerYear,
     labourCost,
     errorCost,
     delayCost,
+    delayUnpricedBecause,
     decisionLagDays: i.decisionLagDays,
     staleDecisionsPerYear,
     totalKnownCost,

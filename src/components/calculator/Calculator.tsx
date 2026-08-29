@@ -247,11 +247,12 @@ export default function Calculator() {
         {showAdvanced && (
           <div className="calc__advanced">
             <div className="field">
-              <label htmlFor="daycost">What is one day of delay worth? (Rs)</label>
+              <label htmlFor="daycost">What does a day of delay cost, per decision? (Rs)</label>
               <input id="daycost" type="number" inputMode="numeric" min={0} {...field('costPerDayOfDelay', 'Leave blank if unsure')} />
               <p className="field__hint">
-                Nobody outside your business can put a number on this, so we report the delay and leave the valuation
-                to you.
+                Per decision, not for the business as a whole — it is multiplied by the days late and the number of
+                reports, and the result shows that working. Nobody outside your business can put a number on this,
+                which is why it is yours to give and blank by default.
               </p>
             </div>
             <div className="field">

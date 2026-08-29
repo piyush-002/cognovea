@@ -83,7 +83,11 @@ export default function Results({
             value={result.delayCost}
             total={total}
             tone="delay"
-            note="Your figure for what a day of delay is worth, applied across the year."
+            /* The arithmetic is spelled out because this term compounds fast
+               and can end up several times the labour cost. A large number
+               nobody can trace looks like a trick; the same number with its
+               working shown is an argument the reader can check or dispute. */
+            note={`${result.decisionLagDays} days late × ${formatCurrency(inputs.costPerDayOfDelay ?? 0)} a day × ${result.staleDecisionsPerYear.toLocaleString('en-IN')} decisions a year. Your figure, your arithmetic — if it looks too large, the day value is the number to revisit.`}
           />
         ) : (
           <div className="calc-bar calc-bar--unpriced">
@@ -91,12 +95,19 @@ export default function Results({
               <span className="calc-bar__label">Decisions made late</span>
               <span className="calc-bar__value calc-bar__value--muted">not priced</span>
             </div>
-            <p className="calc-bar__note">
-              Decisions here are being made on data <strong>{result.decisionLagDays} working days old</strong>, around{' '}
-              {result.staleDecisionsPerYear.toLocaleString('en-IN')} times a year. We have not put a number on that:
-              what a day of delay costs depends entirely on the decision, and any figure we supplied would be a guess
-              about your business. Add yours in the optional fields and it joins the total.
-            </p>
+            {result.delayUnpricedBecause === 'no-cycles' ? (
+              <p className="calc-bar__note">
+                You have given a value for a day of delay, but no recurring reports — so there is no count of late
+                decisions to apply it to. Set the reports a month above and this fills in.
+              </p>
+            ) : (
+              <p className="calc-bar__note">
+                Decisions here are being made on data <strong>{result.decisionLagDays} working days old</strong>,
+                around {result.staleDecisionsPerYear.toLocaleString('en-IN')} times a year. We have not put a number
+                on that: what a day of delay costs depends entirely on the decision, and any figure we supplied would
+                be a guess about your business. Add yours in the optional fields and it joins the total.
+              </p>
+            )}
           </div>
         )}
       </div>

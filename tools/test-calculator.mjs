@@ -124,6 +124,41 @@ const near = (a, b, tol = 0.5) => Math.abs(a - b) <= tol;
   ok('and it raises the total', withValue.totalKnownCost > r.totalKnownCost);
 }
 
+/* --- decision lag: the two bugs a user found by driving it ---------------- */
+{
+  // Reported case: a day value and a lag were entered, and both were silently
+  // discarded because there were no reporting cycles to multiply by. Printing
+  // "Rs 0" for two figures somebody deliberately typed is the worst possible
+  // answer — it looks like a considered result.
+  const zero = calculate({ people: 1, hoursPerWeek: 1, hourlyCost: 2000, reportsPerMonth: 0, decisionLagDays: 12, costPerDayOfDelay: 20000 });
+  ok('no reporting cycles: the delay is unpriced, not zero', zero.delayCost === null, `got ${zero.delayCost}`);
+  ok('and the reason is stated so the page can explain it', zero.delayUnpricedBecause === 'no-cycles', `got ${zero.delayUnpricedBecause}`);
+
+  const unvalued = calculate({ people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth: 12, decisionLagDays: 3 });
+  ok('no day value: unpriced for a different, stated reason', unvalued.delayCost === null && unvalued.delayUnpricedBecause === 'unvalued');
+
+  const priced = calculate({ people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth: 12, decisionLagDays: 3, costPerDayOfDelay: 20000 });
+  ok('priced when both are present, with no reason to explain', priced.delayCost !== null && priced.delayUnpricedBecause === null);
+  ok('and it is days x value x decisions', near(priced.delayCost, 3 * 20000 * 144), `got ${priced.delayCost}`);
+
+  // Second bug, worse than the first and invisible: the decision count was
+  // clamped at 365, so beyond about 30 reports a month the output stopped
+  // responding to the input and said nothing about it. A silent ceiling is
+  // worse than a large number, because a large number can be argued with.
+  const at30 = calculate({ people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth: 30, decisionLagDays: 3, costPerDayOfDelay: 20000 });
+  const at100 = calculate({ people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth: 100, decisionLagDays: 3, costPerDayOfDelay: 20000 });
+  ok(
+    'the delay cost keeps responding above 30 reports a month',
+    at100.delayCost > at30.delayCost * 3,
+    `30/mo: ${at30.delayCost}, 100/mo: ${at100.delayCost} — these were nearly equal under the old cap`,
+  );
+  ok('and it scales exactly with the report count', near(at100.delayCost / at30.delayCost, 100 / 30, 0.001));
+
+  // Zero lag is a real answer, not a missing one.
+  const noLag = calculate({ people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth: 12, decisionLagDays: 0, costPerDayOfDelay: 20000 });
+  ok('no lag means no delay cost, and that is a priced zero', noLag.delayCost === 0);
+}
+
 /* --- payback -------------------------------------------------------------- */
 {
   const noInv = calculate({ people: 5, hoursPerWeek: 10, hourlyCost: 1000, reportsPerMonth: 10 });
@@ -149,9 +184,14 @@ const near = (a, b, tol = 0.5) => Math.abs(a - b) <= tol;
     ['everything empty', {}],
     ['hours beyond a week', { people: 2, hoursPerWeek: 500, hourlyCost: 1000 }],
   ];
+  // Only the numbers. `delayUnpricedBecause` is a string by design, and an
+  // earlier version of this check swept it up and failed on it — the test
+  // being too broad rather than the code being wrong.
+  const numericOutputs = (r) => Object.entries(r).filter(([k]) => k !== 'delayUnpricedBecause').map(([, v]) => v);
+
   for (const [name, input] of cases) {
     const r = calculate(input);
-    const finite = Object.values(r).every((v) => v === null || (typeof v === 'number' && Number.isFinite(v)));
+    const finite = numericOutputs(r).every((v) => v === null || (typeof v === 'number' && Number.isFinite(v)));
     const nonNegative = r.labourCost >= 0 && r.errorCost >= 0 && r.hoursPerYear >= 0 && r.totalKnownCost >= 0;
     ok(`${name}: every output is finite`, finite, JSON.stringify(r));
     ok(`${name}: nothing is negative`, nonNegative);
@@ -195,7 +235,36 @@ const near = (a, b, tol = 0.5) => Math.abs(a - b) <= tol;
   ok('a hostile industry falls back rather than passing through', hostile.industry === 'other');
   ok('hostile numbers are clamped', hostile.people <= 5000 && hostile.hoursPerWeek <= 60 && hostile.hourlyCost >= 0);
   const r = calculate(hostile);
-  ok('and the result is still finite', Object.values(r).every((v) => v === null || Number.isFinite(v)));
+  ok(
+    'and the result is still finite',
+    Object.entries(r)
+      .filter(([k]) => k !== 'delayUnpricedBecause')
+      .every(([, v]) => v === null || Number.isFinite(v)),
+  );
+}
+
+/* --- the reason field must only ever be something the page handles -------- */
+{
+  const allowed = new Set(['unvalued', 'no-cycles', null]);
+  const shapes = [
+    {},
+    { people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth: 12 },
+    { people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth: 0, costPerDayOfDelay: 5000 },
+    { people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth: 12, costPerDayOfDelay: 5000 },
+    { people: 4, hoursPerWeek: 8, hourlyCost: 1600, reportsPerMonth: 12, costPerDayOfDelay: 0 },
+  ];
+  ok(
+    'the unpriced reason is always one the page knows how to explain',
+    shapes.every((sh) => allowed.has(calculate(sh).delayUnpricedBecause)),
+    'an unhandled value would render the wrong explanation, or none',
+  );
+  ok(
+    'a reason is present exactly when there is no delay cost',
+    shapes.every((sh) => {
+      const r = calculate(sh);
+      return (r.delayCost === null) === (r.delayUnpricedBecause !== null);
+    }),
+  );
 }
 
 /* --- the honesty guarantees ----------------------------------------------- */
