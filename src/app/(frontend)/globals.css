@@ -532,7 +532,22 @@ b {
   font-weight: 500;
   letter-spacing: -0.008em;
   text-decoration: none;
-  white-space: nowrap;
+  /* Not `white-space: nowrap`. That gave every button a min-content width it
+     refused to go below, and "Get Started With an AI Readiness Assessment"
+     measures 327px. With 18px of page padding either side it forced the page
+     to 364px wide, so on any phone narrower than that the entire layout —
+     heading, nav, everything — was pushed out and clipped by the body's
+     overflow-x. The button looked fine; the page around it did not.
+
+     Allowing the label to wrap costs nothing where there is room: a flex item
+     sized from its content still takes one line whenever one line fits, so
+     wider phones and every desktop are unchanged. Only the labels that cannot
+     fit break, which is the correct outcome and the one nowrap was preventing.
+
+     max-inline-size is the belt: no button may be wider than what contains it,
+     whatever a future label says. */
+  max-inline-size: 100%;
+  text-align: center;
   border: 1px solid transparent;
   transition: transform 0.3s var(--ease), background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
 }

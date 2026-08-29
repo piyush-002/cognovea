@@ -149,6 +149,25 @@ export interface Post {
    */
   publishedAt?: string | null;
   /**
+   * Leave the name empty to publish under the company byline.
+   */
+  author?: {
+    name?: string | null;
+    /**
+     * e.g. Lead Data Engineer.
+     */
+    role?: string | null;
+    /**
+     * One or two sentences on why this person can speak to this subject.
+     */
+    bio?: string | null;
+    photo?: (number | null) | Media;
+    /**
+     * Optional. A LinkedIn profile or similar, used as the author's sameAs.
+     */
+    url?: string | null;
+  };
+  /**
    * One or two sentences. Used on the insights index, in social previews, and as the meta description if you leave the SEO tab empty.
    */
   excerpt: string;
@@ -558,6 +577,15 @@ export interface PostsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   publishedAt?: T;
+  author?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        bio?: T;
+        photo?: T;
+        url?: T;
+      };
   excerpt?: T;
   heroImage?: T;
   content?: T;
