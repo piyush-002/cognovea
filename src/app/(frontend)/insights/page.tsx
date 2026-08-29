@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     'Perspectives from the Cognovea team on data engineering, analytics, business intelligence and applied AI.',
   alternates: { canonical: `${PATH}/` },
   openGraph: {
-    title: 'Insights | Cognovea',
+    title: 'Insights | Data, Analytics and AI Perspectives',
     description:
       'Perspectives from the Cognovea team on data engineering, analytics, business intelligence and applied AI.',
     url: `${PATH}/`,

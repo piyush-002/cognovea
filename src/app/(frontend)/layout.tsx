@@ -40,10 +40,15 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: {
-    default: 'Cognovea | Data Analytics and AI Solutions',
-    template: '%s | Cognovea',
-  },
+  /* No `template`. It was '%s | Cognovea', which Next appends to every child
+     page's title — including the seven whose titles, taken from the source
+     documents, already end in the brand. Those rendered as
+     "… | Cognovea | Cognovea". The duplication is invisible in a page file,
+     because half of it comes from here.
+
+     The document-specified title is now what renders, exactly. The four pages
+     whose titles do not carry the brand say so themselves. */
+  title: 'Cognovea | Data Analytics and AI Solutions',
   description: site.description,
   applicationName: site.name,
   authors: [{ name: site.name, url: site.url }],
@@ -53,7 +58,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: site.name,
-    title: 'Cognovea | Where Data Becomes Intelligence',
+    title: 'Cognovea | Data Analytics and AI Solutions',
     description: 'Data Depth. AI Power. Real Impact.',
     url: site.url,
     locale: 'en_IN',
@@ -68,7 +73,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Cognovea | Where Data Becomes Intelligence',
+    title: 'Cognovea | Data Analytics and AI Solutions',
     description: 'Data Depth. AI Power. Real Impact.',
     images: ['/og.png'],
   },

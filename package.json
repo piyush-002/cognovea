@@ -30,7 +30,9 @@
     "test:hero": "node tools/test-hero.mjs",
     "test:errors": "node tools/test-error-describe.mjs",
     "test:push-guard": "node tools/test-push-guard.mjs",
-    "test:canonical": "node tools/test-canonical.mjs"
+    "test:canonical": "node tools/test-canonical.mjs",
+    "test:titles": "node tools/test-titles.mjs",
+    "test:currency": "node tools/test-currency.mjs"
   },
   "dependencies": {
     "next": "~15.4.11",

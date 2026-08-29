@@ -7,7 +7,10 @@ import { site } from '@/lib/site';
 const PATH = '/privacy-policy';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy',
+  title: 'Privacy Policy | Cognovea',
+  // Declared rather than inherited. Without it this page's link previews use
+  // the site-wide og:title, which announces a privacy policy as the homepage.
+  openGraph: { title: 'Privacy Policy | Cognovea' },
   description:
     'How Cognovea collects, uses, stores and protects personal information submitted through cognovea.com, and the rights available to you over that information.',
   alternates: { canonical: `${PATH}/` },

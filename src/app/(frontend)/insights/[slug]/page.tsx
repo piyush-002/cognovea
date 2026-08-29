@@ -28,7 +28,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = (await getPost(slug)) as Record<string, any> | null;
   if (!post) return { title: 'Article not found' };
 
-  const title = post.metaTitle || post.title;
+  // The brand used to come from the root layout's title template. That
+  // template is gone, because it was appending the brand to page titles that
+  // already carried it; an article title never does, so it is added here.
+  const bare = post.metaTitle || post.title;
+  const title = bare.includes('Cognovea') ? bare : `${bare} | Cognovea`;
   const description = post.metaDescription || post.excerpt;
   const image = post.heroImage?.url;
 
