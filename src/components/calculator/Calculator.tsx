@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { COST_BANDS, INDUSTRIES, TIME_REDUCTION, type IndustryId } from '@/lib/calculator/assumptions';
 import { LIMITS, calculate, normalise, type Inputs } from '@/lib/calculator/model';
 import { decodeInputs, encodeInputs, hasSharedState } from '@/lib/calculator/url-state';
+import InfoTip from '@/components/calculator/InfoTip';
 import Results from '@/components/calculator/Results';
 
 /**
@@ -91,7 +92,13 @@ export default function Calculator() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const query = window.location.search.replace(/^\?/, '');
+    let query = '';
+    try {
+      query = window.location.search.replace(/^\?/, '');
+    } catch {
+      // An opaque origin can refuse this too. No shared state, which is the
+      // correct outcome: there is no URL to have carried any.
+    }
     if (hasSharedState(query)) {
       const shared = decodeInputs(query);
       setDraft(fromInputs(shared));
@@ -106,10 +113,23 @@ export default function Calculator() {
 
   // The URL follows the result, not the typing: an address that changes while a
   // form is still empty is not a result anybody can share.
+  //
+  // Wrapped, because replaceState throws in any document with an opaque origin
+  // — a sandboxed iframe, a file:// page, some embedded contexts. Unwrapped it
+  // threw inside the effect and took the whole result down with it, so the
+  // calculator produced nothing at all. That is not hypothetical here: the plan
+  // for this tool includes agencies embedding it, which is precisely the case
+  // that has no origin to write to. Losing the shareable URL there is a fair
+  // trade; losing the calculator is not.
   useEffect(() => {
     if (!ready || !calculated) return;
-    const encoded = encodeInputs(normalise(toInputs(draft)));
-    window.history.replaceState(null, '', `${window.location.pathname}?${encoded}`);
+    try {
+      const encoded = encodeInputs(normalise(toInputs(draft)));
+      window.history.replaceState(null, '', `${window.location.pathname}?${encoded}`);
+    } catch {
+      // No addressable URL in this context. The tool still works; only the
+      // share link does not, and the share button falls back to a prompt.
+    }
   }, [draft, calculated, ready]);
 
   const set = useCallback((key: keyof Draft, value: string | number) => {
@@ -120,7 +140,11 @@ export default function Calculator() {
     setDraft(EMPTY);
     setCalculated(false);
     setShowAdvanced(false);
-    window.history.replaceState(null, '', window.location.pathname);
+    try {
+      window.history.replaceState(null, '', window.location.pathname);
+    } catch {
+      // Same reason as above. Clearing the fields is the part that matters.
+    }
     document.getElementById('people')?.focus();
   }
 
@@ -156,46 +180,63 @@ export default function Calculator() {
         }}
         aria-label="Reporting cost inputs"
       >
-        <div className="field">
-          <label htmlFor="industry">Industry</label>
-          <select id="industry" value={draft.industry} onChange={(e) => set('industry', e.target.value)}>
-            {INDUSTRIES.map((i) => (
-              <option key={i.id} value={i.id}>
-                {i.label}
-              </option>
-            ))}
-          </select>
-          <p className="field__hint">Changes the wording only. Every number below is yours.</p>
-        </div>
-
+        {/* Paired into rows so the whole form clears a 13" laptop fold. Six
+            full-width fields ran 823px and pushed the button under the fold on
+            every laptop measured; a control you have to scroll to find is a
+            control half the visitors never reach. */}
         <div className="form__row">
+          <div className="field">
+            <label htmlFor="industry">
+              Industry
+              <InfoTip label="industry">
+                Changes the wording only — every number below is yours. We found no public benchmark for reporting
+                hours by sector worth citing, so there are none here rather than invented ones.
+              </InfoTip>
+            </label>
+            <select id="industry" value={draft.industry} onChange={(e) => set('industry', e.target.value)}>
+              {INDUSTRIES.map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="field">
             <label htmlFor="people">People doing manual reporting</label>
             <input id="people" type="number" inputMode="numeric" min={1} max={LIMITS.people[1]} {...field('people', 'e.g. 4')} />
           </div>
+        </div>
+
+        <div className="form__row">
           <div className="field">
             <label htmlFor="hours">Hours a week, each</label>
             <input id="hours" type="number" inputMode="decimal" min={0} max={LIMITS.hoursPerWeek[1]} step="0.5" {...field('hoursPerWeek', 'e.g. 8')} />
             <p className="field__hint">Per person, not the team total.</p>
           </div>
+          <div className="field">
+            <label htmlFor="cost">
+              Fully loaded cost per hour (Rs)
+              <InfoTip label="cost per hour">
+                The shortcuts below are starting points, not survey data. Type your own and the calculation follows
+                your number.
+              </InfoTip>
+            </label>
+            <input id="cost" type="number" inputMode="numeric" min={0} max={LIMITS.hourlyCost[1]} {...field('hourlyCost', 'e.g. 1600')} />
+            <p className="field__hint">Salary plus employer costs.</p>
+          </div>
         </div>
 
-        <div className="field">
-          <label htmlFor="cost">Fully loaded cost per hour (Rs)</label>
-          <input id="cost" type="number" inputMode="numeric" min={0} max={LIMITS.hourlyCost[1]} {...field('hourlyCost', 'e.g. 1600')} />
-          <div className="calc__bands" role="group" aria-label="Cost band shortcuts">
-            {COST_BANDS.value.map((b) => (
-              <button
-                key={b.id}
-                type="button"
-                className={`calc__band${draft.hourlyCost === String(b.hourly) ? ' is-on' : ''}`}
-                onClick={() => set('hourlyCost', String(b.hourly))}
-              >
-                {b.label}
-              </button>
-            ))}
-          </div>
-          <p className="field__hint">Salary plus employer costs. The shortcuts are starting points, not survey data.</p>
+        <div className="calc__bands" role="group" aria-label="Cost band shortcuts">
+          {COST_BANDS.value.map((b) => (
+            <button
+              key={b.id}
+              type="button"
+              className={`calc__band${draft.hourlyCost === String(b.hourly) ? ' is-on' : ''}`}
+              onClick={() => set('hourlyCost', String(b.hourly))}
+            >
+              {b.label}
+            </button>
+          ))}
         </div>
 
         <div className="form__row">
@@ -204,9 +245,14 @@ export default function Calculator() {
             <input id="reports" type="number" inputMode="numeric" min={0} max={LIMITS.reportsPerMonth[1]} {...field('reportsPerMonth', 'e.g. 12')} />
           </div>
           <div className="field">
-            <label htmlFor="lag">Days old is the data when someone acts on it</label>
-            <input id="lag" type="number" inputMode="numeric" min={0} max={LIMITS.decisionLagDays[1]} {...field('decisionLagDays', 'e.g. 3')} />
-            <p className="field__hint">Optional. Working days.</p>
+            <label htmlFor="lag">
+              Days old is the data when acted on
+              <InfoTip label="data age">
+                Optional. Working days between the data being true and someone acting on it. On its own it is
+                reported as a finding; add what a day of delay costs and it becomes part of the total.
+              </InfoTip>
+            </label>
+            <input id="lag" type="number" inputMode="numeric" min={0} max={LIMITS.decisionLagDays[1]} {...field('decisionLagDays', 'e.g. 3 working days')} />
           </div>
         </div>
 
@@ -214,7 +260,13 @@ export default function Calculator() {
             range input asks people to judge a position against nothing. */}
         <div className="field calc__slider">
           <div className="calc__slider-head">
-            <label htmlFor="reduction">How much of that effort automation removes</label>
+            <label htmlFor="reduction">
+              How much of that effort automation removes
+              <InfoTip label="the automation assumption">
+                Our planning assumption, not a measurement, and set at the cautious end. What survives automation is
+                exception handling and judgement. Move it if your experience says otherwise.
+              </InfoTip>
+            </label>
             <output className="calc__slider-val" htmlFor="reduction">
               {pct}%
             </output>
@@ -234,10 +286,6 @@ export default function Calculator() {
             <span>Typical</span>
             <span>Ambitious</span>
           </div>
-          <p className="field__hint">
-            Our planning assumption, not a measurement, and set at the cautious end. Move it if your experience says
-            otherwise.
-          </p>
         </div>
 
         <button type="button" className="calc__toggle" onClick={() => setShowAdvanced((v) => !v)} aria-expanded={showAdvanced}>

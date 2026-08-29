@@ -26,6 +26,7 @@ const MODULES = {
   '@/lib/calculator/model': 'src/lib/calculator/model.ts',
   '@/lib/calculator/url-state': 'src/lib/calculator/url-state.ts',
   '@/components/calculator/Results': 'src/components/calculator/Results.tsx',
+  '@/components/calculator/InfoTip': 'src/components/calculator/InfoTip.tsx',
   '@/components/calculator/Calculator': 'src/components/calculator/Calculator.tsx',
 };
 
@@ -211,6 +212,89 @@ const fill = async (page, id, value) => {
   ok('the headline is a real number, not NaN or Infinity', /^Rs [\d,]+$/.test(big.trim()), big);
   const people = await page.evaluate(() => document.getElementById('people')?.value);
   ok('an absurd people count is clamped before it renders', Number(people) <= 5000, people);
+  await ctx.close();
+}
+
+/* --- the whole form must clear a laptop fold ------------------------------ */
+{
+  // A control below the fold is a control a share of visitors never reach, and
+  // the one below it here is the button that produces the answer.
+  for (const [w, h, label] of [[1280, 700, '13" laptop'], [1440, 780, '14" laptop'], [1512, 850, 'MacBook 14"']]) {
+    const ctx = await browser.newContext({ viewport: { width: w, height: h } });
+    const page = await ctx.newPage();
+    await page.route('**/tools/bi-automation-calculator*', (route) =>
+      route.fulfill({ status: 200, contentType: 'text/html', body: html }));
+    await page.goto('https://example.test/tools/bi-automation-calculator');
+    await page.waitForFunction(() => window.__mounted === true, null, { timeout: 15000 });
+    await page.waitForTimeout(150);
+    const bottom = await page.evaluate(() =>
+      Math.round(document.querySelector('.calc__submit').getBoundingClientRect().bottom));
+    ok(`every control fits above the fold on a ${label}`, bottom <= h, `submit ends at ${bottom}px in ${h}px`);
+    await ctx.close();
+  }
+}
+
+/* --- mobile: no overflow, and the tooltips reachable by touch ------------- */
+{
+  for (const [w, h, name] of [[320, 568, 'small Android'], [360, 640, 'Android'], [390, 844, 'iPhone 14'], [430, 932, 'Pro Max']]) {
+    const ctx = await browser.newContext({ viewport: { width: w, height: h }, isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    await page.route('**/tools/bi-automation-calculator*', (route) =>
+      route.fulfill({ status: 200, contentType: 'text/html', body: html }));
+    await page.goto('https://example.test/tools/bi-automation-calculator');
+    await page.waitForFunction(() => window.__mounted === true, null, { timeout: 15000 });
+
+    for (const [id, v] of [['people','6'],['hours','9'],['cost','2400'],['reports','18'],['lag','4']]) await page.fill('#' + id, v);
+    await page.click('button[type=submit]');
+    await page.waitForSelector('.calc-res', { timeout: 5000 });
+
+    const over = await page.evaluate((vw) => {
+      let worst = 0;
+      for (const el of document.querySelectorAll('.calc *')) {
+        const b = el.getBoundingClientRect();
+        if (b.width === 0) continue;
+        worst = Math.max(worst, Math.round(b.right - vw), Math.round(-b.left));
+      }
+      return Math.max(worst, document.documentElement.scrollWidth - vw);
+    }, w);
+    ok(`${name} ${w}px: nothing runs past the edge`, over <= 1, `worst overhang ${over}px`);
+
+    // A hover-only tooltip is unreachable on a touch screen, and the first
+    // version of this component was exactly that: the tap opened it and the
+    // synthesised mouseleave closed it again before anything rendered.
+    await page.locator('.tip__btn').first().click();
+    await page.waitForTimeout(150);
+    const bubble = await page.locator('.tip__bubble').first().boundingBox();
+    ok(`${name} ${w}px: a tooltip opens on tap`, bubble !== null);
+    if (bubble) {
+      ok(`${name} ${w}px: and stays on screen`, bubble.x >= -0.5 && bubble.x + bubble.width <= w + 0.5,
+        `x ${Math.round(bubble.x)}, width ${Math.round(bubble.width)}, viewport ${w}`);
+    }
+
+    const target = await page.evaluate(() => {
+      const b = document.querySelector('.tip__btn').getBoundingClientRect();
+      return { w: Math.round(b.width), h: Math.round(b.height) };
+    });
+    ok(`${name} ${w}px: the info button is a real tap target`, target.h >= 32 && target.w >= 32, JSON.stringify(target));
+    await ctx.close();
+  }
+}
+
+/* --- it must survive a context with no addressable URL -------------------- */
+{
+  // An agency embedding this in a sandboxed iframe has an opaque origin, where
+  // history.replaceState throws. Unguarded, that threw inside an effect and
+  // took the entire result down: the calculator produced nothing at all.
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  await page.setContent(html);
+  await page.waitForFunction(() => window.__mounted === true, null, { timeout: 15000 });
+  for (const [id, v] of [['people','4'],['hours','8'],['cost','1600'],['reports','12']]) await page.fill('#' + id, v);
+  await page.click('button[type=submit]');
+  const appeared = await page.locator('.calc-res').count().catch(() => 0) ||
+    await page.waitForSelector('.calc-res', { timeout: 4000 }).then(() => 1).catch(() => 0);
+  ok('it still calculates where the URL cannot be written', appeared === 1,
+    'replaceState throws on an opaque origin; the result must not depend on it');
   await ctx.close();
 }
 

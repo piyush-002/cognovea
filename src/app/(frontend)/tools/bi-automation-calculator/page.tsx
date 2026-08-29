@@ -70,7 +70,7 @@ export default function CalculatorPage() {
         </div>
       </section>
 
-      <section className="band band--tint">
+      <section className="band band--tint" id="methodology">
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">Methodology</p>

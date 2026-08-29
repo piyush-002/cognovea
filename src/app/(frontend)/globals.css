@@ -3626,3 +3626,126 @@ tbody tr:hover {
   border-color: var(--violet);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--violet) 30%, transparent);
 }
+
+/* One line carrying what used to be three stacked hints. The statements are
+   the reason the tool is credible, so they survive the compaction; only their
+   arrangement changed. */
+.calc__caveat {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.calc__caveat a {
+  color: var(--link);
+}
+
+/* The calculator's form is tighter than the contact form: it has twice the
+   controls and has to clear a laptop fold, where the contact form does not. */
+.calc__form {
+  gap: 0.85rem;
+}
+
+.calc__form .form__row {
+  gap: 0.9rem;
+}
+
+.calc__form .field input,
+.calc__form .field select {
+  padding-block: 0.7rem;
+}
+
+.calc__slider input[type='range'] {
+  margin-block-start: 0.45rem;
+}
+
+/* Info tooltips ----------------------------------------------------------- */
+
+.tip {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-inline-start: 0.35rem;
+}
+
+/* The field is the positioning context, so a bubble is bounded by the control
+   it belongs to. */
+.calc__form .field,
+.calc__slider {
+  position: relative;
+}
+
+/* A real 36px target, not a 16px one with an invisible overlay. The overlay
+   version measured 16px to every tool that checks tap sizes, and to a finger it
+   was a guess. Negative margin keeps the label's line height unchanged, so the
+   bigger target costs no layout. */
+.tip__btn {
+  display: grid;
+  place-items: center;
+  inline-size: 36px;
+  block-size: 36px;
+  margin-block: -10px;
+  margin-inline-start: -10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fg-3);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.tip__btn:hover,
+.tip__btn[aria-expanded='true'] {
+  color: var(--blue-ink);
+}
+
+.tip__btn svg {
+  inline-size: 15px;
+  block-size: 15px;
+}
+
+/* Anchored to the field, not to the icon.
+ *
+ * Centring on the icon put the bubble's left edge off-screen every time: the
+ * icons sit near the start of their label, and half a 20rem bubble is wider
+ * than the space to their left. Positioning against the field instead means it
+ * can never be wider than the control it explains, which is true at every
+ * width without a breakpoint or any measuring in JavaScript. */
+.tip__bubble {
+  position: absolute;
+  z-index: 20;
+  inset-block-end: calc(100% + 9px);
+  inset-inline-start: 0;
+  inline-size: max-content;
+  max-inline-size: min(22rem, 100%);
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  background: var(--navy);
+  color: rgb(255 255 255 / 0.92);
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: 0 6px 24px rgb(16 24 40 / 0.22);
+  pointer-events: none;
+}
+
+/* The arrow points back at the icon rather than at the bubble's own centre,
+   since the bubble is no longer centred on it. */
+.tip__bubble::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-start: 14px;
+  border: 6px solid transparent;
+  border-block-start-color: var(--navy);
+}
+
+/* A label containing a tooltip is a flex row, so the icon sits on the text
+   baseline rather than being pushed onto its own line by the label's display:
+   block. */
+.calc__form .field label:has(.tip) {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
