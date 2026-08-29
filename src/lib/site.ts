@@ -1,3 +1,4 @@
+import { CANONICAL_URL } from './host-redirect.mjs';
 /**
  * Single source of truth for site-wide values: URLs, contact details, nav.
  * Change the domain here once and canonicals, sitemap, robots and JSON-LD follow.
@@ -6,7 +7,11 @@
 export const site = {
   name: 'Cognovea',
   tagline: 'Where Data Becomes Intelligence.',
-  url: 'https://cognovea.com',
+  /* Imported, not restated. next.config.mjs needs the same value for the www
+     redirect and cannot import a .ts module, so it lives in host-redirect.mjs
+     and both read it from there. Two copies of this string is exactly the bug
+     being fixed: canonicals said the apex while every real URL was www. */
+  url: CANONICAL_URL,
   description:
     'Cognovea turns enterprise data into intelligence. Data analytics, business intelligence, data engineering and AI solutions that drive data-driven decision making.',
   email: 'hello@cognovea.com',

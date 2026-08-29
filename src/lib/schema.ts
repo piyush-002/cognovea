@@ -46,12 +46,26 @@ export function articleSchema(post: PostSummary & { updatedAt?: string | null })
     dateModified: post.updatedAt ?? post.publishedAt ?? undefined,
     image: post.heroImage?.url ? [post.heroImage.url] : [abs('/og.png')],
     keywords: post.tags.length ? post.tags.join(', ') : undefined,
-    author: { '@type': 'Organization', name: site.name, url: abs('/') },
+    /* A Person when someone is named, the Organization when the post is
+       genuinely the company's. Attributing every article to an Organization is
+       what the audit was objecting to, but attributing one to an invented
+       Person would be worse than either. */
+    author: post.author.isCompany
+      ? { '@type': 'Organization', name: site.name, url: abs('/') }
+      : {
+          '@type': 'Person',
+          name: post.author.name,
+          ...(post.author.role ? { jobTitle: post.author.role } : {}),
+          ...(post.author.bio ? { description: post.author.bio } : {}),
+          ...(post.author.url ? { sameAs: [post.author.url] } : {}),
+          worksFor: { '@id': `${site.url}/#organization` },
+        },
     publisher: {
       '@type': 'Organization',
       name: site.name,
       url: abs('/'),
-      logo: { '@type': 'ImageObject', url: abs('/og.png') },
+      // The brand lockup, not the social card. See the note in layout.tsx.
+      logo: { '@type': 'ImageObject', url: abs('/logo.png').replace(/\/$/, ''), width: 512, height: 512 },
     },
   };
 }

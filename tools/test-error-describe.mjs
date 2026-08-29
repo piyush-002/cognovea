@@ -48,6 +48,15 @@ const describe = new Function(`${js}; return describe;`)();
 
 let pass = 0;
 let fail = 0;
+const check2 = (name, got, want) => {
+  if (got === want) {
+    pass++;
+    console.log(`  ok    ${name}`);
+  } else {
+    fail++;
+    console.log(`  FAIL  ${name}\n        got ${got}, want ${want}`);
+  }
+};
 const check = (name, value, mustContain) => {
   const out = String(describe(value));
   const missing = mustContain.filter((m) => !out.includes(m));
@@ -113,6 +122,42 @@ if (allStrings) {
 } else {
   fail++;
   console.log('  FAIL  some input did not produce a string, or threw');
+}
+
+/* --- the remedy hint must fire on a wrapped driver error ------------------ */
+{
+  const m = src.match(/function isSchemaDrift\(error: unknown\): boolean \{[\s\S]*?\n\}/);
+  if (!m) {
+    fail++;
+    console.log('  FAIL  isSchemaDrift() not found in src/lib/payload.ts');
+  } else {
+    const js = m[0]
+      .replace('function isSchemaDrift(error: unknown): boolean {', 'function isSchemaDrift(error) {')
+      .replace(/: unknown|: boolean/g, '')
+      .replace(/ as \{[^}]*\}/g, '');
+    const isSchemaDrift = new Function(`${js}; return isSchemaDrift;`)();
+
+    // The shape that actually arrives: Drizzle wraps the pg error, so the code
+    // is one level down. Checking only the top level is what made the first
+    // version print the code and then withhold the advice.
+    const wrapped = Object.assign(new Error('Failed query: select ...'), {
+      cause: Object.assign(new Error('column posts.author_name does not exist'), {
+        code: '42703',
+        routine: 'errorMissingColumn',
+      }),
+    });
+    check2('a wrapped missing-column error is recognised', isSchemaDrift(wrapped), true);
+    check2('a missing table is recognised', isSchemaDrift({ code: '42P01' }), true);
+    check2('an unwrapped missing column is recognised', isSchemaDrift({ code: '42703' }), true);
+    check2('an unrelated error is not', isSchemaDrift(new Error('connection terminated')), false);
+    check2('a connection refusal is not', isSchemaDrift({ code: 'ECONNREFUSED' }), false);
+    check2('null does not throw', isSchemaDrift(null), false);
+
+    // A cause chain that points at itself must not spin.
+    const loop = new Error('outer');
+    loop.cause = loop;
+    check2('a circular cause chain terminates', isSchemaDrift(loop), false);
+  }
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);

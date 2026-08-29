@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
+import Byline from '@/components/Byline';
 import JsonLd from '@/components/JsonLd';
 import { formatDate, getPosts } from '@/lib/content';
 import { abs } from '@/lib/site';
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
     'Perspectives from the Cognovea team on data engineering, analytics, business intelligence and applied AI.',
   alternates: { canonical: `${PATH}/` },
   openGraph: {
-    title: 'Insights | Cognovea',
+    title: 'Insights | Data, Analytics and AI Perspectives',
     description:
       'Perspectives from the Cognovea team on data engineering, analytics, business intelligence and applied AI.',
     url: `${PATH}/`,
@@ -97,6 +98,8 @@ export default async function InsightsPage() {
                   <p className="eyebrow">
                     {formatDate(p.publishedAt)}
                     {p.readingMinutes ? ` · ${p.readingMinutes} min read` : ''}
+                    {' · '}
+                    <Byline author={p.author} compact />
                   </p>
 
                   <h2 className="h-sm" style={{ marginTop: '0.7rem' }}>

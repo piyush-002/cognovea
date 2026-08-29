@@ -6,6 +6,8 @@
  * package.json, because Payload requires them to match; `npm install` is now
  * enough on a fresh clone.
  */
+import { hostRedirects } from './src/lib/host-redirect.mjs';
+
 let withPayload;
 try {
   ({ withPayload } = await import('@payloadcms/next/withPayload'));
@@ -180,6 +182,28 @@ const nextConfig = {
   // server code to the client.
   productionBrowserSourceMaps: false,
 
+  /**
+   * One canonical host. The other 308s to it, path and query preserved.
+   *
+   * Without this both www and the apex answer 200 with identical HTML and the
+   * same canonical tag, so search engines have to pick one and any link
+   * equity splits across the pair. It is also why an admin session could
+   * behave differently depending on which spelling of the domain someone
+   * typed: the cookie set on one host is not sent to the other.
+   *
+   * Which host is canonical comes from NEXT_PUBLIC_SERVER_URL, so this needs
+   * no code change per environment. Off on previews, whose hostnames are
+   * generated per deployment.
+   */
+  async redirects() {
+    return hostRedirects({
+      serverUrl: process.env.NEXT_PUBLIC_SERVER_URL,
+      vercelProductionUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+      isDeployed: Boolean(process.env.VERCEL),
+      isPreview: Boolean(process.env.VERCEL) && process.env.VERCEL_ENV !== 'production',
+    });
+  },
+
   async headers() {
     return [
       {
@@ -210,6 +234,18 @@ const nextConfig = {
           { key: 'Content-Security-Policy', value: "default-src 'none'; frame-ancestors 'none'" },
           { key: 'Cache-Control', value: 'no-store, max-age=0' },
         ],
+      },
+      {
+        // Static assets. Excluded from the page rule by its negative lookahead
+        // so that rule and this one cannot both apply, which left them with no
+        // headers at all: a scanner that happens to request a .js bundle sees a
+        // response carrying nothing, and nosniff genuinely matters on a file
+        // whose content type a browser might otherwise guess at.
+        //
+        // No CSP: these are the assets a CSP governs, not documents that need
+        // one, and a policy here would apply to nothing.
+        source: '/_next/:path*',
+        headers: baseHeaders,
       },
     ];
   },

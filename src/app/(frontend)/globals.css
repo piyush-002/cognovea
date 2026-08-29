@@ -532,7 +532,22 @@ b {
   font-weight: 500;
   letter-spacing: -0.008em;
   text-decoration: none;
-  white-space: nowrap;
+  /* Not `white-space: nowrap`. That gave every button a min-content width it
+     refused to go below, and "Get Started With an AI Readiness Assessment"
+     measures 327px. With 18px of page padding either side it forced the page
+     to 364px wide, so on any phone narrower than that the entire layout —
+     heading, nav, everything — was pushed out and clipped by the body's
+     overflow-x. The button looked fine; the page around it did not.
+
+     Allowing the label to wrap costs nothing where there is room: a flex item
+     sized from its content still takes one line whenever one line fits, so
+     wider phones and every desktop are unchanged. Only the labels that cannot
+     fit break, which is the correct outcome and the one nowrap was preventing.
+
+     max-inline-size is the belt: no button may be wider than what contains it,
+     whatever a future label says. */
+  max-inline-size: 100%;
+  text-align: center;
   border: 1px solid transparent;
   transition: transform 0.3s var(--ease), background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
 }
@@ -2867,4 +2882,226 @@ tbody tr:hover {
   .quote__logo {
     margin-left: 0;
   }
+}
+
+/* ==========================================================================
+   Case studies
+   ========================================================================== */
+
+/* The body is a single column the width of comfortable reading, and individual
+   blocks opt out of it to go wider. Doing it this way rather than nesting
+   wrappers means a full-bleed image and a paragraph are siblings in the markup,
+   which is what the block list actually is. */
+.cs-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+}
+
+.cs-block {
+  inline-size: min(100%, 46rem);
+  margin-block-start: clamp(2.2rem, 4.5vw, 3.6rem);
+}
+
+.cs-block:first-child {
+  margin-block-start: 0;
+}
+
+.cs-block--wide {
+  inline-size: min(100%, 68rem);
+}
+
+.cs-block__head {
+  margin-block-end: 0.9rem;
+}
+
+.cs-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  padding-block-end: clamp(1.5rem, 3vw, 2.2rem);
+  border-block-end: 1px solid var(--line);
+  margin-block-end: clamp(1.8rem, 3.5vw, 2.6rem);
+}
+
+.cs-meta__v {
+  margin-block-start: 0.35rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.cs-cover {
+  margin-block-end: clamp(2.2rem, 4.5vw, 3.6rem);
+}
+
+/* --- figures ------------------------------------------------------------ */
+
+.cs-figure {
+  margin: 0;
+}
+
+.cs-figure__frame {
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+}
+
+/* Height is left to the image's own aspect ratio rather than forced into a
+   fixed box. A case study image is usually a screenshot, and cropping a
+   dashboard to 16:9 cuts off the part that made it worth showing. */
+.cs-figure__frame img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.cs-figure__cap {
+  margin-block-start: 0.7rem;
+  font-size: 14px;
+  color: var(--fg-3);
+}
+
+.cs-pair {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 1.6rem);
+}
+
+.cs-gallery {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 1.6rem);
+}
+
+/* --- problem / solution ------------------------------------------------- */
+
+.cs-ps {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 1.6rem);
+}
+
+.cs-ps__panel {
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+/* The solution panel is the one that should be read, so it gets the accent.
+   A tint rather than a fill: three saturated panels in a row would spend the
+   whole violet budget in one section. */
+.cs-ps__panel--accent {
+  background: var(--violet-wash);
+  border-color: color-mix(in srgb, var(--violet) 18%, var(--line));
+}
+
+.cs-ps__panel .rich > *:first-child {
+  margin-block-start: 0.6rem;
+}
+
+/* --- pull quote --------------------------------------------------------- */
+
+.cs-pull {
+  margin-inline: 0;
+  padding-inline-start: clamp(1.2rem, 3vw, 2rem);
+  border-inline-start: 2px solid var(--violet);
+}
+
+.cs-pull__text {
+  margin: 0;
+  font-family: var(--f-head);
+  font-size: clamp(1.25rem, 2.6vw, 1.9rem);
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+}
+
+.cs-pull__by {
+  margin-block-start: 0.9rem;
+  font-size: 14.5px;
+  color: var(--fg-3);
+}
+
+/* Wider screens only. Everything above is the single-column phone layout, so
+   these are additive and cannot be lost to a later rule of equal specificity.
+   See tools/test-css-order.mjs. */
+@media (min-width: 760px) {
+  .cs-pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cs-gallery--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cs-gallery--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .cs-ps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cs-ps--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================================================
+   Byline
+   ========================================================================== */
+
+.byline {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding-block-start: clamp(1.4rem, 3vw, 2rem);
+  border-block-start: 1px solid var(--line);
+}
+
+.byline__photo,
+.byline__initial {
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: 50%;
+  flex: none;
+  object-fit: cover;
+}
+
+.byline__initial {
+  display: grid;
+  place-items: center;
+  background: var(--violet-wash);
+  color: var(--blue-ink);
+  font-family: var(--f-head);
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.byline__name {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+/* Inside an .eyebrow the byline is one more piece of the same meta line, so it
+   inherits that line's size and colour rather than fighting it. */
+.eyebrow .byline__name,
+.eyebrow .byline__role {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.byline__role {
+  margin-block-start: 0.15rem;
+  font-size: 14px;
+  color: var(--fg-3);
+}
+
+.byline__bio {
+  margin-block-start: 0.5rem;
+  font-size: 14.5px;
+  color: var(--fg-2);
+  max-inline-size: 40rem;
 }

@@ -56,6 +56,49 @@ export const Posts: CollectionConfig = {
         ],
       },
     },
+    /**
+     * Authorship.
+     *
+     * Optional, and empty means the byline reads "The Cognovea Team" rather
+     * than a name nobody stands behind. Attribution is only worth anything if
+     * the person named actually wrote it, so this stays a field an editor
+     * fills in rather than something defaulted from whoever happened to be
+     * logged in when the record was created.
+     *
+     * A name alone is most of the value. Role and bio are what turn a byline
+     * into something a reader can weigh.
+     */
+    {
+      name: 'author',
+      type: 'group',
+      admin: { description: 'Leave the name empty to publish under the company byline.' },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'name', type: 'text', admin: { width: '50%' } },
+            {
+              name: 'role',
+              type: 'text',
+              admin: { width: '50%', description: 'e.g. Lead Data Engineer.' },
+            },
+          ],
+        },
+        {
+          name: 'bio',
+          type: 'textarea',
+          maxLength: 320,
+          admin: { description: 'One or two sentences on why this person can speak to this subject.' },
+        },
+        { name: 'photo', type: 'upload', relationTo: 'media' },
+        {
+          name: 'url',
+          type: 'text',
+          admin: { description: 'Optional. A LinkedIn profile or similar, used as the author\'s sameAs.' },
+        },
+      ],
+    },
+
     {
       name: 'excerpt',
       type: 'textarea',

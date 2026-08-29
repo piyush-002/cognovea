@@ -178,11 +178,10 @@ export function serviceSchema({
     description,
     serviceType,
     url: abs(path),
-    provider: {
-      '@type': 'Organization',
-      name: site.name,
-      url: abs('/'),
-    },
+    // A reference to the Organization declared in the root layout, not a
+    // second one with two of its fields. Repeating it describes a different
+    // company that happens to share a name.
+    provider: { '@id': `${site.url}/#organization` },
     areaServed: ['IN', 'US', 'GB', 'AE', 'SG'],
   };
 }
