@@ -76,6 +76,7 @@ export const serviceLinks: NavLink[] = [
 ];
 
 export const companyLinks: NavLink[] = [
+  { href: '/tools', label: 'Free Tools' },
   { href: '/insights', label: 'Insights' },
   { href: '/about-us', label: 'About Us' },
   { href: '/careers', label: 'Careers' },
@@ -92,6 +93,10 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   { path: '/generative-ai-services', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/ai-strategy-consulting', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/data-health-check', priority: 0.9, changeFrequency: 'monthly' },
+  // The calculator is a link target in its own right, so it ranks above the
+  // blog: it is the page other sites are meant to point at.
+  { path: '/tools', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/tools/bi-automation-calculator', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/insights', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/about-us', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/careers', priority: 0.6, changeFrequency: 'weekly' },

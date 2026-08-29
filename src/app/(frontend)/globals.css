@@ -3105,3 +3105,334 @@ tbody tr:hover {
   color: var(--fg-2);
   max-inline-size: 40rem;
 }
+
+/* ==========================================================================
+   Savings calculator
+   ========================================================================== */
+
+.calc {
+  display: grid;
+  gap: clamp(1.6rem, 4vw, 2.6rem);
+  align-items: start;
+}
+
+.calc__form {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.field__hint {
+  margin-block-start: 0.4rem;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--fg-3);
+}
+
+/* Cost band shortcuts ----------------------------------------------------- */
+
+.calc__bands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-block-start: 0.55rem;
+}
+
+.calc__band {
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-size: 12.5px;
+  color: var(--fg-2);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  /* 32px is below the 44px guideline, so the row gets vertical padding from
+     the gap above and these sit inside a form where the real targets are the
+     inputs. They are a shortcut, not the only way to set the value. */
+  min-height: 32px;
+}
+
+.calc__band:hover {
+  border-color: var(--violet);
+  color: var(--fg);
+}
+
+.calc__band.is-on {
+  background: var(--violet-wash);
+  border-color: color-mix(in srgb, var(--violet) 40%, var(--line));
+  color: var(--blue-ink);
+  font-weight: 500;
+}
+
+.calc__toggle {
+  justify-self: start;
+  padding: 0.5rem 0;
+  background: none;
+  border: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--link);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  min-height: 44px;
+}
+
+.calc__advanced {
+  display: grid;
+  gap: 1.1rem;
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--line);
+  background: var(--paper-2);
+}
+
+/* Output ------------------------------------------------------------------ */
+
+.calc__out {
+  position: sticky;
+  /* Sticky so the number stays visible while the inputs are edited: the whole
+     interaction is "change this, watch that move", and it stops working the
+     moment the result scrolls off. Falls back to normal flow on one column. */
+  top: calc(var(--nav-h) + 1.5rem);
+}
+
+.calc-res {
+  padding: clamp(1.3rem, 3.5vw, 2rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+.calc-res__big {
+  margin-block-start: 0.5rem;
+  font-family: var(--f-head);
+  font-size: clamp(2rem, 5.5vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+}
+
+.calc-res__mid {
+  margin-block-start: 0.35rem;
+  font-family: var(--f-head);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+
+.calc-res__mid--good {
+  color: var(--blue-ink);
+}
+
+.calc-res__sub {
+  margin-block-start: 0.45rem;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.calc-res__bars {
+  display: grid;
+  gap: 1.05rem;
+  margin-block-start: clamp(1.3rem, 3vw, 1.9rem);
+  padding-block-start: clamp(1.3rem, 3vw, 1.9rem);
+  border-block-start: 1px solid var(--line);
+}
+
+.calc-bar__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-block-end: 0.4rem;
+}
+
+.calc-bar__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.calc-bar__value {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+
+.calc-bar__value--muted {
+  color: var(--fg-3);
+  font-style: italic;
+}
+
+.calc-bar__track {
+  block-size: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line) 60%, transparent);
+  overflow: hidden;
+}
+
+.calc-bar__fill {
+  block-size: 100%;
+  border-radius: 999px;
+  transition: width 0.45s var(--ease);
+}
+
+/* Three tones from the brand ramp, in cost order, so the eye reads the
+   breakdown as one quantity split three ways rather than three unrelated
+   figures. */
+.calc-bar__fill--labour { background: var(--violet); }
+.calc-bar__fill--error  { background: var(--blue); }
+.calc-bar__fill--delay  { background: var(--cyan); }
+
+.calc-bar__note {
+  margin-block-start: 0.45rem;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.calc-bar--unpriced {
+  padding: 0.8rem 0.9rem;
+  border-radius: 10px;
+  border: 1px dashed var(--line);
+}
+
+.calc-res__after {
+  display: grid;
+  gap: 1.2rem;
+  margin-block-start: clamp(1.3rem, 3vw, 1.9rem);
+  padding-block-start: clamp(1.3rem, 3vw, 1.9rem);
+  border-block-start: 1px solid var(--line);
+}
+
+.calc-res__payback {
+  margin-block-start: 1.1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: var(--violet-wash);
+  font-size: 14.5px;
+  color: var(--fg);
+}
+
+.calc__actions {
+  margin-block-start: 1.2rem;
+}
+
+.calc__share-note {
+  margin-block-start: 0.6rem;
+  font-size: 13px;
+  color: var(--fg-3);
+}
+
+/* Methodology ------------------------------------------------------------- */
+
+.method {
+  max-inline-size: 52rem;
+}
+
+.method__list {
+  display: grid;
+  gap: 1.2rem;
+  margin-block-start: 1.4rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: method;
+}
+
+.method__item {
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+.method__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  margin-block-end: 0.5rem;
+}
+
+.method__tag {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Published and assumption are visually distinct on purpose. The reader needs
+   to see at a glance which numbers we are standing behind with a citation and
+   which are our own judgement. */
+.method__tag--published {
+  background: color-mix(in srgb, var(--cyan) 18%, transparent);
+  color: #0b6b7d;
+}
+
+.method__tag--editorial {
+  background: var(--violet-wash);
+  color: var(--blue-ink);
+}
+
+.method__tag--user-set {
+  background: color-mix(in srgb, var(--line) 45%, transparent);
+  color: var(--fg-2);
+}
+
+.method__note {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--fg-2);
+}
+
+.method__src {
+  margin-block-start: 0.7rem;
+  padding-block-start: 0.7rem;
+  border-block-start: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--fg-3);
+}
+
+.method__gap {
+  margin-block-start: 1.8rem;
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+}
+
+.method__gap ul {
+  margin-block-start: 0.8rem;
+  display: grid;
+  gap: 0.7rem;
+  padding-inline-start: 1.1rem;
+}
+
+.method__gap li {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--fg-2);
+}
+
+/* Two columns once there is room. Additive, so nothing here can be lost to a
+   later rule of equal specificity. See tools/test-css-order.mjs. */
+@media (min-width: 900px) {
+  .calc {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .calc-res__after {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* The share sits with the figure rather than under it: two numbers on one line
+   read as one fact, which is what they are. */
+.calc-bar__share {
+  color: var(--fg-3);
+  font-weight: 400;
+}
