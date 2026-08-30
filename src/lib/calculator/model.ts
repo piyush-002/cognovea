@@ -1,0 +1,229 @@
+import { CELL_ERROR_RATE, TIME_REDUCTION, WORKING_WEEKS_PER_YEAR, type IndustryId } from './assumptions';
+
+/**
+ * The calculation, as a pure function.
+ *
+ * Pure so it can be tested without a browser, and so the same code produces the
+ * on-screen result, the shared-link result and the PDF. Three implementations
+ * of one sum is three chances to disagree with itself, and a calculator whose
+ * PDF says something different from its screen is finished as a citable thing.
+ *
+ * The model deliberately refuses to monetise one of the three costs by default.
+ * See `decisionLag` below.
+ */
+
+export type Inputs = {
+  industry: IndustryId;
+  /** People doing the manual reporting. */
+  people: number;
+  /** Hours a week each of them spends on it. */
+  hoursPerWeek: number;
+  /** Fully loaded cost per hour, in rupees. */
+  hourlyCost: number;
+  /** Recurring reports produced per month. Drives the error exposure. */
+  reportsPerMonth: number;
+  /** Typical age of the data when a decision is made on it, in working days. */
+  decisionLagDays: number;
+  /**
+   * Optional. What one day of delay costs this business. Nobody can supply this
+   * from outside the business, so if it is absent the delay is reported as a
+   * finding rather than converted into money.
+   */
+  costPerDayOfDelay?: number | null;
+  /** Share of manual effort removed. Visitor-controlled; see TIME_REDUCTION. */
+  timeReduction: number;
+  /** Optional. What the visitor expects to invest, for a payback figure. */
+  investment?: number | null;
+};
+
+export type Result = {
+  hoursPerYear: number;
+  labourCost: number;
+  errorCost: number;
+  /** Null when the delay has not been, or cannot be, priced. */
+  delayCost: number | null;
+  /**
+   * Why it is null, so the page can explain rather than print nothing.
+   * 'unvalued'  — no day value supplied, which is the default and fine.
+   * 'no-cycles' — a day value was supplied but there are no recurring reports,
+   *               so there is no count of late decisions to apply it to.
+   */
+  delayUnpricedBecause: 'unvalued' | 'no-cycles' | null;
+  /** Always present: the delay expressed as a fact rather than a cost. */
+  decisionLagDays: number;
+  staleDecisionsPerYear: number;
+  totalKnownCost: number;
+  hoursAfter: number;
+  costAfter: number;
+  annualSaving: number;
+  /** Null unless the visitor supplied an investment figure. */
+  paybackMonths: number | null;
+};
+
+const clamp = (n: number, lo: number, hi: number) => Math.min(Math.max(n, lo), hi);
+
+/** Non-finite, negative and absurd values are coerced rather than propagated. */
+function sane(n: unknown, lo: number, hi: number, fallback = 0): number {
+  const v = typeof n === 'number' ? n : Number(n);
+  if (!Number.isFinite(v)) return fallback;
+  return clamp(v, lo, hi);
+}
+
+export const LIMITS = {
+  people: [1, 5000],
+  hoursPerWeek: [0, 60],
+  hourlyCost: [0, 100000],
+  reportsPerMonth: [0, 2000],
+  decisionLagDays: [0, 60],
+  costPerDayOfDelay: [0, 100000000],
+  investment: [0, 1000000000],
+} as const;
+
+/**
+ * Clamp everything into range, and supply nothing where a value is missing.
+ *
+ * The fallbacks used to be 4 people, 8 hours a week, Rs 1600 an hour, 12 reports
+ * a month — plausible numbers, close to what somebody would type. That made a
+ * missing value indistinguishable from a real one: an empty field produced a
+ * confident, sensible-looking result that the visitor had not entered, and
+ * twice it took a person looking at a screenshot to notice.
+ *
+ * They are now the empty value for each field rather than a likely one. If a
+ * guard upstream ever fails again, the output is visibly zero instead of
+ * quietly wrong, and zero is a number somebody questions.
+ */
+export function normalise(raw: Partial<Inputs>): Inputs {
+  return {
+    industry: (raw.industry ?? 'other') as IndustryId,
+    // One, because the field cannot mean fewer than one person.
+    people: Math.round(sane(raw.people, ...LIMITS.people, 1)),
+    hoursPerWeek: sane(raw.hoursPerWeek, ...LIMITS.hoursPerWeek, 0),
+    hourlyCost: sane(raw.hourlyCost, ...LIMITS.hourlyCost, 0),
+    reportsPerMonth: Math.round(sane(raw.reportsPerMonth, ...LIMITS.reportsPerMonth, 0)),
+    decisionLagDays: sane(raw.decisionLagDays, ...LIMITS.decisionLagDays, 0),
+    costPerDayOfDelay:
+      raw.costPerDayOfDelay === null || raw.costPerDayOfDelay === undefined
+        ? null
+        : sane(raw.costPerDayOfDelay, ...LIMITS.costPerDayOfDelay, 0),
+    timeReduction: sane(raw.timeReduction, TIME_REDUCTION.value.min, TIME_REDUCTION.value.max, TIME_REDUCTION.value.default),
+    investment:
+      raw.investment === null || raw.investment === undefined
+        ? null
+        : sane(raw.investment, ...LIMITS.investment, 0),
+  };
+}
+
+export function calculate(raw: Partial<Inputs>): Result {
+  const i = normalise(raw);
+  const weeks = WORKING_WEEKS_PER_YEAR.value;
+
+  const hoursPerYear = i.people * i.hoursPerWeek * weeks;
+  const labourCost = hoursPerYear * i.hourlyCost;
+
+  const reportsPerYear = i.reportsPerMonth * 12;
+
+  /**
+   * Error cost: a share of the reporting effort that gets done twice.
+   *
+   * This used to be expressed as reports-carrying-an-error × hours-per-report ×
+   * rate, which reads as though it depends on how many reports there are. It
+   * does not. Substitute hours-per-report = hours ÷ reports and the report
+   * count cancels out of its own formula:
+   *
+   *     (reports × rate) × (hours / reports) × cost  ≡  rate × hours × cost
+   *
+   * The elaborate version produced two false impressions and one real defect.
+   * It implied the report count mattered when 1 a month and 500 a month gave
+   * byte-identical output, and it broke discontinuously at zero, where
+   * hours-per-report was defined as 0 and the whole term collapsed — so going
+   * from 0 reports to 1 jumped the rework cost from nothing to its full value
+   * and then never moved again.
+   *
+   * Written as what it actually is. A fixed share of the work is wrong and gets
+   * redone; how that work is parcelled into reports has nothing to do with it.
+   *
+   * Still the conservative reading: it counts only errors somebody catches, and
+   * says nothing about a decision taken on a wrong number, which is the
+   * expensive case and is not estimable from these inputs.
+   */
+  const errorCost = hoursPerYear * CELL_ERROR_RATE.value * i.hourlyCost;
+
+  /**
+   * Decision lag.
+   *
+   * Reported as days by default, and converted to money only if the visitor
+   * says what a day is worth. There is no honest general multiplier here: a day
+   * of stale stock data costs a retailer something entirely unlike what it
+   * costs a hospital, and any figure we supplied would be the number a
+   * sceptical reader attacks first. So the tool states the finding — decisions
+   * are being made on data this many days old, this many times a year — and
+   * leaves the valuation to whoever knows the business.
+   *
+   * The value entered is PER DECISION, and the arithmetic is shown on the page
+   * so nobody has to guess. That matters because this term compounds fast:
+   * three days at Rs 20,000 across 144 decisions is Rs 86 lakh, several times
+   * the labour cost. That may be true for a business where a late decision is
+   * genuinely expensive, but it must be visibly the visitor's own arithmetic
+   * rather than something the tool did quietly on their behalf.
+   *
+   * There is deliberately no cap. An earlier version clamped the decision count
+   * at 365, which meant 30 reports a month and 100 reports a month produced
+   * nearly identical figures — the output stopped responding to an input and
+   * said nothing about it. A silent ceiling is worse than a large number: the
+   * large number can be argued with.
+   */
+  const staleDecisionsPerYear = reportsPerYear;
+  const delayCost =
+    i.costPerDayOfDelay && i.costPerDayOfDelay > 0 && staleDecisionsPerYear > 0
+      ? i.decisionLagDays * i.costPerDayOfDelay * staleDecisionsPerYear
+      : null;
+
+  const totalKnownCost = labourCost + errorCost + (delayCost ?? 0);
+
+  const hoursAfter = hoursPerYear * (1 - i.timeReduction);
+  const labourAfter = hoursAfter * i.hourlyCost;
+  // Automation removes the manual step that produced the error, so the residual
+  // error cost scales with the residual manual effort rather than vanishing.
+  const errorAfter = errorCost * (1 - i.timeReduction);
+  const delayAfter = delayCost === null ? null : delayCost * (1 - i.timeReduction);
+  const costAfter = labourAfter + errorAfter + (delayAfter ?? 0);
+
+  const annualSaving = totalKnownCost - costAfter;
+
+  const paybackMonths =
+    i.investment && i.investment > 0 && annualSaving > 0
+      ? (i.investment / annualSaving) * 12
+      : null;
+
+  const delayUnpricedBecause: Result['delayUnpricedBecause'] =
+    delayCost !== null
+      ? null
+      : i.costPerDayOfDelay && i.costPerDayOfDelay > 0
+        ? 'no-cycles'
+        : 'unvalued';
+
+  return {
+    hoursPerYear,
+    labourCost,
+    errorCost,
+    delayCost,
+    delayUnpricedBecause,
+    decisionLagDays: i.decisionLagDays,
+    staleDecisionsPerYear,
+    totalKnownCost,
+    hoursAfter,
+    costAfter,
+    annualSaving,
+    paybackMonths,
+  };
+}
+
+/** Indian digit grouping, matching the rest of the site. */
+export function formatCurrency(n: number): string {
+  const rounded = Math.round(n);
+  return `Rs ${rounded.toLocaleString('en-IN')}`;
+}
+
+export function formatHours(n: number): string {
+  return `${Math.round(n).toLocaleString('en-IN')} hrs`;
+}

@@ -6,21 +6,16 @@ import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
 import { abs, site } from '@/lib/site';
+import { pageMetadata } from '@/lib/seo';
 
 const PATH = '/contact';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Contact Cognovea | Data Analytics & AI Consulting',
   description:
     'Connect with Cognovea to discuss your data, analytics, or AI needs, or start a two week Data Health Check to understand where your data needs attention.',
-  alternates: { canonical: `${PATH}/` },
-  openGraph: {
-    title: 'Contact Cognovea | Data Analytics & AI Consulting',
-    description:
-      'Connect with Cognovea to discuss your data, analytics, or AI needs, or start a two week Data Health Check to understand where your data needs attention.',
-    url: `${PATH}/`,
-  },
-};
+  path: '/contact',
+});
 
 const CRUMBS = [{ href: PATH, label: 'Contact' }];
 

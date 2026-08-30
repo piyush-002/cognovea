@@ -75,12 +75,43 @@ export const serviceLinks: NavLink[] = [
   },
 ];
 
-export const companyLinks: NavLink[] = [
-  { href: '/insights', label: 'Insights' },
-  { href: '/about-us', label: 'About Us' },
-  { href: '/careers', label: 'Careers' },
-  { href: '/contact', label: 'Contact' },
-];
+/*
+ * Each link defined once, then composed into the three places they appear.
+ * The top nav shows a shorter list than the footer, and deriving both from one
+ * set of objects is what stops a label being changed in one and not the other.
+ */
+const TOOLS: NavLink = { href: '/tools', label: 'Free Tools' };
+const INSIGHTS: NavLink = { href: '/insights', label: 'Insights' };
+const CONTACT: NavLink = { href: '/contact', label: 'Contact' };
+const ABOUT: NavLink = {
+  href: '/about-us',
+  label: 'About Us',
+  blurb: 'Who we are, how we work, and where we are.',
+};
+const CAREERS: NavLink = {
+  href: '/careers',
+  label: 'Careers',
+  blurb: 'Open data and AI roles, and what the work looks like.',
+};
+
+/** Shown flat in the top nav. */
+export const navPrimaryLinks: NavLink[] = [TOOLS, INSIGHTS, CONTACT];
+
+/**
+ * Grouped under a Company dropdown in the top nav.
+ *
+ * About and Careers are the two nobody arrives looking for — a visitor comes
+ * for the work, the tools or a conversation, and finds these once they are
+ * already interested. Folding them in takes the top row from seven items to
+ * five, which is the difference between a row you scan and one you read.
+ */
+export const navCompanyLinks: NavLink[] = [ABOUT, CAREERS];
+
+/**
+ * Everything, in reading order, for the footer and the mobile drawer. Both have
+ * the room, and a footer is where people go when the nav did not have it.
+ */
+export const companyLinks: NavLink[] = [TOOLS, INSIGHTS, ABOUT, CAREERS, CONTACT];
 
 export const legalLinks: NavLink[] = [{ href: '/privacy-policy', label: 'Privacy Policy' }];
 
@@ -92,6 +123,10 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   { path: '/generative-ai-services', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/ai-strategy-consulting', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/data-health-check', priority: 0.9, changeFrequency: 'monthly' },
+  // The calculator is a link target in its own right, so it ranks above the
+  // blog: it is the page other sites are meant to point at.
+  { path: '/tools', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/tools/bi-automation-calculator', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/insights', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/about-us', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/careers', priority: 0.6, changeFrequency: 'weekly' },

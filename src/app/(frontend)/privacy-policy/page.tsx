@@ -3,19 +3,16 @@ import Link from 'next/link';
 import { PageHero, breadcrumbSchema } from '@/components/Bits';
 import JsonLd from '@/components/JsonLd';
 import { site } from '@/lib/site';
+import { pageMetadata } from '@/lib/seo';
 
 const PATH = '/privacy-policy';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Privacy Policy | Cognovea',
-  // Declared rather than inherited. Without it this page's link previews use
-  // the site-wide og:title, which announces a privacy policy as the homepage.
-  openGraph: { title: 'Privacy Policy | Cognovea' },
   description:
     'How Cognovea collects, uses, stores and protects personal information submitted through cognovea.com, and the rights available to you over that information.',
-  alternates: { canonical: `${PATH}/` },
-  robots: { index: true, follow: true },
-};
+  path: '/privacy-policy',
+});
 
 const CRUMBS = [{ href: PATH, label: 'Privacy Policy' }];
 
