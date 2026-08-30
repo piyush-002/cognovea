@@ -3762,18 +3762,3 @@ tbody tr:hover {
   min-inline-size: 15rem;
 }
 
-/* The standalone answer above the calculator. Set apart from the tool so it
-   reads as a statement rather than as instructions for the widget. */
-.answer {
-  max-inline-size: 46rem;
-  margin-block-end: clamp(1.8rem, 4vw, 2.8rem);
-  padding-block-end: clamp(1.5rem, 3.5vw, 2.2rem);
-  border-block-end: 1px solid var(--line);
-}
-
-.answer p {
-  margin-block-start: 0.9rem;
-  font-size: 15.5px;
-  line-height: 1.65;
-  color: var(--fg-2);
-}

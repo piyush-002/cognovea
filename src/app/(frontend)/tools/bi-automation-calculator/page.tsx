@@ -119,27 +119,6 @@ export default function CalculatorPage() {
 
       <section className="band">
         <div className="wrap">
-          {/* The short answer, before the tool.
-              A calculator page that only makes sense while you are using it
-              gives an answer engine nothing to quote and a hurried reader
-              nothing to take away. This states the method in full sentences
-              that stand alone, which is what gets cited. */}
-          <div className="answer rv">
-            <h2 className="h-sm">The short version</h2>
-            <p>
-              To work out what manual reporting costs you a year: multiply the people doing it by the hours each
-              spends a week, by 46 working weeks, by their fully loaded hourly cost. Add the rework — roughly{' '}
-              {(CELL_ERROR_RATE.value * 100).toFixed(2)}% of spreadsheet formulas produce a wrong result, from an
-              audit of 50 operational spreadsheets covering 270,722 formulas — and add what it costs you when
-              decisions wait on data that is already days old.
-            </p>
-            <p>
-              The calculator below does that arithmetic on your figures and splits the total three ways, so you can
-              see which part is worth acting on. It is free, nothing is gated, and every assumption it makes is listed
-              with its source further down this page.
-            </p>
-          </div>
-
           <Calculator />
         </div>
       </section>
