@@ -4196,25 +4196,6 @@ tbody tr:hover {
 
 
 
-/* Full-bleed across the top of the card, so the motif reads as the card's
-   subject rather than as an icon set beside the text. The negative margin pulls
-   it back out through the card's own padding to reach the edges. */
-.pb-card__art {
-  inline-size: calc(100% + 3rem);
-  /* The reset sets max-width: 100% on every img, which silently clamps the
-     bleed back to the content box and leaves the motif stopping short of the
-     card's right edge. */
-  max-inline-size: none;
-  margin: -1.5rem -1.5rem 0.4rem;
-  block-size: auto;
-  border-block-end: 1px solid var(--line);
-}
-
-.pb-card--soon .pb-card__art {
-  opacity: 0.5;
-  border-block-end-style: dashed;
-}
-
 .pb-card__industry {
   font-size: 12px;
   font-weight: 600;
@@ -4288,15 +4269,6 @@ tbody tr:hover {
   position: sticky;
   /* Clear of the sticky header. */
   inset-block-start: 5.5rem;
-  display: grid;
-  gap: 1.1rem;
-}
-
-.pb-side__art {
-  inline-size: 100%;
-  block-size: auto;
-  border: 1px solid var(--line);
-  border-radius: 12px;
 }
 
 /* Measure, not full width. This is long-form reading and a 100-character line
@@ -4305,13 +4277,23 @@ tbody tr:hover {
   max-inline-size: 46rem;
 }
 
+/* Set to the right, as its own block rather than a float.
+   
+   It answers "is this written for me", which is worth a glance and not worth
+   the first full-width band on the page — that position belongs to the answer
+   the reader came for. Not floated: the block below it has a background and a
+   border, and a block box flows *under* a float rather than beside it, so the
+   two would overlap. Only the inline text would have wrapped. */
 .pb__audience {
-  padding: 1rem 1.2rem;
-  border-inline-start: 3px solid var(--violet);
+  max-inline-size: 24rem;
+  margin-inline-start: auto;
+  padding: 0.9rem 1.1rem;
+  border-inline-end: 3px solid var(--violet);
   background: var(--violet-wash);
-  border-radius: 0 10px 10px 0;
-  font-size: 15px;
-  line-height: 1.65;
+  border-radius: 10px 0 0 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: end;
 }
 
 .pb__toc {
@@ -4515,9 +4497,18 @@ tbody tr:hover {
 
   .pb-side {
     position: static;
-    grid-template-columns: 10rem 1fr;
-    align-items: center;
-    gap: 1.2rem;
+  }
+
+  /* Full width on a narrow screen: a 24rem block right-aligned in a 26rem
+     column is just an indented paragraph, and right-aligned text is harder to
+     read for no gain once there is no space beside it. */
+  .pb__audience {
+    max-inline-size: none;
+    margin-inline-start: 0;
+    text-align: start;
+    border-inline-end: 0;
+    border-inline-start: 3px solid var(--violet);
+    border-radius: 0 10px 10px 0;
   }
 }
 
@@ -4526,9 +4517,6 @@ tbody tr:hover {
     grid-template-columns: 1fr;
   }
 
-  .pb-side__art {
-    display: none;
-  }
 }
 
 @media (max-width: 40rem) {

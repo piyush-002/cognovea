@@ -66,10 +66,6 @@ export default function PlaybooksPage() {
           <div className="pb-grid">
             {live.map((p) => (
               <Link key={p.slug} href={`${PATH}/${p.slug}`} className="pb-card">
-                {/* eslint-disable-next-line @next/next/no-img-element -- a 3KB
-                    vector, already resolution-independent; see Figure() in
-                    Bits.tsx for why these skip the optimiser. */}
-                <img className="pb-card__art" src={p.image} alt="" width={600} height={400} loading="lazy" />
                 <span className="pb-card__industry">{p.industry}</span>
                 <h2 className="pb-card__title">{p.title}</h2>
                 <p className="pb-card__blurb">{p.description}</p>
@@ -81,8 +77,6 @@ export default function PlaybooksPage() {
 
             {PLANNED_PLAYBOOKS.map((p) => (
               <div key={p.slug} className="pb-card pb-card--soon">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="pb-card__art" src={p.image} alt="" width={600} height={400} loading="lazy" />
                 <span className="pb-card__industry">{p.industry}</span>
                 <h2 className="pb-card__title">AI Use Case Playbook</h2>
                 <p className="pb-card__blurb">

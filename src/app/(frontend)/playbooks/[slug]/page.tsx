@@ -108,11 +108,6 @@ export default async function PlaybookPage({ params }: Props) {
               rather than used; on the left it stays visible while you read, and
               the industry motif gives the column something to sit under. */}
           <aside className="pb-side">
-            {/* eslint-disable-next-line @next/next/no-img-element -- a 3KB
-                vector; the optimiser would cost a request and return more
-                bytes. Same reasoning as Figure() in Bits.tsx. */}
-            <img className="pb-side__art" src={playbook.image} alt="" width={600} height={400} />
-
             <nav className="pb__toc" aria-label="On this page">
               <span className="pb__toc-lab">On this page</span>
               <ol>
@@ -132,6 +127,11 @@ export default async function PlaybookPage({ params }: Props) {
           </aside>
 
           <div className="pb">
+            {/* Set to the right and out of the reading column.
+            
+                It answers "is this for me", which is worth a glance and not
+                worth the first full-width block on the page — that position
+                belongs to the answer somebody came for. */}
             <p className="pb__audience">{playbook.audience}</p>
 
             {/* The answer before the argument.
