@@ -126,6 +126,7 @@ ok(
 
 /* --- every inner page carries a breadcrumb -------------------------------- */
 const missingCrumbs = [];
+const exemptCrumbs = [];
 const pageWalk = (dir) => {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, e.name);
@@ -134,12 +135,26 @@ const pageWalk = (dir) => {
       const rel = path.relative(pagesDir, dir);
       if (!rel) continue; // the homepage is the root of the trail
       const text = fs.readFileSync(full, 'utf8');
+      /*
+       * A route that declares itself noindex is exempt, and only that.
+       *
+       * BreadcrumbList exists to shape a search result. The printable summary
+       * carries robots: { index: false } because it is one visitor's figures,
+       * generated for them and linked from nowhere — so there is no result for
+       * a breadcrumb to appear in. Read from the source, so removing the
+       * noindex puts the page back under the rule automatically.
+       */
+      if (/robots:\s*\{[^}]*index:\s*false/.test(text)) {
+        exemptCrumbs.push('/' + rel);
+        continue;
+      }
       if (!/breadcrumbSchema/.test(text)) missingCrumbs.push('/' + rel);
     }
   }
 };
 pageWalk(pagesDir);
-ok('every inner page emits a BreadcrumbList', missingCrumbs.length === 0, missingCrumbs.join(', '));
+ok('every indexable inner page emits a BreadcrumbList', missingCrumbs.length === 0, missingCrumbs.join(', '));
+if (exemptCrumbs.length) console.log(`        exempt (noindex): ${exemptCrumbs.join(', ')}`);
 
 /* --- FAQ schema must use the visible copy --------------------------------- */
 const faqPages = [];

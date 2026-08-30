@@ -301,7 +301,46 @@ function industryArt() {
   }).join('')}`,
   );
 
-  return { retail, mfg, fin, health, energy };
+  // Logistics. Legs converging on a hub, one running long.
+  //
+  // Same grammar as the others: the shape is the ordinary case and the amber
+  // mark is the exception worth looking at — here a route whose transit time is
+  // out of line with the rest, which is what the data is for.
+  const logistics = ind(
+    'ind-logistics',
+    (() => {
+      const hub = [430, 200];
+      const origins = [
+        [70, 96],
+        [70, 168],
+        [70, 240],
+        [70, 312],
+        [190, 60],
+        [190, 340],
+      ];
+      // The third leg is the slow one. Fixed rather than random so the file is
+      // byte-identical on every run, as everything else in here is.
+      const slow = 2;
+      const legs = origins
+        .map((o, i) => {
+          const bend = i === slow ? 74 : 26 + (i % 3) * 10;
+          const mx = (o[0] + hub[0]) / 2;
+          const my = (o[1] + hub[1]) / 2 - bend;
+          const colour = i === slow ? C.amber : C.violet;
+          const op = i === slow ? '1' : (0.68 - (i % 3) * 0.1).toFixed(2);
+          const w = i === slow ? 5.5 : 3.4;
+          return `<path d="M ${o[0]} ${o[1]} Q ${mx.toFixed(1)} ${my.toFixed(1)} ${hub[0]} ${hub[1]}" fill="none" stroke="${colour}" stroke-opacity="${op}" stroke-width="${w}" stroke-linecap="round"/>
+      <circle cx="${o[0]}" cy="${o[1]}" r="${i === slow ? 11 : 8}" fill="${colour}" fill-opacity="${i === slow ? '1' : '.7'}"/>`;
+        })
+        .join('');
+      return `${legs}
+  <circle cx="${hub[0]}" cy="${hub[1]}" r="34" fill="${C.violet}" fill-opacity=".22" stroke="${C.violet}" stroke-opacity=".8" stroke-width="3"/>
+  <circle cx="${hub[0]}" cy="${hub[1]}" r="12" fill="${C.violet}"/>
+  <line x1="${hub[0] + 46}" y1="${hub[1]}" x2="548" y2="${hub[1]}" stroke="${C.cyan}" stroke-width="3" stroke-linecap="round"/>`;
+    })(),
+  );
+
+  return { retail, mfg, fin, health, energy, logistics };
 }
 
 /* ------------------------------------------------------------------- grain */
@@ -687,6 +726,7 @@ write('ind-manufacturing.svg', I.mfg);
 write('ind-financial.svg', I.fin);
 write('ind-healthcare.svg', I.health);
 write('ind-energy.svg', I.energy);
+write('ind-logistics.svg', I.logistics);
 
 
 write('de-warehouse.svg', artWarehouse());

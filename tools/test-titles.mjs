@@ -52,9 +52,32 @@ const walk = (dir) => {
 };
 walk(pagesDir);
 
+/*
+ * Routes that declare themselves noindex are exempt from the rules below, and
+ * only those.
+ *
+ * The rules exist to protect pages that get indexed and shared: a title that
+ * disagrees with its og:title, or a breadcrumb trail Google cannot show. A page
+ * that says `robots: { index: false }` is neither indexed nor shareable — the
+ * printable summary is one visitor's figures, generated for them, never linked
+ * from anywhere. Requiring social metadata and breadcrumb schema on it would be
+ * adding markup for a search result that must never exist.
+ *
+ * Deliberately narrow, and self-repairing: the exemption is read from the
+ * source, so the moment somebody removes the noindex the page is checked again.
+ */
+const isNoindex = (src) => /robots:\s*\{[^}]*index:\s*false/.test(src);
+
+const skipped = [];
+
 for (const full of pages) {
   const rel = '/' + (path.relative(pagesDir, path.dirname(full)) || '');
   const src = fs.readFileSync(full, 'utf8');
+
+  if (isNoindex(src)) {
+    skipped.push(rel);
+    continue;
+  }
 
   ok(
     `${rel}: builds its metadata with pageMetadata()`,
@@ -109,5 +132,6 @@ ok(
   'trailingSlash is on, so the other spelling redirects and must not be named as canonical',
 );
 
+if (skipped.length) console.log(`  exempt (noindex): ${skipped.join(', ')}`);
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);

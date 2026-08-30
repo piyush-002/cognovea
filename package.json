@@ -42,7 +42,11 @@
     "test:tool-lead": "node tools/test-tool-lead.mjs",
     "test:summary-print": "node tools/test-summary-print.mjs",
     "test:notify": "node tools/test-notify.mjs",
-    "test:rate-limit": "node tools/test-rate-limit.mjs"
+    "test:rate-limit": "node tools/test-rate-limit.mjs",
+    "check:cycles": "node tools/check-cycles.mjs",
+    "check:playbooks": "node tools/check-playbooks.mjs",
+    "test:nav": "node tools/test-nav.mjs",
+    "test:playbooks-ui": "node tools/test-playbooks-ui.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",

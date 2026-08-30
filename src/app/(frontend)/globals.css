@@ -1,4 +1,14 @@
-/* ==========================================================================
+/* A white plate behind the mark rather than a filter over it.
+   
+   These are colour marks — blue seals, an orange numeral — so the invert trick
+   used for single-colour artwork would destroy them. On a navy footer they need
+   an opaque light ground, which is also how a certification body would expect
+   its mark to be reproduced: as issued, unaltered, with clear space around it. */
+.c-foot__cert--logo img {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #fff;
+}/* ==========================================================================
    Cognovea, design system v3
    Purple → Blue → Cyan on a white canvas, with deep navy for weight.
 
@@ -2287,6 +2297,84 @@ tbody tr:hover {
   color: var(--fg-3);
 }
 
+/* Certification marks, bottom of the footer's first column.
+   
+   Set as quiet outlined chips rather than anything shouty: on a footer these
+   are reassurance for somebody already interested, not a claim to win
+   attention with. The wrapping is deliberate — three of these do not fit one
+   line in the column on a phone, and a horizontal scroll for three words would
+   be absurd. */
+/* `.c-foot ul` sets display:grid at a higher specificity than a single class,
+   so this has to match it or the chips stack into a column — which is what they
+   did, silently, and looked deliberate. */
+.c-foot ul.c-foot__certs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-block-start: 1.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.c-foot__certs li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+}
+
+.c-foot__cert-name {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+}
+
+.c-foot__cert-meta {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* A supplied certification mark.
+   
+   No border and no padding around it: certification bodies set clear-space
+   rules for their marks, and a box drawn tight around one usually breaks them.
+   Height is fixed so three marks from three different bodies line up; width
+   follows the artwork. */
+.c-foot__certs li.c-foot__cert--logo {
+  padding: 0;
+  border: 0;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.c-foot__cert--logo img {
+  /* 58px, not 42: the supplied artwork is 168px tall and the version numbers
+     inside the seals are unreadable much below this. Still under a third of the
+     source height, so nothing is being upscaled. */
+  block-size: 58px;
+  inline-size: auto;
+  max-inline-size: none;
+}
+
+/* A white plate behind the mark rather than a filter over it.
+   
+   These are colour marks — blue seals, an orange numeral — so the invert trick
+   written for single-colour artwork turned each one into a solid white
+   rectangle: brightness(0) blacks out every pixel, invert(1) then makes the lot
+   white. The images were loading perfectly and rendering as blank plates.
+   
+   A plate is also closer to how a certification body expects its mark
+   reproduced: as issued, unaltered, with clear space around it. */
+.c-foot__cert--logo img {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #fff;
+}
+
 /* h2 rather than h4: as h4 these jumped two levels from the page's last h2,
    which a screen-reader user hears as missing sections. Inside the footer
    landmark an h2 column heading is both valid and flat. */
@@ -4142,4 +4230,387 @@ tbody tr:hover {
 
 .gate__cancel:hover {
   color: var(--fg);
+}
+
+/* ==========================================================================
+   Playbooks  (/playbooks and /playbooks/<industry>)
+   ========================================================================== */
+
+/* The index cards. */
+.pb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+  gap: 1.1rem;
+}
+
+.pb-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.5rem;
+  /* Clips the full-bleed motif to the card's rounded corners. */
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.pb-card:hover,
+.pb-card:focus-visible {
+  border-color: var(--line-2);
+  transform: translateY(-2px);
+}
+
+/* Not a link, so it must not look like one. It carries no aria-disabled either:
+   that attribute belongs on something interactive, and a div is not. */
+.pb-card--soon {
+  background: transparent;
+  border-style: dashed;
+  cursor: default;
+}
+
+.pb-card--soon:hover {
+  transform: none;
+  border-color: var(--line);
+}
+
+.pb-card--soon .pb-card__title,
+.pb-card--soon .pb-card__blurb {
+  color: var(--fg-3);
+}
+
+
+
+.pb-card__industry {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--violet);
+}
+
+.pb-card--soon .pb-card__industry {
+  color: var(--fg-3);
+}
+
+.pb-card__title {
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1.06rem;
+  line-height: 1.32;
+  font-weight: 600;
+}
+
+.pb-card__blurb {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--fg-2, var(--fg-3));
+}
+
+.pb-card__meta {
+  margin-block-start: auto;
+  padding-block-start: 0.5rem;
+  font-size: 13px;
+  color: var(--fg-3);
+}
+
+/* Footnotes to the grid, not content in it.
+   Full width rather than the 62ch measure the body copy uses: these sit under a
+   grid that spans the wrap, and a short column under a wide grid reads as an
+   unfinished third card. Italic and grey so the eye files them as an aside. */
+.pb-notes {
+  margin-block-start: 1.5rem;
+  padding-block-start: 1.2rem;
+  border-block-start: 1px solid var(--line);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--fg-3);
+}
+
+.pb-notes__star {
+  margin-inline-end: 0.3em;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--violet);
+}
+
+/* --- the playbook itself ------------------------------------------------- */
+
+/* Two columns: contents on the left, the article beside it.
+   
+   The whole grid is pinned to the start of the wrap rather than centred. A
+   capped column inside .wrap inherits its margin-inline: auto and ends up
+   floating in the middle of a 1240px container with nothing either side, which
+   is what this replaced. */
+/* Three columns: contents, article, and a right-hand rail for the note about
+   who this is written for.
+   
+   The article takes 1fr rather than a fixed measure so it absorbs whatever the
+   two rails leave — at the 1160px the wrap gives on a desktop that is roughly
+   650px, which is a comfortable line length. Placement is by grid-column, not
+   by source order, so the markup can stack sensibly on a phone. */
+.pb-layout {
+  display: grid;
+  grid-template-columns: 13rem minmax(0, 1fr) 14rem;
+  gap: 2.25rem;
+  align-items: start;
+}
+
+/* The row is pinned as well as the column.
+   
+   With only grid-column set, the row is left to auto-placement, which never
+   moves backwards: the rail appears second in the source, finds column 1 of row
+   1 taken, and drops to row 2 — so the note ends up level with the middle of
+   the article instead of at the top of it. */
+.pb-side {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.pb {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.pb-rail {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.pb-side {
+  position: sticky;
+  /* Clear of the sticky header. */
+  inset-block-start: 5.5rem;
+}
+
+
+
+/* Reads as an aside in the margin, so it is set small and quiet: it answers
+   "is this written for me", which is worth a glance and nothing more. Left
+   aligned — right-aligned ragged text is harder to read, and the column's
+   position on the page already does the work that alignment was standing in
+   for. */
+.pb__audience {
+  padding: 0.9rem 1.1rem;
+  border-inline-start: 3px solid var(--violet);
+  background: var(--violet-wash);
+  border-radius: 0 10px 10px 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.pb__toc {
+  padding: 1.1rem 1.3rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.pb__toc-lab {
+  display: block;
+  margin-block-end: 0.6rem;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.pb__toc ol {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding-inline-start: 1.1rem;
+  font-size: 14.5px;
+}
+
+.pb__h2 {
+  margin-block: 2.6rem 0.9rem;
+}
+
+.pb > .pb__h2:first-of-type {
+  margin-block-start: 1.8rem;
+  padding-block-end: 0.5rem;
+  border-block-end: 1px solid var(--line);
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1.45rem;
+  font-weight: 600;
+  /* So a jump from the contents list does not hide the heading under the nav. */
+  scroll-margin-block-start: 5rem;
+}
+
+.pb__lead {
+  margin-block-end: 1.2rem;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--fg-3);
+}
+
+.pb__case {
+  margin-block: 2rem;
+  padding-block-end: 2rem;
+  border-block-end: 1px solid var(--line);
+  scroll-margin-block-start: 5rem;
+}
+
+.pb__case:last-of-type {
+  border-block-end: 0;
+}
+
+.pb__num {
+  display: block;
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--violet);
+}
+
+.pb__case h3 {
+  margin-block: 0.3rem 0.35rem;
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.pb__sum {
+  margin-block-end: 1rem;
+  font-size: 15.5px;
+  color: var(--fg-3);
+}
+
+.pb__case > p {
+  margin-block-end: 1.1rem;
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.pb__cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+  margin-block: 1.2rem;
+}
+
+.pb__col h4,
+.pb__fails h4 {
+  margin-block-end: 0.5rem;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.pb__col ul {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding-inline-start: 1.1rem;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.pb__col p {
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+/* Given its own treatment because it is the part of the page worth the most,
+   and the part every competing document leaves out. */
+.pb__fails {
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fcfcfd;
+}
+
+.pb__fails p {
+  font-size: 14.5px;
+  line-height: 1.68;
+}
+
+.pb__evi {
+  margin-block-start: 1.1rem;
+  padding-inline-start: 1rem;
+  border-inline-start: 2px solid var(--line-2);
+}
+
+.pb__evi p {
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+.pb__evi cite {
+  display: block;
+  margin-block-start: 0.45rem;
+  font-size: 13px;
+  font-style: normal;
+  color: var(--fg-3);
+}
+
+.pb__more {
+  margin-block-start: 2rem;
+  font-size: 14px;
+  color: var(--fg-3);
+}
+
+/* One breakpoint, and it comes after the base rules it overrides — see
+   tools/test-css-order.mjs, which exists because that went wrong once. */
+/* Below this the two columns do not both fit, so the contents go back to a
+   block above the article — no longer sticky, because a sticky sidebar on a
+   phone is a box that follows you down the page. */
+/* Below this the three columns will not fit, so everything stacks in source
+   order: contents, who it is for, then the article. The rails lose their
+   grid-column placement with the columns, and the contents stop being sticky —
+   a box that follows you down a phone screen is a nuisance rather than
+   navigation. */
+@media (max-width: 64rem) {
+  .pb-layout {
+    grid-template-columns: minmax(0, 46rem);
+    gap: 1.4rem;
+  }
+
+  /* Row placement has to be released with the columns, or all three would be
+     assigned the same single-column row 1 and overlap. */
+  .pb-side,
+  .pb-rail,
+  .pb {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .pb-side {
+    position: static;
+  }
+
+  /* A contents link is a 16px line of text, which is a poor target for a thumb.
+     Blocked out with vertical padding it becomes a ~40px row without changing
+     how it looks — the underline stays the same length, the row around it just
+     gets easier to hit. WCAG 2.5.8 asks for 24px; 40 is comfortable. */
+  .pb__toc a {
+    display: block;
+    padding-block: 0.6rem;
+  }
+
+  .pb__toc ol {
+    gap: 0;
+  }
+}
+
+@media (max-width: 40rem) {
+  .pb__cols {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .pb__h2 {
+    font-size: 1.28rem;
+  }
+
+  .pb__case h3 {
+    font-size: 1.15rem;
+  }
 }
