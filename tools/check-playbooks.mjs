@@ -137,7 +137,30 @@ for (const p of PLAYBOOKS) {
 
 /* --- the shape that makes it useful rather than promotional --------------- */
 for (const p of PLAYBOOKS) {
+  /*
+   * The 62-character rule lives in tools/test-titles.mjs, and this route slips
+   * past it: that check parses static `metadata` exports, and a playbook builds
+   * its title in generateMetadata from this object. So the rule is enforced
+   * here instead, where the string actually is.
+   */
   ok(`${p.slug}: has a title that could be searched for`, (p.title || '').length > 25);
+  ok(
+    `${p.slug}: the title fits what a search result displays`,
+    (p.title || '').length <= 62,
+    `${(p.title || '').length} chars: "${p.title}"`,
+  );
+  // Two of the six use cases involve no machine learning, so the set is not
+  // "AI" — but the phrase people search still has to survive inside the title.
+  ok(
+    `${p.slug}: the title says data and AI, not just AI`,
+    /\bdata and ai\b/i.test(p.title || ''),
+    p.title,
+  );
+  ok(
+    `${p.slug}: and still contains the phrase people type`,
+    /ai use cases in /i.test(p.title || ''),
+    p.title,
+  );
   ok(`${p.slug}: says who it is for`, (p.audience || '').length > 60);
   ok(`${p.slug}: has at least four use cases`, p.useCases.length >= 4, String(p.useCases.length));
   ok(`${p.slug}: has readiness criteria`, p.readiness.length >= 3, String(p.readiness.length));

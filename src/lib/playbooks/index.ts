@@ -1,7 +1,7 @@
 import { FINDINGS, type Finding } from '@/lib/playbooks/sources';
 
 /**
- * The AI Use Case Playbooks.
+ * The Data & AI Use Case Playbooks.
  *
  * Content as data rather than JSX, for two reasons. The page and the printable
  * one-pager render the same object, so the document a reader files cannot
@@ -38,7 +38,16 @@ export type UseCase = {
 export type Playbook = {
   slug: string;
   industry: string;
-  /** The page's H1. Written to be searched for, not to be clever. */
+  /**
+   * The page's H1, and its title in a search result. Kept under 62 characters
+   * so it is not truncated there.
+   *
+   * "Data and AI" rather than "AI", because two of the six use cases involve no
+   * machine learning whatever and calling the set AI would be the same
+   * overselling this document exists to argue against. It costs nothing in
+   * search: "Data and AI Use Cases in Manufacturing" contains the phrase
+   * people actually type, word for word.
+   */
   title: string;
   /** Meta description and the listing card's blurb. */
   description: string;
@@ -74,13 +83,13 @@ export type Playbook = {
 const manufacturing: Playbook = {
   slug: 'manufacturing',
   industry: 'Manufacturing',
-  title: 'AI Use Cases in Manufacturing: What Works, What It Needs, and How to Tell',
+  title: 'Data and AI Use Cases in Manufacturing',
   description:
-    'Six AI use cases in manufacturing, each with the data it requires, how to prove it worked, and where it fails. Every figure sourced, including the ones everyone quotes without checking.',
+    'Six data and AI use cases in manufacturing, each with the data it requires, how to prove it worked, and where it fails. Every figure sourced, including the ones everyone quotes without checking.',
   audience:
     'Written for plant, operations and IT leads at manufacturers who have been asked what they should be doing with AI and need an answer they can defend. It assumes no data science background and no existing platform.',
   standfirst:
-    'Six AI use cases manufacturers actually run: predictive maintenance, automated visual inspection, demand forecasting, OEE analysis and scheduling, energy optimisation, and spares and inventory. For each one this sets out the data it needs before it can work at all, how you would prove it worked, and the conditions under which it fails.',
+    'Six things manufacturers actually run on their data: predictive maintenance, automated visual inspection, demand forecasting, OEE analysis and scheduling, energy optimisation, and spares and inventory. Two of the six involve no machine learning at all. For each one this sets out the data it needs before it can work, how you would prove it worked, and the conditions under which it fails.',
 
   useCases: [
     {

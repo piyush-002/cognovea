@@ -22,9 +22,9 @@ const PATH = '/playbooks';
  * and earn nothing.
  */
 export const metadata: Metadata = pageMetadata({
-  title: 'AI Use Case Playbooks by Industry | Free, No Sign-Up',
+  title: 'Data & AI Playbooks by Industry | Free',
   description:
-    'What AI is actually used for in your industry, what data each use case needs, how to prove it worked, and where it fails. Free to read, every figure sourced.',
+    'What data and AI are actually used for in your industry, what each use case needs, how to prove it worked, and where it fails. Free to read, every figure sourced.',
   path: PATH,
 });
 
@@ -41,7 +41,7 @@ export default function PlaybooksPage() {
           {
             '@context': 'https://schema.org',
             '@type': 'CollectionPage',
-            name: 'AI Use Case Playbooks',
+            name: 'Data & AI Use Case Playbooks',
             url: abs(PATH),
             description:
               'Industry-by-industry playbooks covering what AI is used for, what data it requires, and how to tell whether it worked.',
@@ -56,8 +56,8 @@ export default function PlaybooksPage() {
 
       <PageHero
         eyebrow="Playbooks"
-        title="AI Use Case Playbooks, by industry"
-        intro="What AI is genuinely used for in your sector, what each use case needs before it can work, how you would know it worked, and where it fails. Free to read in full — no sign-up to read anything."
+        title="Data & AI Playbooks, by industry"
+        intro="What data and AI are genuinely used for in your sector, what each use case needs before it can work, how you would know it worked, and where it fails. Free to read in full — no sign-up to read anything."
         crumbs={CRUMBS}
       />
 
@@ -78,7 +78,7 @@ export default function PlaybooksPage() {
             {PLANNED_PLAYBOOKS.map((p) => (
               <div key={p.slug} className="pb-card pb-card--soon">
                 <span className="pb-card__industry">{p.industry}</span>
-                <h2 className="pb-card__title">AI Use Case Playbook</h2>
+                <h2 className="pb-card__title">Data &amp; AI Playbook</h2>
                 <p className="pb-card__blurb">
                   In preparation. Researched and sourced the same way as the first.
                 </p>
