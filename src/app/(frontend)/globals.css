@@ -3749,3 +3749,9 @@ tbody tr:hover {
   align-items: center;
   gap: 0;
 }
+
+.calc__empty-note {
+  margin-block-start: 0.9rem;
+  font-size: 13px;
+  color: var(--fg-3);
+}

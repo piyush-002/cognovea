@@ -218,6 +218,47 @@ const fill = async (page, id, value) => {
   await ctx.close();
 }
 
+/* --- an emptied field must never fall back to an invented number ---------- */
+{
+  const { ctx, page } = await open();
+  await fill(page, 'people', 1);
+  await fill(page, 'hours', 8);
+  await fill(page, 'cost', 1000);
+  await page.click('button[type=submit]');
+  await page.waitForSelector('.calc-res');
+  const before = (await page.locator('.calc-res__big').textContent())?.trim();
+  ok('a result appears with all three filled', before?.startsWith('Rs '), before);
+
+  // Clear the hours. The model's fallback is 8 a week, which is exactly what
+  // the visitor had typed — so a silent default here is invisible. It has to be
+  // checked by whether a result is shown at all, not by whether it changed.
+  await page.fill('#hours', '');
+  await page.waitForTimeout(250);
+
+  ok('clearing a required field removes the result', (await page.locator('.calc-res').count()) === 0,
+    'it used to keep calculating against the fallback of 8 hours a week and present it as the visitor’s own');
+  const notice = (await page.locator('.calc__empty').textContent()) ?? '';
+  ok('and the page names the field it is waiting on', /Hours a week/.test(notice), notice.slice(0, 140));
+
+  await page.fill('#hours', '8');
+  await page.waitForTimeout(250);
+  const after = (await page.locator('.calc-res__big').textContent())?.trim();
+  ok('refilling it brings the same result back', after === before, `${before} then ${after}`);
+
+  // The same for each of the other two, since each has its own fallback.
+  for (const [id, label] of [['people', 'People doing manual reporting'], ['cost', 'Cost per hour']]) {
+    await page.fill('#' + id, '');
+    await page.waitForTimeout(200);
+    ok(`clearing ${id} also removes the result`, (await page.locator('.calc-res').count()) === 0);
+    const n = (await page.locator('.calc__empty').textContent()) ?? '';
+    ok(`and names ${id}`, n.includes(label), n.slice(0, 120));
+    await page.fill('#' + id, id === 'people' ? '1' : '1000');
+    await page.waitForTimeout(200);
+  }
+  ok('all three restored, result is back', (await page.locator('.calc-res').count()) === 1);
+  await ctx.close();
+}
+
 /* --- the whole form must clear a laptop fold ------------------------------ */
 {
   // A control below the fold is a control a share of visitors never reach, and

@@ -63,6 +63,13 @@ const EMPTY: Draft = {
  */
 const REQUIRED = ['people', 'hoursPerWeek', 'hourlyCost'] as const;
 
+/** What to call each one when telling somebody it is empty. */
+const FIELD_NAMES: Record<(typeof REQUIRED)[number], string> = {
+  people: 'People doing manual reporting',
+  hoursPerWeek: 'Hours a week',
+  hourlyCost: 'Cost per hour',
+};
+
 function toInputs(d: Draft): Partial<Inputs> {
   const n = (s: string) => (s.trim() === '' ? undefined : Number(s));
   return {
@@ -116,8 +123,27 @@ export default function Calculator() {
     setReady(true);
   }, []);
 
-  const complete = REQUIRED.every((k) => draft[k].trim() !== '' && Number.isFinite(Number(draft[k])));
-  const result = useMemo(() => (calculated ? calculate(toInputs(draft)) : null), [draft, calculated]);
+  const missing = REQUIRED.filter((k) => draft[k].trim() === '' || !Number.isFinite(Number(draft[k])));
+  const complete = missing.length === 0;
+
+  /**
+   * A result is computed only while every required field is actually filled.
+   *
+   * `calculated` alone was the condition, which meant clearing a field after
+   * the first calculation kept the result on screen — recomputed against
+   * normalise()'s fallbacks. Empty the hours and it carried on reporting 368
+   * hours a year, which is one person at the fallback of 8 a week: a number the
+   * visitor never entered, presented as theirs, on a page whose entire claim is
+   * that every figure is either yours or disclosed.
+   *
+   * The fallbacks stay where they are. They are the model's guard against a
+   * hostile URL producing NaN, and that is a different job from deciding
+   * whether there is enough here to answer.
+   */
+  const result = useMemo(
+    () => (calculated && complete ? calculate(toInputs(draft)) : null),
+    [draft, calculated, complete],
+  );
 
   // The URL follows the result, not the typing: an address that changes while a
   // form is still empty is not a result anybody can share.
@@ -344,7 +370,19 @@ export default function Calculator() {
       </form>
 
       <div className="calc__out">
-        {result ? (
+        {calculated && !complete ? (
+          <div className="calc__empty">
+            <p className="eyebrow">Waiting on one thing</p>
+            <p className="calc__empty-lead">
+              {missing.length === 1 ? 'This field is empty:' : 'These fields are empty:'}{' '}
+              <strong>{missing.map((k) => FIELD_NAMES[k]).join(', ')}</strong>. Fill it back in and the result
+              returns.
+            </p>
+            <p className="calc__empty-note">
+              We would rather show nothing than carry on with a number you did not enter.
+            </p>
+          </div>
+        ) : result ? (
           <>
             <Results
               inputs={normalise(toInputs(draft))}
