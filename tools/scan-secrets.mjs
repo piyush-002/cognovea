@@ -315,7 +315,21 @@ for (const rel of tracked) {
     continue;
   }
   text.split('\n').forEach((line, i) => {
-    if (LOG_RE.test(line)) {
+    // Strip string literals before testing.
+    //
+    // console.error('DATABASE_URI is not set') NAMES the variable; it does not
+    // print it. Flagging that is a false positive on a line whose whole job is
+    // to help somebody fix a missing value — and a scanner that cries wolf on
+    // every run is one people stop reading, which is the failure mode this
+    // whole file exists to avoid.
+    //
+    // What is still caught is the dangerous shape: the identifier appearing as
+    // an expression, e.g. console.log(process.env.DATABASE_URI).
+    const code = line
+      .replace(/'(?:[^'\\]|\\.)*'/g, "''")
+      .replace(/"(?:[^"\\]|\\.)*"/g, '""')
+      .replace(/`(?:[^`\\$]|\\.|\$(?!\{))*`/g, '``');
+    if (LOG_RE.test(code)) {
       warnings.push({ kind: 'a log or response references a secret-ish value', where: `${rel}:${i + 1}`, sample: line.trim().slice(0, 110) });
     }
   });
