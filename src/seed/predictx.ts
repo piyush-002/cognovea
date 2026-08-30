@@ -253,7 +253,15 @@ const body: Portfolio['body'] = [
   },
 ];
 
-export const script = async () => {
+/*
+ * Top-level, not an exported `script` function.
+ *
+ * `payload run <file>` resolves the path and imports it — that is all. It does
+ * not look for an export and call it. An `export const script = ...` therefore
+ * loads the config, prints its startup notice and exits having done nothing,
+ * which is exactly what happened the first time.
+ */
+const seed = async () => {
   const payload = await getPayload({ config: configPromise });
 
   const existing = await payload.find({
@@ -292,3 +300,5 @@ export const script = async () => {
 
   process.exit(0);
 };
+
+await seed();
