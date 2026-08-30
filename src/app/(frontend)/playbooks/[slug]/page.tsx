@@ -126,28 +126,16 @@ export default async function PlaybookPage({ params }: Props) {
             </nav>
           </aside>
 
-          <div className="pb">
-            {/* Set to the right and out of the reading column.
-            
-                It answers "is this for me", which is worth a glance and not
-                worth the first full-width block on the page — that position
-                belongs to the answer somebody came for. */}
+          {/* The right-hand column. Between the contents and the article in the
+              source order so that when the three columns collapse to one it
+              stacks contents, then who-this-is-for, then the article — rather
+              than stranding the note at the foot of the page. Its position on
+              a wide screen is set by grid-column, not by source order. */}
+          <aside className="pb-rail">
             <p className="pb__audience">{playbook.audience}</p>
+          </aside>
 
-            {/* The answer before the argument.
-            
-                An assistant summarising this page, and a reader deciding
-                whether to read it, both take what sits nearest the top. Each
-                line is written to stand alone if it is lifted out. */}
-            <div className="pb__short">
-              <h2 className="pb__short-h">The short answer</h2>
-              <ul>
-                {playbook.shortAnswer.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ul>
-            </div>
-
+          <div className="pb">
             <h2 className="pb__h2">The use cases</h2>
 
           {playbook.useCases.map((u, i) => (

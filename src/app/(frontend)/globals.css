@@ -4257,12 +4257,39 @@ tbody tr:hover {
    capped column inside .wrap inherits its margin-inline: auto and ends up
    floating in the middle of a 1240px container with nothing either side, which
    is what this replaced. */
+/* Three columns: contents, article, and a right-hand rail for the note about
+   who this is written for.
+   
+   The article takes 1fr rather than a fixed measure so it absorbs whatever the
+   two rails leave — at the 1160px the wrap gives on a desktop that is roughly
+   650px, which is a comfortable line length. Placement is by grid-column, not
+   by source order, so the markup can stack sensibly on a phone. */
 .pb-layout {
   display: grid;
-  grid-template-columns: 15rem minmax(0, 46rem);
-  gap: 3rem;
+  grid-template-columns: 13rem minmax(0, 1fr) 14rem;
+  gap: 2.25rem;
   align-items: start;
-  justify-content: start;
+}
+
+/* The row is pinned as well as the column.
+   
+   With only grid-column set, the row is left to auto-placement, which never
+   moves backwards: the rail appears second in the source, finds column 1 of row
+   1 taken, and drops to row 2 — so the note ends up level with the middle of
+   the article instead of at the top of it. */
+.pb-side {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.pb {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.pb-rail {
+  grid-column: 3;
+  grid-row: 1;
 }
 
 .pb-side {
@@ -4271,29 +4298,20 @@ tbody tr:hover {
   inset-block-start: 5.5rem;
 }
 
-/* Measure, not full width. This is long-form reading and a 100-character line
-   loses the reader between the end of one line and the start of the next. */
-.pb {
-  max-inline-size: 46rem;
-}
 
-/* Set to the right, as its own block rather than a float.
-   
-   It answers "is this written for me", which is worth a glance and not worth
-   the first full-width band on the page — that position belongs to the answer
-   the reader came for. Not floated: the block below it has a background and a
-   border, and a block box flows *under* a float rather than beside it, so the
-   two would overlap. Only the inline text would have wrapped. */
+
+/* Reads as an aside in the margin, so it is set small and quiet: it answers
+   "is this written for me", which is worth a glance and nothing more. Left
+   aligned — right-aligned ragged text is harder to read, and the column's
+   position on the page already does the work that alignment was standing in
+   for. */
 .pb__audience {
-  max-inline-size: 24rem;
-  margin-inline-start: auto;
   padding: 0.9rem 1.1rem;
-  border-inline-end: 3px solid var(--violet);
+  border-inline-start: 3px solid var(--violet);
   background: var(--violet-wash);
-  border-radius: 10px 0 0 10px;
-  font-size: 14px;
+  border-radius: 0 10px 10px 0;
+  font-size: 13.5px;
   line-height: 1.6;
-  text-align: end;
 }
 
 .pb__toc {
@@ -4318,39 +4336,6 @@ tbody tr:hover {
   margin: 0;
   padding-inline-start: 1.1rem;
   font-size: 14.5px;
-}
-
-/* The answer block. Set apart from the article's flow so it reads as a summary
-   rather than as the first section, and kept plain — this is the part most
-   likely to be copied out, and copied text should not arrive full of styling. */
-.pb__short {
-  margin-block: 1.6rem 0.6rem;
-  padding: 1.3rem 1.5rem;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #fcfcfd;
-}
-
-.pb__short-h {
-  margin-block-end: 0.7rem;
-  font-family: var(--f-head), system-ui, sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--fg-3);
-}
-
-.pb__short ul {
-  display: grid;
-  gap: 0.7rem;
-  margin: 0;
-  padding-inline-start: 1.1rem;
-}
-
-.pb__short li {
-  font-size: 15px;
-  line-height: 1.68;
 }
 
 .pb__h2 {
@@ -4489,34 +4474,29 @@ tbody tr:hover {
 /* Below this the two columns do not both fit, so the contents go back to a
    block above the article — no longer sticky, because a sticky sidebar on a
    phone is a box that follows you down the page. */
+/* Below this the three columns will not fit, so everything stacks in source
+   order: contents, who it is for, then the article. The rails lose their
+   grid-column placement with the columns, and the contents stop being sticky —
+   a box that follows you down a phone screen is a nuisance rather than
+   navigation. */
 @media (max-width: 64rem) {
   .pb-layout {
     grid-template-columns: minmax(0, 46rem);
-    gap: 1.6rem;
+    gap: 1.4rem;
+  }
+
+  /* Row placement has to be released with the columns, or all three would be
+     assigned the same single-column row 1 and overlap. */
+  .pb-side,
+  .pb-rail,
+  .pb {
+    grid-column: 1;
+    grid-row: auto;
   }
 
   .pb-side {
     position: static;
   }
-
-  /* Full width on a narrow screen: a 24rem block right-aligned in a 26rem
-     column is just an indented paragraph, and right-aligned text is harder to
-     read for no gain once there is no space beside it. */
-  .pb__audience {
-    max-inline-size: none;
-    margin-inline-start: 0;
-    text-align: start;
-    border-inline-end: 0;
-    border-inline-start: 3px solid var(--violet);
-    border-radius: 0 10px 10px 0;
-  }
-}
-
-@media (max-width: 34rem) {
-  .pb-side {
-    grid-template-columns: 1fr;
-  }
-
 }
 
 @media (max-width: 40rem) {

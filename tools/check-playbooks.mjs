@@ -108,7 +108,6 @@ const ATTRIBUTED =
 for (const p of PLAYBOOKS) {
   const fields = [
     ['standfirst', p.standfirst],
-    ...p.shortAnswer.map((line, i) => [`shortAnswer[${i}]`, line]),
     ['description', p.description],
     ['audience', p.audience],
     ...p.useCases.flatMap((u) => [
@@ -143,22 +142,6 @@ for (const p of PLAYBOOKS) {
   ok(`${p.slug}: has at least four use cases`, p.useCases.length >= 4, String(p.useCases.length));
   ok(`${p.slug}: has readiness criteria`, p.readiness.length >= 3, String(p.readiness.length));
   ok(`${p.slug}: has an FAQ, which is what gets quoted back`, p.faq.length >= 3, String(p.faq.length));
-
-  /*
-   * The short answer is the part most likely to be lifted out of the page and
-   * quoted somewhere this document is not. So each line has to survive being
-   * read alone: no opening pronoun, no "the above", nothing that only makes
-   * sense with the sentence before it in view.
-   */
-  ok(`${p.slug}: has a short answer`, p.shortAnswer.length >= 3, String(p.shortAnswer.length));
-  for (const [i, line] of p.shortAnswer.entries()) {
-    ok(`${p.slug}: shortAnswer[${i}] is a full sentence`, line.trim().endsWith('.') && line.length > 80, line.slice(0, 60));
-    ok(
-      `${p.slug}: shortAnswer[${i}] stands on its own`,
-      !/^\s*(it|they|this|that|these|those|the above|such)\b/i.test(line),
-      line.slice(0, 60),
-    );
-  }
 
   // The opening paragraph should name the subject, not describe the document.
   ok(
