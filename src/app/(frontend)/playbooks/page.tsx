@@ -44,7 +44,7 @@ export default function PlaybooksPage() {
             name: 'Data & AI Use Case Playbooks',
             url: abs(PATH),
             description:
-              'Industry-by-industry playbooks covering what AI is used for, what data it requires, and how to tell whether it worked.',
+              'Industry-by-industry playbooks covering what data and AI are used for, what each use case requires, and how to tell whether it worked.',
             hasPart: live.map((p) => ({
               '@type': 'Article',
               headline: p.title,

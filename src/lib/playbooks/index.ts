@@ -586,21 +586,529 @@ const logistics: Playbook = {
   updated: '2026-08-30',
 };
 
-/**
- * The rest, declared but not published.
- *
- * They appear on the index as in preparation rather than as pages, because a
- * thin page is worse for this section than no page: it competes with the real
- * one, gives a first-time visitor a bad impression of the set, and earns no
- * links. They get built to the same standard or they do not go up.
- */
-const PLANNED = [
-  { slug: 'fintech', industry: 'Fintech', image: '/img/ind-financial.svg' },
-  { slug: 'retail-ecommerce', industry: 'Retail & E-commerce', image: '/img/ind-retail.svg' },
-  { slug: 'healthcare', industry: 'Healthcare', image: '/img/ind-healthcare.svg' },
-] as const;
 
-export const PLAYBOOKS: Playbook[] = [manufacturing, oilAndGas, logistics];
+const fintech: Playbook = {
+  slug: 'fintech',
+  industry: 'Fintech',
+  title: 'Data and AI Use Cases in Fintech',
+  description:
+    'Six data and AI use cases in fintech and lending, each with the data it needs, how to prove it worked, and where it fails — including why accuracy is the wrong measure for anything this rare.',
+  audience:
+    'Written for risk, operations and technology leads at lenders, payment companies and financial platforms who need to know what these models require and what they will be asked to defend. It assumes no data science background.',
+  standfirst:
+    'Six things financial firms actually run on their data: transaction fraud detection, credit decisioning, anti-money-laundering triage, collections prioritisation, churn, and reconciliation. Every one has a regulator or an auditor attached, which changes what "working" means. For each this sets out the data it needs, how you would prove it worked, and where it fails.',
+
+  useCases: [
+    {
+      id: 'fraud-detection',
+      name: 'Transaction fraud detection',
+      summary: 'Score a transaction in flight, and decide whether to let it through.',
+      what:
+        'Transaction attributes, device and behavioural signals and the customer’s own history produce a score inside the time available before authorisation. The decision is never only the model’s: a threshold turns a score into an action, and where that threshold sits is a business judgement about the relative cost of a missed fraud and a blocked customer.',
+      needs: [
+        'Confirmed fraud outcomes joined back to the original transaction. Chargebacks arrive months later, which means today’s labels describe last quarter’s fraud.',
+        'Features you can actually compute inside the latency budget. A signal that takes 400ms is not available at authorisation.',
+        'A record of what you blocked. Without it the training data contains only fraud that got through, so the model learns from the fraud you were already worst at catching.',
+        'A named owner for the threshold, and a process for moving it.',
+      ],
+      proof:
+        'Never accuracy. Precision and recall separately, precision-recall AUC, and the two costs stated in money: fraud missed, and good customers declined. A model that improves one while quietly worsening the other has not improved anything.',
+      fails:
+        'On the feedback loop. Blocked transactions never produce an outcome, so the model stops learning about the fraud it already catches and drifts toward what it misses. It also fails quietly when a pattern changes: performance degrades for weeks before anyone notices, unless somebody watches the score distribution rather than the headline metric.',
+      evidence: FINDINGS.fraudBaseRate,
+    },
+    {
+      id: 'credit-decisioning',
+      name: 'Credit decisioning',
+      summary: 'Estimate the probability that this borrower will not repay.',
+      what:
+        'Application data, bureau data and, where permitted, transaction history estimate default risk. The model is one input to a decision that must be explainable to the applicant and defensible to a regulator, which rules out techniques that would otherwise score better.',
+      needs: [
+        'Outcomes observed over a full credit cycle. A model trained only on a benign period has never seen the conditions it exists to price.',
+        'Rejected applications, and some way of reasoning about them. You observe repayment only for people you accepted.',
+        'A feature set you can defend one attribute at a time as not being a proxy for something you must not price on.',
+        'Reason codes. An applicant is entitled to know why, and "the model said so" is not an answer.',
+      ],
+      proof:
+        'Against the existing scorecard, on the same applicants, over a window long enough for outcomes to mature. Approval rate and loss rate together — improving either alone is trivial and means nothing.',
+      fails:
+        'On reject inference and on proxies. A postcode is not an ethnicity field and can behave like one; a model that has never seen the people you declined cannot say what declining them cost. Both are invisible in a validation score and obvious in a regulatory review.',
+    },
+    {
+      id: 'aml-triage',
+      name: 'AML alert triage',
+      summary: 'Rank the alert queue so investigators start where the risk is.',
+      what:
+        'Existing rule-based alerts are scored for likely materiality so a team can work the queue in a sensible order. Note what this is not: it does not replace the rules, and in most jurisdictions it cannot decide that something goes unreviewed.',
+      needs: [
+        'Investigation outcomes recorded consistently — what was escalated, what was closed, and why. Free-text closure notes are the usual blocker.',
+        'The full alert history including everything closed as a false positive, which is where most of the signal is.',
+        'Compliance in the room from the start, because the binding constraint is regulatory before it is technical.',
+      ],
+      proof:
+        'Time to first escalation, and the share of escalations found in the top decile of the ranking. Not "alerts reduced" — that is not the objective and it reads badly in an inspection.',
+      fails:
+        'When triage quietly becomes suppression. Ranking an alert lower is defensible; a model that closes one usually is not, and the difference matters enormously to a regulator even when the mathematics is identical.',
+    },
+    {
+      id: 'collections',
+      name: 'Collections prioritisation',
+      summary: 'Work the accounts where contact will change the outcome.',
+      what:
+        'Arrears history, payment behaviour and contact history estimate which accounts will self-cure and which need intervention, so limited collections capacity goes where it changes something.',
+      needs: [
+        'Contact history with outcomes, not merely attempts.',
+        'A clean definition of cure, and consistency about when the clock starts.',
+        'Visibility of which customers are in hardship, because prioritising on recoverability alone produces conduct problems.',
+      ],
+      proof:
+        'Roll rates and cure rates against the current strategy on comparable arrears buckets, plus amount recovered per collector hour.',
+      fails:
+        'When it optimises purely for recovery. A model that learns to chase hardest the people least able to pay is doing exactly what it was asked and creating a conduct issue, and no validation metric will flag it.',
+    },
+    {
+      id: 'churn',
+      name: 'Customer churn and retention',
+      summary: 'Spot the accounts about to leave, early enough to act.',
+      what:
+        'Balance, transaction frequency, product holdings and service contacts predict attrition, so retention effort is spent before the decision is made rather than after it.',
+      needs: [
+        'A definition of churn that fits the product. A dormant current account and a closed one are different things.',
+        'Enough lead time for the prediction to be actionable. Knowing on the day of closure is knowing nothing.',
+        'Service history, which is frequently in a separate system nobody has joined to the account.',
+      ],
+      proof:
+        'A holdout that receives no intervention. Without one, every customer who stays looks like a save, including everybody who was never leaving.',
+      fails:
+        'When the retention offer goes to whoever scores highest, including customers who would have stayed anyway. That is not retention spend, it is a discount programme with a model attached.',
+    },
+    {
+      id: 'reconciliation',
+      name: 'Reconciliation and exception handling',
+      summary: 'Match what cleared against what you recorded, and surface only the breaks.',
+      what:
+        'Ledger entries, settlement files and bank statements are matched, leaving a much smaller exceptions queue. Mostly matching logic rather than machine learning, and usually the fastest payback on this list.',
+      needs: [
+        'Consistent references across systems, or a documented rule for deriving them.',
+        'Timing conventions written down: cut-offs, value dates, and what a weekend does.',
+        'A route for an exception to be resolved rather than merely flagged.',
+      ],
+      proof:
+        'Auto-match rate, exceptions per thousand transactions, and hours spent reconciling. All three: the first without the third can hide work that simply moved somewhere else.',
+      fails:
+        'When tolerances are loosened to raise the auto-match rate. The number improves and real breaks pass through, which is precisely the wrong trade in a control process.',
+    },
+  ],
+
+  readiness: [
+    {
+      name: 'Outcomes are joined back to the decision that produced them',
+      detail:
+        'Fraud, default, cure, churn — each is observed long after the decision it judges. Where the two cannot be joined there are no labels, and none of the models above can be built or evaluated however much transaction data exists.',
+    },
+    {
+      name: 'You keep a record of what you declined',
+      detail:
+        'Blocked transactions and rejected applications produce no outcome, so every model trained on what you accepted is trained on a sample you selected. It cannot be repaired retrospectively, and it is the most consequential data decision on this list.',
+    },
+    {
+      name: 'Every feature can be defended one at a time',
+      detail:
+        'In a regulated decision the question is not only whether the model performs but whether each input is permissible and each outcome explainable. A feature set nobody can walk through attribute by attribute is a model that will not survive its first review.',
+    },
+    {
+      name: 'Somebody owns the threshold, not just the model',
+      detail:
+        'A score does nothing until a threshold turns it into an action, and where that sits is a commercial and conduct judgement rather than a technical one. Projects that never name the owner of that number end up with it set by whoever built the model.',
+    },
+  ],
+
+  faq: [
+    {
+      question: 'Why is accuracy the wrong way to measure a fraud model?',
+      answer:
+        'Because fraud is rare. In the public credit-card dataset used across this literature, 0.172% of transactions are fraudulent — about one in 577 — so a model that labels everything legitimate is over 99.8% accurate and catches nothing. The published work uses precision, recall, F1 and precision-recall AUC instead, the last specifically because it describes minority-class performance where ROC-AUC flatters it. If a vendor quotes an accuracy figure for a fraud model, that is the review finished.',
+    },
+    {
+      question: 'What data problem stops credit models being usable?',
+      answer:
+        'Reject inference. You observe repayment only for applicants you accepted, so a model trained on the accepted book has never seen the people you declined and cannot tell you whether declining them was right. It is not a modelling detail but a structural bias in the only data you have, and every honest answer to it is expensive.',
+    },
+    {
+      question: 'Can a model close AML alerts?',
+      answer:
+        'Ranking an alert queue is defensible. Closing alerts usually is not, and that distinction matters far more to a regulator than the mathematics behind it. Treat triage as ordering the work rather than reducing it, and measure the share of true escalations found at the top of the ranking rather than the number of alerts avoided.',
+    },
+    {
+      question: 'How do we know a retention model actually retained anyone?',
+      answer:
+        'By keeping a holdout that receives no intervention. Without one, every customer who stays looks like a save, including everybody who was never leaving, and the programme reports a return it did not earn. It is the most common measurement failure in retention work and entirely avoidable.',
+    },
+    {
+      question: 'Where should a financial firm start if none of this exists yet?',
+      answer:
+        'With reconciliation. It is mostly matching logic rather than machine learning, it pays back in weeks, it forces exactly the data hygiene every other use case here depends on — consistent references, agreed timing conventions — and nobody will ask you to explain it to a regulator.',
+    },
+  ],
+
+  image: '/img/ind-financial.svg',
+  published: true,
+  updated: '2026-08-30',
+};
+
+
+const retail: Playbook = {
+  slug: 'retail-ecommerce',
+  industry: 'Retail & E-commerce',
+  title: 'Data and AI Use Cases in Retail & E-commerce',
+  description:
+    'Six data and AI use cases in retail and e-commerce, each with the data it needs, how to prove it worked, and where it fails — including published evidence that the fashionable model is not the one that wins.',
+  audience:
+    'Written for trading, supply chain and technology leads at retailers and e-commerce businesses who need to know which of these is worth starting and what each will demand of their data first. It assumes no data science background.',
+  standfirst:
+    'Six things retailers actually run on their data: demand forecasting, replenishment and allocation, markdown and pricing, personalisation and recommendation, returns and fraud, and availability analysis. For each this sets out the data it needs before it can work, how you would prove it worked, and the conditions under which it fails.',
+
+  useCases: [
+    {
+      id: 'demand-forecasting',
+      name: 'Demand forecasting',
+      summary: 'Forecast what will sell, by product and location, far enough ahead to act.',
+      what:
+        'Sales history, seasonality, price, promotions and calendar effects project demand per SKU and store. It matters only where it changes a commitment — what you buy, what you make, what you move, how you staff.',
+      needs: [
+        'History at the grain you plan at. A chain total does not help a store manager order.',
+        'Out-of-stock periods marked, or the model learns your shortages as low demand and reorders the shortage.',
+        'Promotions and price changes as a dated record, not reconstructed from memory.',
+        'Calendar effects that matter locally — festivals, school terms, paydays — which in India move against the Gregorian calendar and wreck a model that assumes otherwise.',
+      ],
+      proof:
+        'Against your current method on the same SKUs and stores over the same window, using an error measure agreed before you start. Published comparisons favour tree-based ensembles over deep learning on real supermarket data, so start with the simpler thing and make the complicated one earn its place.',
+      fails:
+        'On short life-cycles and new products, where there is no history to learn from and the model is confidently extrapolating from something else. It also fails when it is scored on forecast error while the business is judged on availability, so the two never agree about whether it worked.',
+      evidence: FINDINGS.retailTreesBeatDeepLearning,
+    },
+    {
+      id: 'replenishment',
+      name: 'Replenishment and allocation',
+      summary: 'Send the right quantity to the right place before it sells out.',
+      what:
+        'Forecast, current stock, lead times and shelf capacity decide order quantities and how a delivery is split between stores. This is arithmetic on top of a forecast rather than a model in its own right, and it is where forecasting either pays or does not.',
+      needs: [
+        'Stock accuracy at store level. Where the book says three and the shelf has none, every downstream decision is wrong and no forecast fixes it.',
+        'Real lead times including the variance, not the agreed service level.',
+        'Shelf capacity and case sizes, or the system will order what will not fit.',
+      ],
+      proof:
+        'Availability and stock cover together, plus waste for anything perishable. Availability alone is trivially improved by holding more of everything.',
+      fails:
+        'On inventory record accuracy, almost always. This is a counting and process problem rather than an analytical one, and it defeats more replenishment projects than every modelling issue combined.',
+    },
+    {
+      id: 'pricing-markdown',
+      name: 'Markdown and pricing',
+      summary: 'Decide when to cut, and by how much, while it still sells.',
+      what:
+        'Sell-through rate, remaining stock, time left in the season and price elasticity where it can be estimated decide markdown depth and timing. The prize is not a lower markdown but a smaller residual.',
+      needs: [
+        'Clean price history, including what was actually charged after every promotion rather than the list price.',
+        'Enough price variation to estimate elasticity. If a line has never moved in price, the data cannot tell you what would happen if it did.',
+        'Season end dates and residual disposal costs, or the model has no deadline to optimise against.',
+      ],
+      proof:
+        'Gross margin after markdown and residual units, against a comparable prior season. Reporting one without the other is how a markdown programme claims success while the stockroom fills.',
+      fails:
+        'When elasticity is estimated from promotional periods and applied to base pricing. The two behave differently, and a model that conflates them will recommend cuts that buy volume you already had.',
+    },
+    {
+      id: 'personalisation',
+      name: 'Personalisation and recommendation',
+      summary: 'Show a customer something they would not have found on their own.',
+      what:
+        'Browse and purchase behaviour rank what to show. The commercial question is not whether it lifts click-through but whether it lifts basket value — recommending what somebody was going to buy anyway is easy and worth nothing.',
+      needs: [
+        'Behaviour joined to a persistent customer identifier across sessions and devices.',
+        'A cold-start answer for new customers and new products, which is most of the catalogue in most retailers.',
+        'A consent position that matches what you actually do with the data, because the privacy policy is part of the system.',
+      ],
+      proof:
+        'A holdout that sees no recommendations, measured on incremental basket value rather than click-through. Attribution without a holdout will credit the recommender with sales it did not cause.',
+      fails:
+        'By collapsing onto the popular. A recommender optimised on click-through learns to show bestsellers, which raises the metric and adds nothing a category page would not have done.',
+    },
+    {
+      id: 'returns-fraud',
+      name: 'Returns and refund abuse',
+      summary: 'Separate a genuine return from a pattern of abuse.',
+      what:
+        'Return rates by customer, product and reason code identify both the products that are failing customers and the small number of accounts systematically abusing the policy.',
+      needs: [
+        'Reason codes that staff actually use, which means few enough to be picked honestly under time pressure.',
+        'Returns joined to the original order and the customer, including guest checkouts.',
+        'Product-level return history, because a high rate is often a sizing or description problem rather than a customer problem.',
+      ],
+      proof:
+        'Return rate by cohort against the change made, and abuse recovered. Watch the false-positive cost carefully: accusing a good customer of fraud is expensive in a way no dashboard shows.',
+      fails:
+        'When it is treated as a fraud problem first. Most excess returns are caused by inaccurate product information, and a model pointed at customers will never find that.',
+    },
+    {
+      id: 'availability',
+      name: 'Availability and phantom stock',
+      summary: 'Find the lines the system thinks are in stock and the shelf does not.',
+      what:
+        'Sales patterns that stop abruptly while stock-on-hand stays positive identify likely phantom inventory — the book says you have it, the shelf disagrees. No machine learning required, and frequently the highest-value thing on this list.',
+      needs: [
+        'Sales at a daily grain per store and SKU.',
+        'Stock-on-hand snapshots on the same clock as the sales.',
+        'A process for someone to check a flagged line, which is the part that gets forgotten.',
+      ],
+      proof:
+        'The share of flagged lines confirmed as wrong when somebody physically checks. If most flags are correct, this pays for itself immediately; if not, the rule needs tuning before anyone is sent to look.',
+      fails:
+        'When nobody is assigned to check. A phantom stock report that nobody walks the aisle for is a list of known problems, which is worse than not knowing because it removes the excuse.',
+    },
+  ],
+
+  readiness: [
+    {
+      name: 'The stock number is true',
+      detail:
+        'Replenishment, allocation, availability and forecasting all inherit inventory accuracy. Where the book and the shelf disagree, every one of them is optimising against a fiction — and this is a counting and process problem, not an analytical one.',
+    },
+    {
+      name: 'Out-of-stocks are recorded, not silently absent',
+      detail:
+        'Sales history with unmarked stock-outs understates demand exactly where demand was highest. A forecast trained on it reorders the shortage, and the error compounds every cycle it is not corrected.',
+    },
+    {
+      name: 'One customer identifier survives across sessions and channels',
+      detail:
+        'Personalisation, returns analysis and lifetime value all need behaviour joined to a person rather than to a session. Where guest checkout and app and web produce three unlinked identities, none of them can be built honestly.',
+    },
+    {
+      name: 'The local calendar is in the data',
+      detail:
+        'Festivals, school terms and paydays move demand more than most seasonality, and in India they move against the Gregorian calendar. A model that has only seen month numbers cannot learn them, and will be wrong in the same weeks every year.',
+    },
+  ],
+
+  faq: [
+    {
+      question: 'Do we need deep learning for retail demand forecasting?',
+      answer:
+        'The published evidence says start simpler. A study using six years of daily demand from an Austrian supermarket — over 330 products and 5.2 million records across fruit, fresh meat and soft drinks — found tree-based ensembles outperforming LSTM deep learning on every metric reported, with the widest gap on fresh meat. That is one retailer in one country, so treat the direction rather than the margin as transferable. But it is a good reason to make the complicated model beat the simple one on your own data before buying it.',
+    },
+    {
+      question: 'What is the most common reason retail forecasting projects disappoint?',
+      answer:
+        'Inventory accuracy, and unmarked stock-outs. If the book says three and the shelf has none, every replenishment decision downstream is wrong regardless of forecast quality. And a sales history that does not record when you had nothing to sell teaches the model that demand was low exactly when it was highest.',
+    },
+    {
+      question: 'How do we know a recommender is adding anything?',
+      answer:
+        'By holding out a group who see no recommendations, and measuring incremental basket value rather than click-through. Click-through rewards showing people what they were already going to buy. Without the holdout, attribution credits the recommender with sales that would have happened anyway, which is why almost every reported uplift figure is larger than the real one.',
+    },
+    {
+      question: 'Why does personalisation end up recommending bestsellers?',
+      answer:
+        'Because that is what optimising click-through selects for. Popular items get clicked, the model learns to show them, the metric improves and the recommender ends up doing the job a category page already did. If the output looks like your top-sellers list, the objective is wrong rather than the algorithm.',
+    },
+    {
+      question: 'Where should a retailer start if none of this exists yet?',
+      answer:
+        'With phantom stock: finding lines the system believes are in stock while sales have stopped dead. It needs no machine learning, only daily sales and stock snapshots on the same clock, and it usually surfaces available sales nobody knew were being lost. It also proves whether anyone will act on a report, which is worth knowing before commissioning a forecasting programme.',
+    },
+  ],
+
+  image: '/img/ind-retail.svg',
+  published: true,
+  updated: '2026-08-30',
+};
+
+
+const healthcare: Playbook = {
+  slug: 'healthcare',
+  industry: 'Healthcare',
+  title: 'Data and AI Use Cases in Healthcare Operations',
+  description:
+    'Six data and AI use cases in hospital and clinic operations — scheduling, capacity, supply, revenue cycle — each with the data it needs, how to prove it worked, and where it fails. Clinical decision support is deliberately out of scope.',
+  audience:
+    'Written for operations, finance and IT leads at hospitals, clinic groups and diagnostics chains. It covers how a provider runs, not how a clinician decides. It assumes no data science background.',
+  standfirst:
+    'Six things healthcare providers run on their operational data: no-show prediction, clinic scheduling, inpatient capacity forecasting, theatre utilisation, supply and consumables, and revenue cycle. Nothing here touches diagnosis or treatment — that is a regulated activity with a different evidence bar, and it is not what this document is about.',
+
+  useCases: [
+    {
+      id: 'no-shows',
+      name: 'No-show prediction',
+      summary: 'Estimate who will not attend, early enough to do something about it.',
+      what:
+        'Appointment history, lead time, demographics, distance and prior attendance estimate the probability that a booking will not be kept, so reminders or overbooking can be targeted rather than applied to everyone.',
+      needs: [
+        'Attendance outcomes recorded consistently, with cancellations distinguished from failures to attend. Where the two are one field, nothing built on it means anything.',
+        'Lead time between booking and appointment, which is usually the strongest single predictor.',
+        'A reminder or overbooking process that can actually be varied by patient, or the prediction changes nothing.',
+      ],
+      proof:
+        'The no-show rate itself, against a comparable clinic or period. This is the measurement everyone skips: the published work shows no-shows can be predicted, and says much less about whether acting on the prediction reduces them.',
+      fails:
+        'On overbooking, if the model is trusted too far. A clinic that overbooks on a prediction and is wrong has a waiting room of people who did attend. It also fails on fairness: the features that predict non-attendance — distance, deprivation, prior misses — describe access barriers, and a model that quietly deprioritises those patients has turned a disadvantage into a policy.',
+      evidence: FINDINGS.noShowPredictable,
+    },
+    {
+      id: 'clinic-scheduling',
+      name: 'Clinic scheduling',
+      summary: 'Build a template that matches how long appointments actually take.',
+      what:
+        'Historical consultation durations by clinician and appointment type set slot lengths and clinic templates, instead of the fifteen minutes everybody gets because that is what the template has always said.',
+      needs: [
+        'Actual start and end times, not scheduled ones. Most systems record the second and not the first.',
+        'Appointment type recorded consistently, and honestly — where "follow-up" absorbs three different kinds of visit, the average is meaningless.',
+        'Clinician-level variation acknowledged as legitimate rather than treated as non-compliance.',
+      ],
+      proof:
+        'Clinic overrun, patient waiting time and idle slots, together. Reducing overrun by lengthening every slot is not an improvement, it is fewer patients seen.',
+      fails:
+        'When the template is optimised centrally and imposed. Clinic staff know which patients need longer, and a schedule that removes their ability to say so gets worked around within a fortnight.',
+    },
+    {
+      id: 'capacity-forecasting',
+      name: 'Inpatient capacity forecasting',
+      summary: 'Forecast beds needed, far enough ahead to staff for it.',
+      what:
+        'Admission history, seasonality, day-of-week patterns and expected length of stay project occupancy, so staffing and elective scheduling can be set against the forecast rather than against last week.',
+      needs: [
+        'Admission, discharge and transfer events with reliable timestamps.',
+        'Length of stay by specialty and case mix, which varies enormously and averages badly.',
+        'Several years of history to separate seasonality from trend, including whatever unusual period your data contains and a decision about whether to exclude it.',
+      ],
+      proof:
+        'Forecast error at the horizon your staffing decisions are actually made on. A forecast that is accurate a day ahead and useless three weeks ahead does not help anybody rostering.',
+      fails:
+        'On discharge timing, which is where the real variance lives and which depends on decisions — social care, transport, pharmacy — mostly outside the model. A capacity forecast that assumes discharge behaves predictably is forecasting the wrong thing.',
+    },
+    {
+      id: 'theatre-utilisation',
+      name: 'Theatre and equipment utilisation',
+      summary: 'Find where expensive capacity is standing idle, and why.',
+      what:
+        'Session start and finish times, turnaround intervals and cancellation reasons show where theatre or scanner time is lost. Counting and attribution rather than machine learning, and usually the fastest payback here.',
+      needs: [
+        'Timestamps at each step, not just a session block.',
+        'Cancellation reasons from a short enough list that they are chosen honestly.',
+        'Case duration by procedure and surgeon, as observed rather than as booked.',
+      ],
+      proof:
+        'Utilisation and cases per list against the current baseline, plus on-the-day cancellations. If utilisation rises while cancellations rise, the lists have simply been overfilled.',
+      fails:
+        'When the data is entered by the people the numbers will judge, and that conflict is not acknowledged. Turnaround times become uniformly excellent and nothing changes.',
+    },
+    {
+      id: 'supplies',
+      name: 'Supplies and consumables',
+      summary: 'Hold what a procedure cannot proceed without, and stop holding the rest.',
+      what:
+        'Consumption by procedure, lead times and expiry set stock levels for consumables and implants. Expiry makes this harder than industrial inventory: overstocking is not merely tied-up cash, it is waste with a date on it.',
+      needs: [
+        'Consumption linked to procedures rather than to a stores issue.',
+        'Real lead times, and shelf life at the point of receipt rather than at manufacture.',
+        'A criticality judgement made clinically, not by unit price.',
+      ],
+      proof:
+        'Value held and value expired, against stock-outs that delayed or cancelled a procedure. All three, always.',
+      fails:
+        'When criticality is inferred from cost. The item that stops a list is often inexpensive, and the costly one on the shelf is frequently the one that expires unused.',
+    },
+    {
+      id: 'revenue-cycle',
+      name: 'Revenue cycle and claims',
+      summary: 'Find why claims are rejected, before they are submitted.',
+      what:
+        'Rejection history by payer, procedure and reason identifies the patterns that cause denials — a missing authorisation, a coding mismatch, an eligibility gap — so they can be caught at submission rather than discovered at rejection.',
+      needs: [
+        'Denial reason codes retained and joined to the original claim.',
+        'Payer rules in some structured form, which is usually the largest piece of work.',
+        'A resubmission process that records what was changed, or nothing can be learned from a success.',
+      ],
+      proof:
+        'First-pass acceptance rate and days in accounts receivable, against the current baseline. Denials overturned on appeal matter less than denials never incurred.',
+      fails:
+        'When payer rules change faster than the analysis is refreshed. A model built on last year’s denial patterns confidently prevents last year’s denials.',
+    },
+  ],
+
+  readiness: [
+    {
+      name: 'Timestamps describe what happened, not what was booked',
+      detail:
+        'Scheduling, capacity and theatre analysis all rest on when things actually started and finished. Most systems reliably record the scheduled time and unreliably record the actual one, and no analysis recovers a timestamp nobody captured.',
+    },
+    {
+      name: 'Attendance outcomes distinguish a cancellation from a no-show',
+      detail:
+        'A patient who rang to cancel and a patient who did not arrive are different events with different causes and different remedies. Where one field holds both, no-show work cannot begin.',
+    },
+    {
+      name: 'A named owner for every action the output triggers',
+      detail:
+        'A no-show score changes who gets a reminder call; a capacity forecast changes a roster; a denial prediction changes what is checked before submission. Where no role owns that action today, the output has nowhere to go.',
+    },
+    {
+      name: 'Somebody is accountable for the fairness of each model',
+      detail:
+        'Operational models in healthcare allocate access — who is reminded, who is overbooked, whose appointment is shortened. The features that predict non-attendance largely describe barriers to attending, so a model optimised for utilisation can quietly disadvantage exactly the patients who most need the appointment. That review is a standing responsibility, not a launch checklist item.',
+    },
+  ],
+
+  faq: [
+    {
+      question: 'Can patient no-shows actually be predicted?',
+      answer:
+        'Yes, with an important caveat about what that buys you. A study across two Brazilian hospital datasets — 8,371 CT appointments with a 6.65% no-show rate and 7,413 consultations with 19.03% — reached sensitivity above 0.94 with the better combinations of model and resampling. The authors also state plainly that the results are case-specific and not generalisable between settings, and that class imbalance badly affects every metric except sensitivity. Prediction is the easy half; the published work says much less about whether acting on the predictions reduces the no-show rate, which is the only thing that matters to a clinic.',
+    },
+    {
+      question: 'Why does this playbook not cover clinical AI?',
+      answer:
+        'Because diagnosis and treatment support are regulated activities with a different evidence bar — prospective validation, regulatory clearance, clinical governance — and a page about operations is the wrong place for them. Everything here concerns how a provider runs: who is expected, how long a list takes, what is in the store, why a claim was denied. That work is valuable, unglamorous, and needs no clinical claim to justify itself.',
+    },
+    {
+      question: 'What is the fairness risk in operational healthcare models?',
+      answer:
+        'That they allocate access while appearing to allocate resources. The features that predict non-attendance — distance, prior misses, deprivation — mostly describe barriers to attending. A model that deprioritises those patients has converted a disadvantage into a policy, and it will show up as an efficiency gain on every dashboard you have. Someone has to be accountable for reviewing that, continuously.',
+    },
+    {
+      question: 'Which of these pays back fastest?',
+      answer:
+        'Usually theatre and equipment utilisation, or the phantom capacity that scheduling analysis uncovers. Both are counting exercises rather than machine learning, both are measurable within a quarter, and both tend to find that the losses are not where everyone assumed.',
+    },
+    {
+      question: 'Where should a provider start if none of this exists yet?',
+      answer:
+        'By checking whether actual start and finish times are captured, and whether cancellations and no-shows are distinguishable. Neither needs any analysis at all, both are prerequisites for most of this list, and discovering that they are missing is worth more than a prediction model built on the gap.',
+    },
+  ],
+
+  image: '/img/ind-healthcare.svg',
+  published: true,
+  updated: '2026-08-30',
+};
+
+/**
+ * Industries with a playbook announced but not written.
+ *
+ * Empty, because all six are published. The mechanism stays: a seventh industry
+ * gets listed here and appears on the index as in preparation rather than as a
+ * thin page, which would compete with the real ones and earn nothing.
+ */
+type PlannedPlaybook = { slug: string; industry: string; image: string };
+
+/* Typed explicitly rather than inferred. `[] as const` gives an empty array the
+   element type `never`, so the index page's .map() over it stops compiling the
+   moment the last industry is published — which is exactly when nobody is
+   looking at this file. */
+const PLANNED: PlannedPlaybook[] = [];
+
+export const PLAYBOOKS: Playbook[] = [manufacturing, oilAndGas, logistics, fintech, retail, healthcare];
 
 export const PLANNED_PLAYBOOKS = PLANNED;
 

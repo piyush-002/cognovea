@@ -91,6 +91,45 @@ export const SOURCES: Record<string, Source> = {
       'The improvements it collects are those the original authors reported on their own datasets, which are not directly comparable with each other and are not a promise about any particular business. Nearly three quarters of the papers were published in the last four years of the window, so the field is young.',
   },
 
+  fraudImbalance: {
+    id: 'fraudImbalance',
+    label: 'Machine Learning-Based Cyber Fraud Detection: A Comparative Study of Resampling Methods for Imbalanced Credit Card Data',
+    url: 'https://www.mdpi.com/2076-3417/16/2/850',
+    year: 2026,
+    publisher: 'Applied Sciences (MDPI)',
+    standing: 'peer-reviewed',
+    method:
+      'Comparison of resampling strategies on a public credit-card transaction set in which 0.172% of transactions are fraudulent — a ratio of roughly one in 577 — evaluating models on precision, recall, F1 and precision-recall AUC rather than accuracy.',
+    caveat:
+      'One public dataset, whose features are anonymised principal components rather than the fields a bank would actually hold. It supports the point about how such models must be evaluated, not a claim about how well any particular system performs.',
+  },
+
+  retailForecastComparison: {
+    id: 'retailForecastComparison',
+    label: 'Applying Machine Learning in Retail Demand Prediction: Tree-Based Ensembles and LSTM Deep Learning',
+    url: 'https://www.mdpi.com/2076-3417/13/19/11112',
+    year: 2023,
+    publisher: 'Applied Sciences (MDPI)',
+    standing: 'peer-reviewed',
+    method:
+      'Six years of daily demand from an Austrian supermarket — over 330 products and 5.2 million records across fruit, fresh meat and soft drinks — comparing tree-based ensembles against LSTM networks on MAPE, MAE, RMSE and R².',
+    caveat:
+      'One retailer, one country, three perishable categories. The direction of the result is instructive; the margin is not transferable.',
+  },
+
+  bmcNoShow: {
+    id: 'bmcNoShow',
+    label: 'Decision Analysis Framework for Predicting No-Shows to Appointments Using Machine Learning Algorithms',
+    url: 'https://bmchealthservres.biomedcentral.com/articles/10.1186/s12913-023-10418-6',
+    year: 2023,
+    publisher: 'BMC Health Services Research',
+    standing: 'peer-reviewed',
+    method:
+      'Two Brazilian hospital datasets — 8,371 CT appointments with a 6.65% no-show rate, and 7,413 consultations with 19.03% — across three classifiers and four resampling techniques, validated with repeated cross-validation.',
+    caveat:
+      'The authors state their results are case-specific and not generalisable between settings, and that class imbalance badly affects every metric other than sensitivity. It reports how well no-shows can be predicted, not whether acting on the predictions reduces them.',
+  },
+
   powellSpreadsheetErrors: {
     id: 'powellSpreadsheetErrors',
     label: 'Errors in Operational Spreadsheets',
@@ -156,6 +195,21 @@ export const FINDINGS = {
     claim:
       'The same review identifies unreliable input data — missing history, or biases built into what was recorded — as a recurring limit on forecast quality, independent of which model is used.',
     source: SOURCES.mdpiForecastReview,
+  },
+  fraudBaseRate: {
+    claim:
+      'In a public credit-card dataset used across the fraud-detection literature, 0.172% of transactions are fraudulent — roughly one in 577 — which is why accuracy is the wrong measure and precision-recall AUC is the right one.',
+    source: SOURCES.fraudImbalance,
+  },
+  retailTreesBeatDeepLearning: {
+    claim:
+      'On six years of daily demand from an Austrian supermarket — 330 products, 5.2 million records — tree-based ensembles outperformed LSTM deep learning on every metric reported, with the widest gap on fresh meat.',
+    source: SOURCES.retailForecastComparison,
+  },
+  noShowPredictable: {
+    claim:
+      'No-shows are predictable: across two hospital datasets with rates of 6.65% and 19.03%, the best combinations reached sensitivity above 0.94 — while the authors state the results are case-specific and not generalisable between settings.',
+    source: SOURCES.bmcNoShow,
   },
   spreadsheetErrorRate: {
     claim:

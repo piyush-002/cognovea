@@ -175,7 +175,13 @@ async function sideways(page) {
   }));
 }
 
-const playbookHtml = await html(PlaybookPage({ params: Promise.resolve({ slug: 'manufacturing' }) }));
+const { publishedPlaybooks: all } = load('@/lib/playbooks');
+const SLUGS = all().map((p) => p.slug);
+
+/* Every published playbook, not just the first. They share a template, so a
+   layout fault is shared too — but the content is not, and it is the content
+   that decides whether something overflows. */
+const playbookHtml = await html(PlaybookPage({ params: Promise.resolve({ slug: SLUGS[0] }) }));
 const indexHtml = await html(IndexPage());
 
 /* --- desktop: three columns, all starting level --------------------------- */
@@ -210,8 +216,13 @@ const indexHtml = await html(IndexPage());
   await page.close();
 }
 
-/* --- phones --------------------------------------------------------------- */
-for (const [label, markup] of [['playbook', playbookHtml], ['index', indexHtml]]) {
+/* --- phones: every playbook, because the content differs ------------------ */
+const allPlaybooks = [];
+for (const slug of SLUGS) {
+  allPlaybooks.push([slug, await html(PlaybookPage({ params: Promise.resolve({ slug }) }))]);
+}
+
+for (const [label, markup] of [...allPlaybooks, ['index', indexHtml]]) {
   for (const width of PHONES) {
     const page = await open(markup, width);
     const s = await sideways(page);
