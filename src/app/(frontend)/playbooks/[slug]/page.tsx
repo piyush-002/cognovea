@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
+import Faq from '@/components/Faq';
 import JsonLd from '@/components/JsonLd';
 import { getPlaybook, publishedPlaybooks } from '@/lib/playbooks';
 import { SOURCES, STANDING_LABEL } from '@/lib/playbooks/sources';
@@ -133,6 +134,20 @@ export default async function PlaybookPage({ params }: Props) {
           <div className="pb">
             <p className="pb__audience">{playbook.audience}</p>
 
+            {/* The answer before the argument.
+            
+                An assistant summarising this page, and a reader deciding
+                whether to read it, both take what sits nearest the top. Each
+                line is written to stand alone if it is lifted out. */}
+            <div className="pb__short">
+              <h2 className="pb__short-h">The short answer</h2>
+              <ul>
+                {playbook.shortAnswer.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </div>
+
             <h2 className="pb__h2">The use cases</h2>
 
           {playbook.useCases.map((u, i) => (
@@ -187,26 +202,22 @@ export default async function PlaybookPage({ params }: Props) {
             Every use case above assumes these. Where one is missing, it is the project — not a prerequisite to be waved
             through in a kick-off meeting.
           </p>
-          <ol className="pb__ready">
-            {playbook.readiness.map((r) => (
-              <li key={r.name}>
-                <h3>{r.name}</h3>
-                <p>{r.detail}</p>
-              </li>
-            ))}
-          </ol>
+            {/* Collapsed, but rendered.
+            
+                The panels are always in the HTML — Faq hides them with CSS
+                rather than rendering them conditionally — so a crawler and an
+                assistant read the whole thing while a visitor sees four
+                headings instead of four paragraphs. Nothing is behind
+                JavaScript. */}
+            <Faq
+              items={playbook.readiness.map((r) => ({ q: r.name, a: r.detail }))}
+              defaultOpen={null}
+            />
 
           <h2 className="pb__h2" id="questions">
             Questions people ask
           </h2>
-          <dl className="pb__faq">
-            {playbook.faq.map((f) => (
-              <div key={f.question}>
-                <dt>{f.question}</dt>
-                <dd>{f.answer}</dd>
-              </div>
-            ))}
-          </dl>
+            <Faq items={playbook.faq.map((f) => ({ q: f.question, a: f.answer }))} defaultOpen={0} />
 
             <p className="pb__more">
               <Link href="/playbooks">All industry playbooks</Link> ·{' '}

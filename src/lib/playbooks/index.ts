@@ -44,8 +44,24 @@ export type Playbook = {
   description: string;
   /** Who this is for, and who it is not for. */
   audience: string;
-  /** The honest framing that opens the page. */
+  /**
+   * The opening paragraph, under the H1.
+   *
+   * Names the use cases outright rather than describing the document. Somebody
+   * arriving on "AI use cases in manufacturing" wants to see the list in the
+   * first sentence, and an assistant summarising the page quotes what is
+   * nearest the heading.
+   */
   standfirst: string;
+  /**
+   * The answer, before the argument.
+   *
+   * Four self-contained sentences a reader can take away and an assistant can
+   * quote without needing the paragraph around them. Each is complete on its
+   * own — no "it", no "the above" — because a sentence lifted out of context is
+   * exactly how this gets cited.
+   */
+  shortAnswer: string[];
   useCases: UseCase[];
   /** What has to be true before any of the above is worth starting. */
   readiness: { name: string; detail: string }[];
@@ -73,7 +89,13 @@ const manufacturing: Playbook = {
   audience:
     'Written for plant, operations and IT leads at manufacturers who have been asked what they should be doing with AI and need an answer they can defend. It assumes no data science background and no existing platform.',
   standfirst:
-    'Most published figures about AI in manufacturing come from companies selling AI to manufacturers. That does not make them wrong, but it does mean the honest version of this document has to say which is which. Where good evidence exists it is cited. Where it does not, this says so rather than filling the gap with a number.',
+    'Six AI use cases manufacturers actually run: predictive maintenance, automated visual inspection, demand forecasting, OEE analysis and scheduling, energy optimisation, and spares and inventory. For each one this sets out the data it needs before it can work at all, how you would prove it worked, and the conditions under which it fails.',
+  shortAnswer: [
+    'The AI use cases with the most operational evidence behind them in manufacturing are predictive maintenance, automated visual inspection and demand forecasting. Energy optimisation and spares optimisation pay back more reliably but are rarely described as AI at all.',
+    'The barrier is almost never the model. It is a maintenance history that records that an engineer attended but not what failed, sensor data too coarse to see a fault develop, and no agreed definition of a defect.',
+    'A high accuracy score on a failure-prediction model means very little on its own, because failures are rare: ask how many real failures it caught and how many false alarms it raised, as two separate numbers.',
+    'The cheapest first project is usually a loss analysis rather than a model. Establishing where output is actually lost needs no machine learning and tells you which of the use cases is worth anything at your plant.',
+  ],
 
   useCases: [
     {

@@ -4338,6 +4338,39 @@ tbody tr:hover {
   font-size: 14.5px;
 }
 
+/* The answer block. Set apart from the article's flow so it reads as a summary
+   rather than as the first section, and kept plain — this is the part most
+   likely to be copied out, and copied text should not arrive full of styling. */
+.pb__short {
+  margin-block: 1.6rem 0.6rem;
+  padding: 1.3rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fcfcfd;
+}
+
+.pb__short-h {
+  margin-block-end: 0.7rem;
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.pb__short ul {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+  padding-inline-start: 1.1rem;
+}
+
+.pb__short li {
+  font-size: 15px;
+  line-height: 1.68;
+}
+
 .pb__h2 {
   margin-block: 2.6rem 0.9rem;
 }
@@ -4460,45 +4493,6 @@ tbody tr:hover {
   margin-block-start: 0.45rem;
   font-size: 13px;
   font-style: normal;
-  color: var(--fg-3);
-}
-
-.pb__ready {
-  display: grid;
-  gap: 1.2rem;
-  margin: 0;
-  padding-inline-start: 1.2rem;
-}
-
-.pb__ready h3 {
-  margin-block-end: 0.3rem;
-  font-family: var(--f-head), system-ui, sans-serif;
-  font-size: 1.02rem;
-  font-weight: 600;
-}
-
-.pb__ready p {
-  font-size: 15px;
-  line-height: 1.68;
-  color: var(--fg-3);
-}
-
-.pb__faq {
-  display: grid;
-  gap: 1.3rem;
-}
-
-.pb__faq dt {
-  margin-block-end: 0.4rem;
-  font-family: var(--f-head), system-ui, sans-serif;
-  font-size: 1.02rem;
-  font-weight: 600;
-}
-
-.pb__faq dd {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.72;
   color: var(--fg-3);
 }
 
