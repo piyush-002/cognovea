@@ -1,5 +1,4 @@
 import { headers } from 'next/headers';
-import { getPayloadClient } from '@/lib/payload';
 
 /**
  * A fixed-window rate limiter, counted in Postgres.
@@ -95,6 +94,21 @@ export async function rateLimit(
   if (!key) return ALLOWED;
 
   try {
+    /*
+     * Imported here, not at the top of the file, and it has to stay that way.
+     *
+     * A static import closes a cycle: lib/payload imports @payload-config,
+     * which imports the collections, which import lib/notify for the
+     * notification hooks, which imports this file. Node and the bundler both
+     * resolve that by leaving one binding uninitialised, and the symptom is a
+     * "Cannot access 'X' before initialization" thrown from somewhere
+     * unrelated — getPosts, in the case that found it, which then quietly
+     * returned an empty Insights page and a sitemap with no articles in it.
+     *
+     * A dynamic import is resolved when this function runs, by which time every
+     * module in the loop is initialised.
+     */
+    const { getPayloadClient } = await import('@/lib/payload');
     const payload = await getPayloadClient();
     const pool = (payload as unknown as { db?: { pool?: { query: (q: string, v: unknown[]) => Promise<{ rows: { count: number }[] }> } } }).db?.pool;
     if (!pool) return ALLOWED;
