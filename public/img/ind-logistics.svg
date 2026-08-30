@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400" role="img" aria-label="">
+
+  <defs>
+    <radialGradient id="ind-logistics-a" cx="30%" cy="28%" r="55%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity=".62"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ind-logistics-b" cx="76%" cy="70%" r="52%">
+      <stop offset="0%" stop-color="#4F6BF0" stop-opacity=".38"/>
+      <stop offset="100%" stop-color="#4F6BF0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ind-logistics-c" cx="88%" cy="20%" r="34%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ind-logistics-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="55%" stop-color="#4F6BF0"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+    <filter id="ind-logistics-blur" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="52"/>
+    </filter>
+  </defs>
+  <rect width="600" height="400" fill="#FFFFFF"/>
+  <g filter="url(#ind-logistics-blur)" opacity="0.55">
+    <rect width="600" height="400" fill="url(#ind-logistics-a)"/>
+    <rect width="600" height="400" fill="url(#ind-logistics-b)"/>
+    <rect width="600" height="400" fill="url(#ind-logistics-c)"/>
+  </g>
+  <path d="M 70 96 Q 250.0 122.0 430 200" fill="none" stroke="#7C3AED" stroke-opacity="0.68" stroke-width="3.4" stroke-linecap="round"/>
+      <circle cx="70" cy="96" r="8" fill="#7C3AED" fill-opacity=".7"/><path d="M 70 168 Q 250.0 148.0 430 200" fill="none" stroke="#7C3AED" stroke-opacity="0.58" stroke-width="3.4" stroke-linecap="round"/>
+      <circle cx="70" cy="168" r="8" fill="#7C3AED" fill-opacity=".7"/><path d="M 70 240 Q 250.0 146.0 430 200" fill="none" stroke="#4F6BF0" stroke-opacity="1" stroke-width="5.5" stroke-linecap="round"/>
+      <circle cx="70" cy="240" r="11" fill="#4F6BF0" fill-opacity="1"/><path d="M 70 312 Q 250.0 230.0 430 200" fill="none" stroke="#7C3AED" stroke-opacity="0.68" stroke-width="3.4" stroke-linecap="round"/>
+      <circle cx="70" cy="312" r="8" fill="#7C3AED" fill-opacity=".7"/><path d="M 190 60 Q 310.0 94.0 430 200" fill="none" stroke="#7C3AED" stroke-opacity="0.58" stroke-width="3.4" stroke-linecap="round"/>
+      <circle cx="190" cy="60" r="8" fill="#7C3AED" fill-opacity=".7"/><path d="M 190 340 Q 310.0 224.0 430 200" fill="none" stroke="#7C3AED" stroke-opacity="0.48" stroke-width="3.4" stroke-linecap="round"/>
+      <circle cx="190" cy="340" r="8" fill="#7C3AED" fill-opacity=".7"/>
+  <circle cx="430" cy="200" r="34" fill="#7C3AED" fill-opacity=".22" stroke="#7C3AED" stroke-opacity=".8" stroke-width="3"/>
+  <circle cx="430" cy="200" r="12" fill="#7C3AED"/>
+  <line x1="476" y1="200" x2="548" y2="200" stroke="#22D3EE" stroke-width="3" stroke-linecap="round"/>
+</svg>

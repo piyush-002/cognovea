@@ -4,7 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Logo from '@/components/Logo';
-import { companyLinks, navCompanyLinks, navPrimaryLinks, serviceLinks } from '@/lib/site';
+import {
+  drawerCompanyLinks,
+  drawerResourceLinks,
+  navCompanyLinks,
+  navPrimaryLinks,
+  navResourceLinks,
+  serviceLinks,
+} from '@/lib/site';
 
 export default function Nav() {
   const pathname = usePathname();
@@ -16,7 +23,7 @@ export default function Nav() {
    * leaves two panels overlapping. A single value makes that unrepresentable:
    * opening one closes the other by construction rather than by remembering to.
    */
-  const [openMenu, setOpenMenu] = useState<'services' | 'company' | null>(null);
+  const [openMenu, setOpenMenu] = useState<'services' | 'resources' | 'company' | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
 
@@ -70,6 +77,7 @@ export default function Nav() {
   const current = (href: string) => (pathname === href || pathname === `${href}/` ? 'page' : undefined);
   const inServices = serviceLinks.some((l) => pathname.startsWith(l.href));
   const inCompany = navCompanyLinks.some((l) => pathname.startsWith(l.href));
+  const inResources = navResourceLinks.some((l) => pathname.startsWith(l.href));
 
   return (
     <>
@@ -110,6 +118,32 @@ export default function Nav() {
                   a dozen in-body links point there too. Two identical links four
                   inches apart in one nav add nothing a crawler can use, and cost
                   a slot on a row people scan. */}
+              <li className={`c-nav__item${openMenu === 'resources' ? ' is-open' : ''}`}>
+                <button
+                  type="button"
+                  className="c-nav__trigger"
+                  aria-expanded={openMenu === 'resources'}
+                  aria-haspopup="true"
+                  style={inResources ? { color: 'var(--fg)' } : undefined}
+                  onClick={() => setOpenMenu((v) => (v === 'resources' ? null : 'resources'))}
+                >
+                  Resources
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                    <path d="M2 4.5 6 8.5 10 4.5" />
+                  </svg>
+                </button>
+                <ul className="c-nav__menu">
+                  {navResourceLinks.map((l) => (
+                    <li key={l.href}>
+                      <Link href={l.href} aria-current={current(l.href)}>
+                        <strong>{l.label}</strong>
+                        {l.blurb ? <small>{l.blurb}</small> : null}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+
               {navPrimaryLinks
                 .filter((l) => l.href !== '/contact')
                 .map((l) => (
@@ -200,8 +234,17 @@ export default function Nav() {
           </div>
 
           <div className="c-drawer__group">
+            <span className="eyebrow">Resources</span>
+            {drawerResourceLinks.map((l) => (
+              <Link key={l.href} href={l.href}>
+                {l.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="c-drawer__group">
             <span className="eyebrow">Company</span>
-            {companyLinks.map((l) => (
+            {drawerCompanyLinks.map((l) => (
               <Link key={l.href} href={l.href}>
                 {l.label}
               </Link>

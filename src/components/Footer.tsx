@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import CookieSettings from '@/components/CookieSettings';
-import { companyLinks, legalLinks, serviceLinks, site } from '@/lib/site';
+import { certifications, companyLinks, legalLinks, serviceLinks, site } from '@/lib/site';
 
 export default function Footer() {
   const year = 2026;
@@ -16,6 +16,42 @@ export default function Footer() {
               Where data becomes intelligence. Data engineering, analytics, business intelligence and AI for growing
               enterprises.
             </p>
+
+            {/* Bottom of the left column, under the mark and the line that says
+                what we do — where a reader looks for reassurance once they have
+                decided we might be relevant.
+
+                Words rather than logos: ISO does not certify anyone and forbids
+                use of its own logo for this; the usable mark belongs to whoever
+                issued the certificate, under their rules. */}
+            <ul className="c-foot__certs" aria-label="Certifications">
+              {certifications.map((c) =>
+                c.logo ? (
+                  <li key={c.name} className="c-foot__cert--logo">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- a
+                        certification mark is a fixed-size asset supplied by the
+                        certifying body; the optimiser would cost a request and
+                        risk recompressing artwork we are licensed to reproduce
+                        as issued. */}
+                    <img
+                      src={c.logo}
+                      alt={`${c.name}${c.body ? `, certified by ${c.body}` : ''}`}
+                      width={c.logoWidth}
+                      height={c.logoHeight}
+                      loading="lazy"
+                    />
+                    {c.ref ? <span className="c-foot__cert-meta">{c.ref}</span> : null}
+                  </li>
+                ) : (
+                  <li key={c.name}>
+                    <span className="c-foot__cert-name">{c.name}</span>
+                    {c.body || c.ref ? (
+                      <span className="c-foot__cert-meta">{[c.body, c.ref].filter(Boolean).join(' · ')}</span>
+                    ) : null}
+                  </li>
+                ),
+              )}
+            </ul>
           </div>
 
           <div>

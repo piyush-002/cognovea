@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getPosts } from '@/lib/content';
+import { publishedPlaybooks } from '@/lib/playbooks';
 import { abs, routes } from '@/lib/site';
 
 /**
@@ -19,6 +20,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: r.priority,
   }));
 
+  /* Derived, not listed. A playbook that is published is in the sitemap by
+     construction; there is no second place to remember to update. They rank
+     above the articles for the same reason the calculator does — these are the
+     pages other sites are meant to link to. */
+  const playbookEntries: MetadataRoute.Sitemap = publishedPlaybooks().map((p) => ({
+    url: abs(`/playbooks/${p.slug}`),
+    lastModified: new Date(p.updated),
+    changeFrequency: 'monthly',
+    priority: 0.9,
+  }));
+
   // Falls back to [] if the database is unreachable, so a transient outage
   // produces a sitemap missing its articles rather than a failed build.
   const posts = await getPosts(500);
@@ -30,5 +42,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticEntries, ...postEntries];
+  return [...staticEntries, ...playbookEntries, ...postEntries];
 }
