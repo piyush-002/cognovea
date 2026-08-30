@@ -1,0 +1,249 @@
+import { FINDINGS, type Finding } from '@/lib/playbooks/sources';
+
+/**
+ * The AI Use Case Playbooks.
+ *
+ * Content as data rather than JSX, for two reasons. The page and the printable
+ * one-pager render the same object, so the document a reader files cannot
+ * disagree with the page they read it from — the same rule the calculator's
+ * summary sheet follows. And a playbook that is data can be checked
+ * mechanically: tools/check-playbooks.mjs walks these objects and fails if a
+ * figure appears without a source attached to it.
+ *
+ * Written for the person who has been asked "what should we be doing with AI"
+ * and has to come back with something defensible. That reader is not short of
+ * lists of use cases; they are short of a way to tell which ones are real, what
+ * each actually requires, and how they would know if it worked. So every use
+ * case here carries what it needs and where it fails, and the failure modes are
+ * not softened — a playbook that never says "don't" is a brochure.
+ */
+
+export type UseCase = {
+  id: string;
+  name: string;
+  /** One line, for scanning. */
+  summary: string;
+  /** What it does, in terms an operations lead would use. */
+  what: string;
+  /** The data it needs before it can work at all. The usual reason projects stall. */
+  needs: string[];
+  /** How you would know it worked — stated before you start, not after. */
+  proof: string;
+  /** Where it goes wrong. Written plainly, because this is the useful part. */
+  fails: string;
+  /** Evidence backing the maturity claim, where any exists. */
+  evidence?: Finding;
+};
+
+export type Playbook = {
+  slug: string;
+  industry: string;
+  /** The page's H1. Written to be searched for, not to be clever. */
+  title: string;
+  /** Meta description and the listing card's blurb. */
+  description: string;
+  /** Who this is for, and who it is not for. */
+  audience: string;
+  /** The honest framing that opens the page. */
+  standfirst: string;
+  useCases: UseCase[];
+  /** What has to be true before any of the above is worth starting. */
+  readiness: { name: string; detail: string }[];
+  /** Question-shaped, because these are the questions people actually type. */
+  faq: { question: string; answer: string }[];
+  published: boolean;
+  updated: string;
+};
+
+const manufacturing: Playbook = {
+  slug: 'manufacturing',
+  industry: 'Manufacturing',
+  title: 'AI Use Cases in Manufacturing: What Works, What It Needs, and How to Tell',
+  description:
+    'Six AI use cases in manufacturing, each with the data it requires, how to prove it worked, and where it fails. Every figure sourced, including the ones everyone quotes without checking.',
+  audience:
+    'Written for plant, operations and IT leads at manufacturers who have been asked what they should be doing with AI and need an answer they can defend. It assumes no data science background and no existing platform.',
+  standfirst:
+    'Most published figures about AI in manufacturing come from companies selling AI to manufacturers. That does not make them wrong, but it does mean the honest version of this document has to say which is which. Where good evidence exists it is cited. Where it does not, this says so rather than filling the gap with a number.',
+
+  useCases: [
+    {
+      id: 'predictive-maintenance',
+      name: 'Predictive maintenance',
+      summary: 'Predict a failure from sensor data early enough to schedule the repair.',
+      what:
+        'Equipment sensor readings — vibration, temperature, current draw, acoustic signature — are monitored for the pattern that precedes a particular failure, so the machine is taken down deliberately rather than unexpectedly. The value is not fewer repairs; it is the same repairs, at a time you chose.',
+      needs: [
+        'Sensor data at an interval fine enough to see the failure develop. Hourly averages hide most bearing faults.',
+        'A maintenance history that records what actually failed, not just that an engineer attended. This is the one that is usually missing.',
+        'Enough past failures of the same kind to learn from. A machine that has failed twice in five years cannot support a model, whatever a vendor says.',
+        'Somebody whose job it is to act on an alert. An unactioned prediction is a cost, not a saving.',
+      ],
+      proof:
+        'Agree before you start: which asset, which failure mode, and what the current rate of unplanned stoppages on it is. Then measure the same number six months later. If nobody can state the current rate, that is the first project, not this one.',
+      fails:
+        'Most often for want of labelled failures, not for want of a model. It also fails quietly when the model is scored on accuracy. Worked example: suppose a machine fails on two days in a hundred — a model that always predicts "fine" is then right ninety-eight times out of a hundred, and is completely useless. Insist on being shown how often it caught real failures and how often it cried wolf, as two separate numbers.',
+      evidence: FINDINGS.deploymentGap,
+    },
+    {
+      id: 'visual-inspection',
+      name: 'Automated visual inspection',
+      summary: 'A camera and a model catch surface defects at line speed.',
+      what:
+        'Images of parts are classified as acceptable or not, on the line, at production rate. It suits defects that are genuinely visible and consistently defined: surface finish, print and label errors, missing components, weld appearance.',
+      needs: [
+        'Consistent lighting and camera position. This is more of the work than the model is, and skimping on it is the usual reason a pilot that worked stops working.',
+        'Labelled example images of each defect type, including borderline ones.',
+        'An agreed definition of a defect. Where two inspectors disagree, a model will disagree too, and you will blame the model.',
+        'A decision about what happens to a rejected part, before go-live.',
+      ],
+      proof:
+        'Run it alongside your existing inspection for a period, on the same parts, and compare. Count both the defects it missed and the good parts it rejected — the second is what quietly costs you money after go-live.',
+      fails:
+        'When the defect is not reliably visible in the image, when the product changes more often than the model is retrained, and when the true defect rate is so low that the training set contains almost no examples of what you are looking for.',
+    },
+    {
+      id: 'demand-forecasting',
+      name: 'Demand forecasting',
+      summary: 'Forecast what will be ordered, to plan production and stock against it.',
+      what:
+        'Historical orders, seasonality and known external drivers are used to project demand by SKU and period. The output is only useful if it changes a decision — how much to make, what to hold, when to buy.',
+      needs: [
+        'Several years of order history at the granularity you plan at.',
+        'A record of stock-outs. Sales history alone systematically understates demand you could not meet.',
+        'Knowledge of promotions and one-off events, or the model will learn them as seasonality.',
+      ],
+      proof:
+        'Compare against what you do now, which is usually last period plus a judgement. Measure forecast error on the same SKUs over the same window. A model that cannot beat "same as last month" is not ready, and finding that out early is a good outcome.',
+      fails:
+        'On short histories, on products with few large customers where one phone call outweighs any pattern, and after a genuine change in the market — a model trained on the past is confidently wrong about a step change.',
+    },
+    {
+      id: 'oee-scheduling',
+      name: 'OEE analysis and scheduling',
+      summary: 'Find where output is actually lost, then schedule around it.',
+      what:
+        'Machine states, changeovers and stoppage reasons are combined into a picture of where availability, performance and quality are lost. Frequently the most valuable finding is that the losses are not where everyone assumed.',
+      needs: [
+        'Machine state capture that does not rely on someone filling in a sheet.',
+        'A stoppage reason code list short enough to be used honestly. Forty codes become "other".',
+        'Changeover times as they are, not as the standard says.',
+      ],
+      proof:
+        'This one earns its place before any model does: if the loss analysis surprises the people who run the line, it has already paid for itself, and if it confirms what they knew, you have saved yourself the next project.',
+      fails:
+        'When the data is entered by the people being measured by it, without that conflict being acknowledged and designed around.',
+    },
+    {
+      id: 'energy',
+      name: 'Energy and utilities optimisation',
+      summary: 'Match consumption to production, and find what draws power for nothing.',
+      what:
+        'Meter data is set against production output to find plant drawing power out of proportion to what it makes — compressed air leaks, chillers running against ambient conditions, equipment idling through breaks.',
+      needs: [
+        'Sub-metering. A single site meter tells you the total and nothing else.',
+        'Production output on the same clock as the meter readings.',
+        'Tariff structure, including any demand or peak charges, which often dominate the bill.',
+      ],
+      proof:
+        'kWh per unit produced, before and after, on comparable production. Normalise for output or you will report a saving that is just a quiet month.',
+      fails:
+        'Rarely on the analysis and often on the follow-through: the finding is a maintenance job nobody is assigned, and twelve months later the leak is still there.',
+    },
+    {
+      id: 'spares',
+      name: 'Spares and inventory optimisation',
+      summary: 'Hold the parts that would stop the line, and stop holding the rest.',
+      what:
+        'Consumption history, lead times and the consequence of a stock-out are used to set holdings per part. Cash is usually released rather than spent.',
+      needs: [
+        'Accurate lead times, which are frequently recorded as the supplier’s quote rather than reality.',
+        'A criticality judgement per part — what actually stops if this is missing.',
+        'Issue history from stores, at part level.',
+      ],
+      proof:
+        'Value held against stock-outs causing downtime. Both, always: cutting inventory while causing one line stoppage is not a saving, and reporting only the first is how these projects get a bad name.',
+      fails:
+        'When criticality is inferred from price. The part that stops the plant is often cheap, and the expensive one on the shelf is often the one that never fails.',
+    },
+  ],
+
+  readiness: [
+    {
+      name: 'You can say what a number means, and get the same answer twice',
+      detail:
+        'If two departments produce different output figures for the same week, that is the project. Every use case above inherits the definitions underneath it, and no model repairs a disagreement about what "produced" means.',
+    },
+    {
+      name: 'The data leaves the machine that made it',
+      detail:
+        'Readings trapped in a PLC, an HMI or a local historian nobody can query are not available to anything. Getting them out reliably is unglamorous and is usually the longest task in the plan.',
+    },
+    {
+      name: 'History exists, and goes back far enough',
+      detail:
+        'Models learn from what has happened. Six weeks of data supports nothing seasonal and no rare event, and no technique compensates for history that was never kept.',
+    },
+    {
+      name: 'Somebody owns the decision the output feeds',
+      detail:
+        'Every use case above ends in a decision — take the machine down, reject the part, order the stock. Where no named person makes that decision today, the output has nowhere to go, and this is the most common reason a technically successful pilot is quietly abandoned.',
+    },
+  ],
+
+  faq: [
+    {
+      question: 'How much does unplanned downtime actually cost a manufacturer?',
+      answer:
+        'The most quoted figure is about $1.4 trillion a year across the world’s 500 largest companies, roughly 11% of revenue, from Senseye and Siemens. It is worth knowing how that was arrived at before quoting it: 181 online interviews gathered over four years, combined with the publisher’s own product data, and the Global 500 total is extrapolated from public information rather than surveyed. The report itself calls its combined figures indicative only. It is a reasonable order of magnitude and a poor substitute for your own number, which you can get from your stoppage log and your contribution per hour.',
+    },
+    {
+      question: 'Does AI predictive maintenance actually work, or is it a pilot that never ships?',
+      answer:
+        'Both, depending on the case. A 2025 review in Applied Sciences classified 60 published studies by how far they got: 40 reached live deployment with alerts feeding real work orders, 4 were validated retrospectively against plant data, and 16 never left benchmarks or simulation. So it demonstrably ships — and a third of the published work has not been tested against a real plant. Ask any vendor which of those three their evidence is.',
+    },
+    {
+      question: 'What is the most common reason these projects fail?',
+      answer:
+        'Not the model. The recurring barrier in the published work is data: labelled failure examples are expensive and slow to gather, and industrial data is heterogeneous and heavily imbalanced. In practice the projects that stall are the ones where the maintenance history records that somebody attended, but not what failed.',
+    },
+    {
+      question: 'Why should I distrust a high accuracy score on a failure-prediction model?',
+      answer:
+        'Because on a machine that fails on 2% of days, always predicting "no failure" is 98% accurate. Reviews of this literature note that high accuracy is frequently reported without disclosing how many faulty examples were in the data. Ask instead how many real failures it caught and how many false alarms it raised, as two separate numbers.',
+    },
+    {
+      question: 'Where should a manufacturer start if none of this exists yet?',
+      answer:
+        'With the loss analysis, not with a model. Work out where output is actually lost and whether everyone agrees on the numbers. It is cheap, it needs no machine learning, and it tells you which of the use cases above is worth anything to you — which is a different answer at every plant.',
+    },
+  ],
+
+  published: true,
+  updated: '2026-08-30',
+};
+
+/**
+ * The other five, declared but not published.
+ *
+ * They appear on the index as in preparation rather than as pages, because a
+ * thin page is worse for this section than no page: it competes with the real
+ * one, gives a first-time visitor a bad impression of the set, and earns no
+ * links. They get built to the same standard or they do not go up.
+ */
+const PLANNED = [
+  { slug: 'oil-and-gas', industry: 'Oil & Gas' },
+  { slug: 'fintech', industry: 'Fintech' },
+  { slug: 'retail-ecommerce', industry: 'Retail & E-commerce' },
+  { slug: 'healthcare', industry: 'Healthcare' },
+  { slug: 'logistics', industry: 'Logistics' },
+] as const;
+
+export const PLAYBOOKS: Playbook[] = [manufacturing];
+
+export const PLANNED_PLAYBOOKS = PLANNED;
+
+export const getPlaybook = (slug: string): Playbook | undefined =>
+  PLAYBOOKS.find((p) => p.slug === slug && p.published);
+
+export const publishedPlaybooks = (): Playbook[] => PLAYBOOKS.filter((p) => p.published);

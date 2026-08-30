@@ -1,0 +1,243 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
+import JsonLd from '@/components/JsonLd';
+import { getPlaybook, publishedPlaybooks } from '@/lib/playbooks';
+import { SOURCES, STANDING_LABEL, STANDING_NOTE } from '@/lib/playbooks/sources';
+import { faqSchema } from '@/lib/schema';
+import { pageMetadata } from '@/lib/seo';
+import { abs, site } from '@/lib/site';
+
+type Props = { params: Promise<{ slug: string }> };
+
+/**
+ * One playbook.
+ *
+ * Statically generated from the content module rather than the CMS: these are
+ * long, heavily structured and edited rarely, and putting them behind an editor
+ * would mean either a block type per section or a rich-text field that lets the
+ * sourcing rules be bypassed. tools/check-playbooks.mjs can only enforce "no
+ * figure without a source" while the content is data.
+ */
+export async function generateStaticParams() {
+  return publishedPlaybooks().map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const playbook = getPlaybook(slug);
+  if (!playbook) return pageMetadata({ title: 'Not found', description: '', path: `/playbooks/${slug}` });
+
+  return pageMetadata({
+    title: playbook.title,
+    description: playbook.description,
+    path: `/playbooks/${playbook.slug}`,
+    type: 'article',
+    publishedTime: playbook.updated,
+    modifiedTime: playbook.updated,
+  });
+}
+
+export default async function PlaybookPage({ params }: Props) {
+  const { slug } = await params;
+  const playbook = getPlaybook(slug);
+  if (!playbook) notFound();
+
+  const path = `/playbooks/${playbook.slug}`;
+  const crumbs = [
+    { href: '/playbooks', label: 'Playbooks' },
+    { href: path, label: playbook.industry },
+  ];
+
+  /* Only the sources actually cited on this page, so the list cannot advertise
+     research the reader will not find referenced above it. */
+  const cited = Object.values(SOURCES).filter((s) =>
+    playbook.useCases.some((u) => u.evidence?.source.id === s.id) ||
+    playbook.faq.some((f) => f.answer.includes(s.publisher.split(' ')[0])),
+  );
+
+  return (
+    <>
+      <JsonLd
+        data={[
+          breadcrumbSchema(crumbs),
+          faqSchema(playbook.faq.map((f) => ({ q: f.question, a: f.answer }))),
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: playbook.title,
+            description: playbook.description,
+            url: abs(path),
+            mainEntityOfPage: { '@type': 'WebPage', '@id': abs(path) },
+            datePublished: playbook.updated,
+            dateModified: playbook.updated,
+            author: { '@type': 'Organization', name: site.name, url: abs('/') },
+            publisher: { '@id': `${site.url}/#organization` },
+            about: { '@type': 'Thing', name: `Artificial intelligence in ${playbook.industry.toLowerCase()}` },
+            /* Named because a page whose selling point is that it is checkable
+               should say what it is checkable against. */
+            citation: cited.map((s) => ({
+              '@type': 'CreativeWork',
+              name: s.label,
+              url: s.url,
+              publisher: { '@type': 'Organization', name: s.publisher },
+              datePublished: String(s.year),
+            })),
+          },
+        ]}
+      />
+
+      <PageHero
+        eyebrow={`${playbook.industry} playbook`}
+        title={playbook.title}
+        intro={playbook.standfirst}
+        crumbs={crumbs}
+      />
+
+      <section className="sec">
+        <div className="wrap pb">
+          <p className="pb__audience">{playbook.audience}</p>
+
+          <nav className="pb__toc" aria-label="On this page">
+            <span className="pb__toc-lab">On this page</span>
+            <ol>
+              {playbook.useCases.map((u) => (
+                <li key={u.id}>
+                  <a href={`#${u.id}`}>{u.name}</a>
+                </li>
+              ))}
+              <li>
+                <a href="#readiness">Before any of it works</a>
+              </li>
+              <li>
+                <a href="#questions">Questions people ask</a>
+              </li>
+              <li>
+                <a href="#sources">Sources</a>
+              </li>
+            </ol>
+          </nav>
+
+          <h2 className="pb__h2">The use cases</h2>
+
+          {playbook.useCases.map((u, i) => (
+            <article key={u.id} id={u.id} className="pb__case">
+              <header>
+                <span className="pb__num">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{u.name}</h3>
+                <p className="pb__sum">{u.summary}</p>
+              </header>
+
+              <p>{u.what}</p>
+
+              <div className="pb__cols">
+                <div className="pb__col">
+                  <h4>What it needs</h4>
+                  <ul>
+                    {u.needs.map((n) => (
+                      <li key={n}>{n}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="pb__col">
+                  <h4>How you would know it worked</h4>
+                  <p>{u.proof}</p>
+                </div>
+              </div>
+
+              <div className="pb__fails">
+                <h4>Where it fails</h4>
+                <p>{u.fails}</p>
+              </div>
+
+              {u.evidence ? (
+                <aside className="pb__evi">
+                  <p>{u.evidence.claim}</p>
+                  <cite>
+                    <a href={u.evidence.source.url} rel="nofollow noopener" target="_blank">
+                      {u.evidence.source.label}
+                    </a>
+                    , {u.evidence.source.publisher}, {u.evidence.source.year} ·{' '}
+                    <b>{STANDING_LABEL[u.evidence.source.standing]}</b>
+                  </cite>
+                </aside>
+              ) : null}
+            </article>
+          ))}
+
+          <h2 className="pb__h2" id="readiness">
+            Before any of it works
+          </h2>
+          <p className="pb__lead">
+            Every use case above assumes these. Where one is missing, it is the project — not a prerequisite to be waved
+            through in a kick-off meeting.
+          </p>
+          <ol className="pb__ready">
+            {playbook.readiness.map((r) => (
+              <li key={r.name}>
+                <h3>{r.name}</h3>
+                <p>{r.detail}</p>
+              </li>
+            ))}
+          </ol>
+
+          <h2 className="pb__h2" id="questions">
+            Questions people ask
+          </h2>
+          <dl className="pb__faq">
+            {playbook.faq.map((f) => (
+              <div key={f.question}>
+                <dt>{f.question}</dt>
+                <dd>{f.answer}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <h2 className="pb__h2" id="sources">
+            Sources
+          </h2>
+          <p className="pb__lead">
+            Each with how it was arrived at and what it does not support, because those are the parts that decide how
+            much weight a figure can carry.
+          </p>
+          <ul className="pb__sources">
+            {cited.map((s) => (
+              <li key={s.id}>
+                <a href={s.url} rel="nofollow noopener" target="_blank">
+                  {s.label}
+                </a>
+                <span className="pb__src-meta">
+                  {s.publisher}, {s.year} · <b>{STANDING_LABEL[s.standing]}</b> — {STANDING_NOTE[s.standing]}
+                </span>
+                <p className="pb__src-method">
+                  <b>Method.</b> {s.method}
+                </p>
+                {s.caveat ? (
+                  <p className="pb__src-caveat">
+                    <b>What it does not support.</b> {s.caveat}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+
+          <p className="pb__updated">
+            Last reviewed {playbook.updated}. If a figure here is out of date or wrong, tell us at{' '}
+            <a href={`mailto:${site.email}`}>{site.email}</a> and it will be corrected.
+          </p>
+
+          <p className="pb__more">
+            <Link href="/playbooks">All industry playbooks</Link> ·{' '}
+            <Link href="/tools/bi-automation-calculator">Work out what your reporting costs you</Link>
+          </p>
+        </div>
+      </section>
+
+      <CtaBand
+        title={`Apply this to your ${playbook.industry.toLowerCase()} operation`}
+        body="A Data Health Check runs these questions against your systems rather than your sector: what you have, what it would support today, and what the first useful thing would take."
+      />
+    </>
+  );
+}

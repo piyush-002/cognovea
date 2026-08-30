@@ -4143,3 +4143,348 @@ tbody tr:hover {
 .gate__cancel:hover {
   color: var(--fg);
 }
+
+/* ==========================================================================
+   Playbooks  (/playbooks and /playbooks/<industry>)
+   ========================================================================== */
+
+/* The index cards. */
+.pb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+  gap: 1.1rem;
+}
+
+.pb-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.pb-card:hover,
+.pb-card:focus-visible {
+  border-color: var(--line-2);
+  transform: translateY(-2px);
+}
+
+/* Not a link, so it must not look like one or read as one to a screen reader. */
+.pb-card--soon {
+  background: transparent;
+  border-style: dashed;
+  cursor: default;
+}
+
+.pb-card--soon:hover {
+  transform: none;
+  border-color: var(--line);
+}
+
+.pb-card--soon .pb-card__title,
+.pb-card--soon .pb-card__blurb {
+  color: var(--fg-3);
+}
+
+.pb-card__industry {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--violet);
+}
+
+.pb-card--soon .pb-card__industry {
+  color: var(--fg-3);
+}
+
+.pb-card__title {
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1.06rem;
+  line-height: 1.32;
+  font-weight: 600;
+}
+
+.pb-card__blurb {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--fg-2, var(--fg-3));
+}
+
+.pb-card__meta {
+  margin-block-start: auto;
+  padding-block-start: 0.5rem;
+  font-size: 13px;
+  color: var(--fg-3);
+}
+
+.pb-note {
+  margin-block-start: 1.6rem;
+  max-inline-size: 62ch;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--fg-3);
+}
+
+/* --- the playbook itself ------------------------------------------------- */
+
+/* Measure, not full width. This is long-form reading and a 100-character line
+   loses the reader between the end of one line and the start of the next. */
+.pb {
+  max-inline-size: 46rem;
+}
+
+.pb__audience {
+  padding: 1rem 1.2rem;
+  border-inline-start: 3px solid var(--violet);
+  background: var(--violet-wash);
+  border-radius: 0 10px 10px 0;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.pb__toc {
+  margin-block: 2rem;
+  padding: 1.1rem 1.3rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.pb__toc-lab {
+  display: block;
+  margin-block-end: 0.6rem;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.pb__toc ol {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding-inline-start: 1.1rem;
+  font-size: 14.5px;
+}
+
+.pb__h2 {
+  margin-block: 2.6rem 0.9rem;
+  padding-block-end: 0.5rem;
+  border-block-end: 1px solid var(--line);
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1.45rem;
+  font-weight: 600;
+  /* So a jump from the contents list does not hide the heading under the nav. */
+  scroll-margin-block-start: 5rem;
+}
+
+.pb__lead {
+  margin-block-end: 1.2rem;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--fg-3);
+}
+
+.pb__case {
+  margin-block: 2rem;
+  padding-block-end: 2rem;
+  border-block-end: 1px solid var(--line);
+  scroll-margin-block-start: 5rem;
+}
+
+.pb__case:last-of-type {
+  border-block-end: 0;
+}
+
+.pb__num {
+  display: block;
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--violet);
+}
+
+.pb__case h3 {
+  margin-block: 0.3rem 0.35rem;
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.pb__sum {
+  margin-block-end: 1rem;
+  font-size: 15.5px;
+  color: var(--fg-3);
+}
+
+.pb__case > p {
+  margin-block-end: 1.1rem;
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.pb__cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+  margin-block: 1.2rem;
+}
+
+.pb__col h4,
+.pb__fails h4 {
+  margin-block-end: 0.5rem;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.pb__col ul {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding-inline-start: 1.1rem;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.pb__col p {
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+/* Given its own treatment because it is the part of the page worth the most,
+   and the part every competing document leaves out. */
+.pb__fails {
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fcfcfd;
+}
+
+.pb__fails p {
+  font-size: 14.5px;
+  line-height: 1.68;
+}
+
+.pb__evi {
+  margin-block-start: 1.1rem;
+  padding-inline-start: 1rem;
+  border-inline-start: 2px solid var(--line-2);
+}
+
+.pb__evi p {
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+.pb__evi cite {
+  display: block;
+  margin-block-start: 0.45rem;
+  font-size: 13px;
+  font-style: normal;
+  color: var(--fg-3);
+}
+
+.pb__ready {
+  display: grid;
+  gap: 1.2rem;
+  margin: 0;
+  padding-inline-start: 1.2rem;
+}
+
+.pb__ready h3 {
+  margin-block-end: 0.3rem;
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.pb__ready p {
+  font-size: 15px;
+  line-height: 1.68;
+  color: var(--fg-3);
+}
+
+.pb__faq {
+  display: grid;
+  gap: 1.3rem;
+}
+
+.pb__faq dt {
+  margin-block-end: 0.4rem;
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.pb__faq dd {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.72;
+  color: var(--fg-3);
+}
+
+.pb__sources {
+  display: grid;
+  gap: 1.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pb__sources > li {
+  padding-inline-start: 1rem;
+  border-inline-start: 2px solid var(--line);
+}
+
+.pb__src-meta {
+  display: block;
+  margin-block: 0.3rem 0.6rem;
+  font-size: 13px;
+  color: var(--fg-3);
+}
+
+.pb__src-method,
+.pb__src-caveat {
+  margin-block-end: 0.5rem;
+  font-size: 14px;
+  line-height: 1.62;
+  color: var(--fg-3);
+}
+
+.pb__src-caveat {
+  color: var(--fg);
+}
+
+.pb__updated,
+.pb__more {
+  margin-block-start: 2rem;
+  font-size: 14px;
+  color: var(--fg-3);
+}
+
+/* One breakpoint, and it comes after the base rules it overrides — see
+   tools/test-css-order.mjs, which exists because that went wrong once. */
+@media (max-width: 40rem) {
+  .pb__cols {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .pb__h2 {
+    font-size: 1.28rem;
+  }
+
+  .pb__case h3 {
+    font-size: 1.15rem;
+  }
+}

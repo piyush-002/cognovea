@@ -81,6 +81,7 @@ export const serviceLinks: NavLink[] = [
  * set of objects is what stops a label being changed in one and not the other.
  */
 const TOOLS: NavLink = { href: '/tools', label: 'Free Tools' };
+const PLAYBOOKS: NavLink = { href: '/playbooks', label: 'Playbooks' };
 const INSIGHTS: NavLink = { href: '/insights', label: 'Insights' };
 const CONTACT: NavLink = { href: '/contact', label: 'Contact' };
 const ABOUT: NavLink = {
@@ -95,7 +96,7 @@ const CAREERS: NavLink = {
 };
 
 /** Shown flat in the top nav. */
-export const navPrimaryLinks: NavLink[] = [TOOLS, INSIGHTS, CONTACT];
+export const navPrimaryLinks: NavLink[] = [TOOLS, PLAYBOOKS, INSIGHTS, CONTACT];
 
 /**
  * Grouped under a Company dropdown in the top nav.
@@ -111,7 +112,7 @@ export const navCompanyLinks: NavLink[] = [ABOUT, CAREERS];
  * Everything, in reading order, for the footer and the mobile drawer. Both have
  * the room, and a footer is where people go when the nav did not have it.
  */
-export const companyLinks: NavLink[] = [TOOLS, INSIGHTS, ABOUT, CAREERS, CONTACT];
+export const companyLinks: NavLink[] = [TOOLS, PLAYBOOKS, INSIGHTS, ABOUT, CAREERS, CONTACT];
 
 export const legalLinks: NavLink[] = [{ href: '/privacy-policy', label: 'Privacy Policy' }];
 
@@ -127,6 +128,10 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   // blog: it is the page other sites are meant to point at.
   { path: '/tools', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/tools/bi-automation-calculator', priority: 0.9, changeFrequency: 'monthly' },
+  // Same reasoning as the calculator: these exist to be linked to, so they
+  // outrank the pages that exist to be found.
+  { path: '/playbooks', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/playbooks/manufacturing', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/insights', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/about-us', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/careers', priority: 0.6, changeFrequency: 'weekly' },
