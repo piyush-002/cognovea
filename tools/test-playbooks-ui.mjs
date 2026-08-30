@@ -177,6 +177,8 @@ async function sideways(page) {
 
 const { publishedPlaybooks: all } = load('@/lib/playbooks');
 const SLUGS = all().map((p) => p.slug);
+const { PLANNED_PLAYBOOKS } = load('@/lib/playbooks');
+const EXPECTED_CARDS = SLUGS.length + PLANNED_PLAYBOOKS.length;
 
 /* Every published playbook, not just the first. They share a template, so a
    layout fault is shared too — but the content is not, and it is the content
@@ -309,7 +311,13 @@ for (const width of [360, DESKTOP]) {
       })(),
     };
   });
-  ok(`index @ ${width}: all six cards render`, m.count === 6, `${m.count}`);
+  /* Derived, not the literal six. The index shows every published playbook
+     plus every one announced as in preparation, and that split moves — holding
+     one back does not change the total, but adding a seventh industry would,
+     and a hardcoded number would then be wrong while still passing for a
+     while. */
+  ok(`index @ ${width}: a card for every playbook, published or planned`,
+    m.count === EXPECTED_CARDS, `${m.count} cards, expected ${EXPECTED_CARDS}`);
   ok(`index @ ${width}: ${width === 360 ? 'one card per row' : 'more than one per row'}`,
     width === 360 ? m.cols === 1 : m.cols > 1, `${m.cols} columns`);
   ok(`index @ ${width}: the footnote spans the grid`, m.note === true);

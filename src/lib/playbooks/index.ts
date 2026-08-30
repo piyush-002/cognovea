@@ -1089,7 +1089,16 @@ const healthcare: Playbook = {
   ],
 
   image: '/img/ind-healthcare.svg',
-  published: true,
+  /*
+   * Held back deliberately, not abandoned. The content below is complete and
+   * checked; publishing it is a one-word change.
+   *
+   * Everything else here describes how a business runs. This one touches how a
+   * provider treats people — who gets reminded, who gets overbooked, whose
+   * appointment is shortened — and that deserves a closer read before it goes
+   * out under the firm's name than the other five did.
+   */
+  published: false,
   updated: '2026-08-30',
 };
 
@@ -1106,7 +1115,9 @@ type PlannedPlaybook = { slug: string; industry: string; image: string };
    element type `never`, so the index page's .map() over it stops compiling the
    moment the last industry is published — which is exactly when nobody is
    looking at this file. */
-const PLANNED: PlannedPlaybook[] = [];
+const PLANNED: PlannedPlaybook[] = [
+  { slug: 'healthcare', industry: 'Healthcare', image: '/img/ind-healthcare.svg' },
+];
 
 export const PLAYBOOKS: Playbook[] = [manufacturing, oilAndGas, logistics, fintech, retail, healthcare];
 
