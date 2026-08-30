@@ -2360,14 +2360,19 @@ tbody tr:hover {
   max-inline-size: none;
 }
 
-/* Most of these marks are supplied as dark artwork for light backgrounds. On a
-   navy footer that reads as a black rectangle, so unless the body supplies a
-   reversed version this lifts it. Remove the filter if they send white
-   artwork — and check the body's rules before altering a mark at all. */
-.c-foot__cert--logo img[src$='.svg'],
-.c-foot__cert--logo img[src$='.png'] {
-  filter: brightness(0) invert(1);
-  opacity: 0.85;
+/* A white plate behind the mark rather than a filter over it.
+   
+   These are colour marks — blue seals, an orange numeral — so the invert trick
+   written for single-colour artwork turned each one into a solid white
+   rectangle: brightness(0) blacks out every pixel, invert(1) then makes the lot
+   white. The images were loading perfectly and rendering as blank plates.
+   
+   A plate is also closer to how a certification body expects its mark
+   reproduced: as issued, unaltered, with clear space around it. */
+.c-foot__cert--logo img {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #fff;
 }
 
 /* h2 rather than h4: as h4 these jumped two levels from the page's last h2,
