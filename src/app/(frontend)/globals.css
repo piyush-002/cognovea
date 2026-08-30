@@ -3105,3 +3105,660 @@ tbody tr:hover {
   color: var(--fg-2);
   max-inline-size: 40rem;
 }
+
+/* ==========================================================================
+   Savings calculator
+   ========================================================================== */
+
+.calc {
+  display: grid;
+  gap: clamp(1.6rem, 4vw, 2.6rem);
+  align-items: start;
+}
+
+.calc__form {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.field__hint {
+  margin-block-start: 0.4rem;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--fg-3);
+}
+
+/* Cost band shortcuts ----------------------------------------------------- */
+
+.calc__bands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-block-start: 0.55rem;
+}
+
+.calc__band {
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-size: 12.5px;
+  color: var(--fg-2);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  /* 32px is below the 44px guideline, so the row gets vertical padding from
+     the gap above and these sit inside a form where the real targets are the
+     inputs. They are a shortcut, not the only way to set the value. */
+  min-height: 32px;
+}
+
+.calc__band:hover {
+  border-color: var(--violet);
+  color: var(--fg);
+}
+
+.calc__band.is-on {
+  background: var(--violet-wash);
+  border-color: color-mix(in srgb, var(--violet) 40%, var(--line));
+  color: var(--blue-ink);
+  font-weight: 500;
+}
+
+.calc__toggle {
+  justify-self: start;
+  padding: 0.5rem 0;
+  background: none;
+  border: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--link);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  min-height: 44px;
+}
+
+.calc__advanced {
+  display: grid;
+  gap: 1.1rem;
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--line);
+  background: var(--paper-2);
+}
+
+/* Output ------------------------------------------------------------------ */
+
+.calc__out {
+  position: sticky;
+  /* Sticky so the number stays visible while the inputs are edited: the whole
+     interaction is "change this, watch that move", and it stops working the
+     moment the result scrolls off. Falls back to normal flow on one column. */
+  top: calc(var(--nav-h) + 1.5rem);
+}
+
+.calc-res {
+  padding: clamp(1.3rem, 3.5vw, 2rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+.calc-res__big {
+  margin-block-start: 0.5rem;
+  font-family: var(--f-head);
+  font-size: clamp(2rem, 5.5vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+}
+
+.calc-res__mid {
+  margin-block-start: 0.35rem;
+  font-family: var(--f-head);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+
+.calc-res__mid--good {
+  color: var(--blue-ink);
+}
+
+.calc-res__sub {
+  margin-block-start: 0.45rem;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.calc-res__bars {
+  display: grid;
+  gap: 1.05rem;
+  margin-block-start: clamp(1.3rem, 3vw, 1.9rem);
+  padding-block-start: clamp(1.3rem, 3vw, 1.9rem);
+  border-block-start: 1px solid var(--line);
+}
+
+.calc-bar__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-block-end: 0.4rem;
+}
+
+.calc-bar__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.calc-bar__value {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+
+.calc-bar__value--muted {
+  color: var(--fg-3);
+  font-style: italic;
+}
+
+.calc-bar__track {
+  block-size: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line) 60%, transparent);
+  overflow: hidden;
+}
+
+.calc-bar__fill {
+  block-size: 100%;
+  border-radius: 999px;
+  transition: width 0.45s var(--ease);
+}
+
+/* Three tones from the brand ramp, in cost order, so the eye reads the
+   breakdown as one quantity split three ways rather than three unrelated
+   figures. */
+.calc-bar__fill--labour { background: var(--violet); }
+.calc-bar__fill--error  { background: var(--blue); }
+.calc-bar__fill--delay  { background: var(--cyan); }
+
+.calc-bar__note {
+  margin-block-start: 0.45rem;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.calc-bar--unpriced {
+  padding: 0.8rem 0.9rem;
+  border-radius: 10px;
+  border: 1px dashed var(--line);
+}
+
+.calc-res__after {
+  display: grid;
+  gap: 1.2rem;
+  margin-block-start: clamp(1.3rem, 3vw, 1.9rem);
+  padding-block-start: clamp(1.3rem, 3vw, 1.9rem);
+  border-block-start: 1px solid var(--line);
+}
+
+.calc-res__payback {
+  margin-block-start: 1.1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: var(--violet-wash);
+  font-size: 14.5px;
+  color: var(--fg);
+}
+
+.calc__actions {
+  margin-block-start: 1.2rem;
+}
+
+.calc__share-note {
+  margin-block-start: 0.6rem;
+  font-size: 13px;
+  color: var(--fg-3);
+}
+
+/* Methodology ------------------------------------------------------------- */
+
+.method {
+  max-inline-size: 52rem;
+}
+
+.method__list {
+  display: grid;
+  gap: 1.2rem;
+  margin-block-start: 1.4rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: method;
+}
+
+.method__item {
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+.method__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  margin-block-end: 0.5rem;
+}
+
+.method__tag {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Published and assumption are visually distinct on purpose. The reader needs
+   to see at a glance which numbers we are standing behind with a citation and
+   which are our own judgement. */
+.method__tag--published {
+  background: color-mix(in srgb, var(--cyan) 18%, transparent);
+  color: #0b6b7d;
+}
+
+.method__tag--editorial {
+  background: var(--violet-wash);
+  color: var(--blue-ink);
+}
+
+.method__tag--user-set {
+  background: color-mix(in srgb, var(--line) 45%, transparent);
+  color: var(--fg-2);
+}
+
+.method__note {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--fg-2);
+}
+
+.method__src {
+  margin-block-start: 0.7rem;
+  padding-block-start: 0.7rem;
+  border-block-start: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--fg-3);
+}
+
+.method__gap {
+  margin-block-start: 1.8rem;
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+}
+
+.method__gap ul {
+  margin-block-start: 0.8rem;
+  display: grid;
+  gap: 0.7rem;
+  padding-inline-start: 1.1rem;
+}
+
+.method__gap li {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--fg-2);
+}
+
+/* Two columns once there is room. Additive, so nothing here can be lost to a
+   later rule of equal specificity. See tools/test-css-order.mjs. */
+@media (min-width: 900px) {
+  .calc {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .calc-res__after {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* The share sits with the figure rather than under it: two numbers on one line
+   read as one fact, which is what they are. */
+.calc-bar__share {
+  color: var(--fg-3);
+  font-weight: 400;
+}
+
+/* Calculator: empty state, submit row, and the slider ---------------------- */
+
+.calc__submit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
+  margin-block-start: 0.4rem;
+}
+
+.calc__submit-note {
+  font-size: 13px;
+  color: var(--fg-3);
+  max-inline-size: 22rem;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  /* No transform on a disabled control: a button that moves under the cursor
+     reads as clickable, which is the opposite of what disabled means. */
+  transform: none;
+}
+
+.calc__empty {
+  padding: clamp(1.4rem, 3.5vw, 2.2rem);
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--line);
+  background: var(--paper-2);
+}
+
+.calc__empty-lead {
+  margin-block-start: 0.7rem;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--fg-2);
+}
+
+.calc__empty-list {
+  margin-block-start: 1.1rem;
+  display: grid;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.calc__empty-list li {
+  position: relative;
+  padding-inline-start: 1.3rem;
+  font-size: 14px;
+  color: var(--fg-3);
+}
+
+.calc__empty-list li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.55em;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+}
+
+/* --- the slider ---------------------------------------------------------- */
+
+.calc__slider-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.calc__slider-head label {
+  margin: 0;
+}
+
+.calc__slider-val {
+  font-family: var(--f-head);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--blue-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.calc__slider-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-block-start: 0.4rem;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* A range input styled to show how far along it is. The default control gives
+   a position with nothing to read it against, which is why the percentage and
+   the scale labels are both here. --pos is set inline from the value. */
+.calc__slider input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  inline-size: 100%;
+  block-size: 34px;
+  margin-block-start: 0.7rem;
+  cursor: pointer;
+  /* The `.field input` rule above gives every input a border, a radius, a
+     background and padding, which on a range control draws a box around the
+     track. Cleared here rather than by narrowing that selector, so ordinary
+     text inputs keep the styling they should have. */
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.calc__slider input[type='range']::-webkit-slider-runnable-track {
+  block-size: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--violet) 0%,
+    var(--blue) var(--pos, 50%),
+    color-mix(in srgb, var(--line) 70%, transparent) var(--pos, 50%)
+  );
+}
+
+.calc__slider input[type='range']::-moz-range-track {
+  block-size: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--violet) 0%,
+    var(--blue) var(--pos, 50%),
+    color-mix(in srgb, var(--line) 70%, transparent) var(--pos, 50%)
+  );
+}
+
+.calc__slider input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  inline-size: 22px;
+  block-size: 22px;
+  margin-block-start: -8px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--blue);
+  box-shadow: 0 1px 6px rgb(16 24 40 / 0.18);
+  transition: transform 0.15s var(--ease), border-color 0.2s;
+}
+
+.calc__slider input[type='range']::-moz-range-thumb {
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--blue);
+  box-shadow: 0 1px 6px rgb(16 24 40 / 0.18);
+}
+
+.calc__slider input[type='range']:hover::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+
+/* Clicking the slider was drawing the shared `.field input:focus` ring around
+   the whole control — a violet box around a track, which is not what focus on
+   a slider looks like.
+ *
+ * The ring is removed from the control and moved onto the thumb, not deleted.
+ * A control with no visible focus state is unusable by keyboard, and this one
+ * is operated with arrow keys, so the indicator has to be somewhere. On the
+ * thumb it also says something true: the thumb is the part that moves.
+ *
+ * :focus-visible rather than :focus, so it appears for keyboard users and not
+ * for the mouse click that prompted this. */
+.calc__slider input[type='range']:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.calc__slider input[type='range']:focus-visible::-webkit-slider-thumb {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--violet) 30%, transparent);
+}
+
+.calc__slider input[type='range']:focus-visible::-moz-range-thumb {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--violet) 30%, transparent);
+}
+
+/* One line carrying what used to be three stacked hints. The statements are
+   the reason the tool is credible, so they survive the compaction; only their
+   arrangement changed. */
+.calc__caveat {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.calc__caveat a {
+  color: var(--link);
+}
+
+/* The calculator's form is tighter than the contact form: it has twice the
+   controls and has to clear a laptop fold, where the contact form does not. */
+.calc__form {
+  gap: 0.85rem;
+}
+
+.calc__form .form__row {
+  gap: 0.9rem;
+}
+
+.calc__form .field input,
+.calc__form .field select {
+  padding-block: 0.7rem;
+}
+
+.calc__slider input[type='range'] {
+  margin-block-start: 0.45rem;
+}
+
+/* Info tooltips ----------------------------------------------------------- */
+
+.tip {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-inline-start: 0.35rem;
+}
+
+/* The field is the positioning context, so a bubble is bounded by the control
+   it belongs to. */
+.calc__form .field,
+.calc__slider {
+  position: relative;
+}
+
+/* A real 36px target, not a 16px one with an invisible overlay. The overlay
+   version measured 16px to every tool that checks tap sizes, and to a finger it
+   was a guess. Negative margin keeps the label's line height unchanged, so the
+   bigger target costs no layout. */
+.tip__btn {
+  display: grid;
+  place-items: center;
+  inline-size: 36px;
+  block-size: 36px;
+  margin-block: -10px;
+  margin-inline-start: -10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fg-3);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.tip__btn:hover,
+.tip__btn[aria-expanded='true'] {
+  color: var(--blue-ink);
+}
+
+.tip__btn svg {
+  inline-size: 15px;
+  block-size: 15px;
+}
+
+/* Anchored to the field, not to the icon.
+ *
+ * Centring on the icon put the bubble's left edge off-screen every time: the
+ * icons sit near the start of their label, and half a 20rem bubble is wider
+ * than the space to their left. Positioning against the field instead means it
+ * can never be wider than the control it explains, which is true at every
+ * width without a breakpoint or any measuring in JavaScript. */
+.tip__bubble {
+  position: absolute;
+  z-index: 20;
+  inset-block-end: calc(100% + 9px);
+  inset-inline-start: 0;
+  inline-size: max-content;
+  max-inline-size: min(22rem, 100%);
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  background: var(--navy);
+  color: rgb(255 255 255 / 0.92);
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: 0 6px 24px rgb(16 24 40 / 0.22);
+  pointer-events: none;
+}
+
+/* The arrow points back at the icon rather than at the bubble's own centre,
+   since the bubble is no longer centred on it. */
+.tip__bubble::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-start: 14px;
+  border: 6px solid transparent;
+  border-block-start-color: var(--navy);
+}
+
+/* A label containing a tooltip is a flex row, so the icon sits on the text
+   baseline rather than being pushed onto its own line by the label's display:
+   block. */
+.calc__form .field label:has(.tip) {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.calc__empty-note {
+  margin-block-start: 0.9rem;
+  font-size: 13px;
+  color: var(--fg-3);
+}
+
+/* The Company menu holds two short entries, so it does not need the width the
+   services menu uses for its four descriptions. */
+.c-nav__menu--narrow {
+  min-inline-size: 15rem;
+}
+

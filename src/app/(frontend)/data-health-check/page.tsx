@@ -6,6 +6,7 @@ import ContactForm from '@/components/ContactForm';
 import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
+import { pageMetadata } from '@/lib/seo';
 
 /* Statically generated, and this page shows client logos and a testimonial,
    both of which are published from the admin long after the build. Without a
@@ -18,18 +19,12 @@ export const revalidate = 300;
 
 const PATH = '/data-health-check';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Book a Two Week Data Health Check | Cognovea',
   description:
     'A focused two week audit of your infrastructure, pipelines, BI, data quality and cloud costs, with a written findings report and a prioritized roadmap.',
-  alternates: { canonical: `${PATH}/` },
-  openGraph: {
-    title: 'Book a Two Week Data Health Check | Cognovea',
-    description:
-      'A focused two week assessment of your data, with a written findings report and a prioritized roadmap. The findings remain yours.',
-    url: `${PATH}/`,
-  },
-};
+  path: '/data-health-check',
+});
 
 const CRUMBS = [{ href: PATH, label: 'Data Health Check' }];
 

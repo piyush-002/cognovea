@@ -5,6 +5,7 @@ import { Arrow, CtaBand, Figure, PageHero, breadcrumbSchema } from '@/components
 import JsonLd from '@/components/JsonLd';
 import { abs } from '@/lib/site';
 import Tabs from '@/components/Tabs';
+import { pageMetadata } from '@/lib/seo';
 
 /* Statically generated, and this page shows client logos and a testimonial,
    both of which are published from the admin long after the build. Without a
@@ -17,18 +18,12 @@ export const revalidate = 300;
 
 const PATH = '/about-us';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'About Cognovea | Data Analytics & AI Company',
   description:
     'Cognovea is a data analytics and data engineering company helping businesses turn scattered data into real intelligence through analytics, AI, and data teams.',
-  alternates: { canonical: `${PATH}/` },
-  openGraph: {
-    title: 'About Cognovea | Data Analytics & AI Company',
-    description:
-      'Cognovea is a data analytics and data engineering company helping businesses turn scattered data into real intelligence through analytics, AI, and data teams.',
-    url: `${PATH}/`,
-  },
-};
+  path: '/about-us',
+});
 
 const CRUMBS = [{ href: PATH, label: 'About Us' }];
 

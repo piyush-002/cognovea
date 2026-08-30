@@ -6,6 +6,7 @@ import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
 import Rail from '@/components/Rail';
+import { pageMetadata } from '@/lib/seo';
 
 /* Statically generated, and this page shows client logos and a testimonial,
    both of which are published from the admin long after the build. Without a
@@ -18,18 +19,12 @@ export const revalidate = 300;
 
 const PATH = '/generative-ai-services';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Generative AI Development Services | Cognovea for Business',
   description:
     'Build Generative AI solutions with Cognovea using AI readiness, RAG development services, conversational BI, and LLM integration for measurable AI results.',
-  alternates: { canonical: `${PATH}/` },
-  openGraph: {
-    title: 'Generative AI Development Services | Cognovea for Business',
-    description:
-      'Build Generative AI solutions with Cognovea using AI readiness, RAG development services, conversational BI, and LLM integration for measurable AI results.',
-    url: `${PATH}/`,
-  },
-};
+  path: '/generative-ai-services',
+});
 
 const CRUMBS = [{ href: PATH, label: 'Generative AI Services' }];
 

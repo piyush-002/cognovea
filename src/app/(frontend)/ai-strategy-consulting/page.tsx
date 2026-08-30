@@ -6,6 +6,7 @@ import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
 import Rail from '@/components/Rail';
+import { pageMetadata } from '@/lib/seo';
 
 /* Statically generated, and this page shows client logos and a testimonial,
    both of which are published from the admin long after the build. Without a
@@ -18,18 +19,12 @@ export const revalidate = 300;
 
 const PATH = '/ai-strategy-consulting';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'AI Strategy and Consulting Services | Cognovea',
   description:
     'Looking for a trusted ai consultancy? We provide a clear AI adoption roadmap and a secure AI governance framework to help your business grow safely.',
-  alternates: { canonical: `${PATH}/` },
-  openGraph: {
-    title: 'AI Strategy and Consulting Services | Cognovea',
-    description:
-      'Looking for a trusted ai consultancy? We provide a clear AI adoption roadmap and a secure AI governance framework to help your business grow safely.',
-    url: `${PATH}/`,
-  },
-};
+  path: '/ai-strategy-consulting',
+});
 
 const CRUMBS = [{ href: PATH, label: 'AI Strategy & Consulting' }];
 
