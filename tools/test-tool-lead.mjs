@@ -49,6 +49,9 @@ const FILES = {
   '@/lib/calculator/url-state': 'src/lib/calculator/url-state.ts',
   '@/lib/host-redirect.mjs': 'src/lib/host-redirect.mjs',
   '@/actions/tool-lead': 'src/actions/tool-lead.ts',
+  // Stubbed: this suite is about what the action stores, not about counting.
+  // The limiter is tested against a real PostgreSQL in test-rate-limit.mjs.
+  '@/lib/rate-limit': 'tools/stubs/rate-limit.ts',
   // The calculator modules import each other by relative path.
   './assumptions': 'src/lib/calculator/assumptions.ts',
   './model': 'src/lib/calculator/model.ts',

@@ -1,6 +1,7 @@
 'use server';
 
 import { getPayloadClient } from '@/lib/payload';
+import { LIMITS as RATE, callerKey, rateLimit } from '@/lib/rate-limit';
 
 /**
  * The only public write path into the database.
@@ -53,6 +54,27 @@ export async function submitEnquiry(formData: FormData): Promise<EnquiryResult> 
   // Returns success rather than an error: telling a scraper it was detected
   // just invites it to try again without the trap.
   if (clean(formData.get('website'), 200)) return { ok: true };
+
+  /*
+   * Counted before anything is validated, deliberately: a script probing with
+   * garbage should use up its allowance the same as anyone else. A honeypot
+   * catches crawlers that fill every field they find; it does nothing against
+   * somebody who has looked at the form once and is now posting to it in a loop.
+   *
+   * The cost of not having this is not spam in an inbox. Both forms send mail,
+   * Resend's free plan allows 100 a day, and password resets come out of the
+   * same allowance — so a few minutes against this endpoint locks an admin out
+   * of the site.
+   */
+  const limit = await rateLimit('enquiry', await callerKey(), RATE.enquiry.limit, RATE.enquiry.windowSeconds);
+  if (!limit.allowed) {
+    // No mention of a limit, a count, or a window: a script learns nothing it
+    // can tune against. A real person gets somewhere to go instead.
+    return {
+      ok: false,
+      error: 'We could not send that just now. Please email us directly at hello@cognovea.com and we will pick it up.',
+    };
+  }
 
   const data = {
     fullName: clean(formData.get('fullName'), LIMITS.fullName),
