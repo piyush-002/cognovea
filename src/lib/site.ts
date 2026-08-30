@@ -92,8 +92,8 @@ const PLAYBOOKS: NavLink = {
 };
 const PORTFOLIO: NavLink = {
   href: '/portfolio',
-  label: 'Portfolio',
-  blurb: 'Products we have built, and client work we can show.',
+  label: 'Portfolio & Case Studies',
+  blurb: 'What we have built, and the work we have done.',
 };
 const INSIGHTS: NavLink = { href: '/insights', label: 'Insights' };
 const CONTACT: NavLink = { href: '/contact', label: 'Contact' };

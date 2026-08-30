@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
 import JsonLd from '@/components/JsonLd';
 import PortfolioBlocks from '@/components/PortfolioBlocks';
-import { getPortfolio, getPortfolioEntry, sectorLabel } from '@/lib/portfolio';
+import { getPortfolio, getPortfolioEntry, sectorLabel, studyLabel } from '@/lib/portfolio';
 import { pageMetadata } from '@/lib/seo';
 import { abs, site } from '@/lib/site';
 
@@ -52,11 +52,9 @@ export default async function PortfolioEntryPage({ params }: Props) {
   ];
   const sector = sectorLabel(entry.sector);
 
-  /* Product or client work, and who it was for — resolved in lib/portfolio so
-     an unpermitted client name cannot reach a template. */
-  const eyebrow = [entry.kind === 'product' ? 'Product' : entry.attribution, sector]
-    .filter(Boolean)
-    .join(' · ');
+  /* What kind of study, who it was for, and the sector — resolved in
+     lib/portfolio so an unpermitted client name cannot reach a template. */
+  const eyebrow = [studyLabel(entry.kind, entry.attribution), sector].filter(Boolean).join(' · ');
 
   return (
     <>
@@ -65,16 +63,16 @@ export default async function PortfolioEntryPage({ params }: Props) {
           breadcrumbSchema(crumbs),
           {
             '@context': 'https://schema.org',
-            '@type': entry.kind === 'product' ? 'SoftwareApplication' : 'Article',
+            /* Article for both. SoftwareApplication describes a thing you can
+               install; this is a write-up of how something was built and what
+               it does, which is a document. */
+            '@type': 'Article',
             name: entry.title,
             headline: entry.title,
             description: entry.summary,
             url: abs(path),
             ...(entry.cover ? { image: abs(entry.cover.url) } : {}),
             ...(entry.publishedAt ? { datePublished: entry.publishedAt } : {}),
-            ...(entry.kind === 'product'
-              ? { applicationCategory: 'BusinessApplication', operatingSystem: 'Web' }
-              : {}),
             publisher: { '@id': `${site.url}/#organization` },
             author: { '@type': 'Organization', name: site.name, url: abs('/') },
           },

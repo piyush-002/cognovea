@@ -46,6 +46,18 @@ function cover(value: unknown) {
 }
 
 /**
+ * The label above the title: what kind of study this is, and who it was for.
+ *
+ * Every entry is a case study — of a product we built, or of work we did for
+ * somebody. `kind` still decides whether the client fields apply, but it is no
+ * longer surfaced as the word "Product", which read as a datasheet rather than
+ * as a piece of work.
+ */
+export function studyLabel(kind: 'product' | 'client', attribution: string | null): string {
+  return kind === 'product' ? 'Case study' : `Case study · ${attribution ?? 'Client work'}`;
+}
+
+/**
  * How an entry is attributed on the page.
  *
  * A client name appears only when somebody has ticked the permission box. With

@@ -274,7 +274,7 @@ export interface Media {
   };
 }
 /**
- * Products we have built and client work we can show. Drafts stay private until published.
+ * Case studies of what we have built and the work we have done. Drafts stay private until published.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "portfolio".

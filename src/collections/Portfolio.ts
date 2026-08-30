@@ -25,13 +25,13 @@ import { portfolioHooks } from '@/lib/revalidate';
  */
 export const Portfolio: CollectionConfig = {
   slug: 'portfolio',
-  labels: { singular: 'Portfolio entry', plural: 'Portfolio' },
+  labels: { singular: 'Case study', plural: 'Portfolio & Case Studies' },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'kind', 'sector', 'featured', 'publishedAt'],
     group: 'Content',
     description:
-      'Products we have built and client work we can show. Drafts stay private until published.',
+      'Case studies of what we have built and the work we have done. Drafts stay private until published.',
     preview: (doc) => (doc?.slug ? `/portfolio/${doc.slug}` : null),
   },
   versions: { drafts: true },
@@ -61,8 +61,8 @@ export const Portfolio: CollectionConfig = {
           required: true,
           defaultValue: 'product',
           options: [
-            { label: 'Product we built', value: 'product' },
-            { label: 'Client engagement', value: 'client' },
+            { label: 'Something we built', value: 'product' },
+            { label: 'Work for a client', value: 'client' },
           ],
           admin: {
             width: '50%',

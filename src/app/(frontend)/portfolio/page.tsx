@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
 import JsonLd from '@/components/JsonLd';
 import { toSameOriginPath } from '@/lib/media-url';
-import { getPortfolio, sectorLabel } from '@/lib/portfolio';
+import { getPortfolio, sectorLabel, studyLabel } from '@/lib/portfolio';
 import { pageMetadata } from '@/lib/seo';
 import { abs } from '@/lib/site';
 
@@ -20,9 +20,9 @@ const PATH = '/portfolio';
 export const revalidate = 300;
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Portfolio | What We Have Built',
+  title: 'Portfolio & Case Studies | Cognovea',
   description:
-    'Products we have built and client work we can show — what each one does, how it was put together, and what it was for.',
+    'Case studies of what we have built and the work we have done — what each one does, how it was put together, and what it was for.',
   path: PATH,
 });
 
@@ -39,7 +39,7 @@ export default async function PortfolioPage() {
           {
             '@context': 'https://schema.org',
             '@type': 'CollectionPage',
-            name: 'Portfolio',
+            name: 'Portfolio & Case Studies',
             url: abs(PATH),
             hasPart: entries
               .filter((e) => !e.noindex)
@@ -50,8 +50,8 @@ export default async function PortfolioPage() {
 
       <PageHero
         eyebrow="Portfolio"
-        title="What we have built"
-        intro="Products we own and client work we are able to show. Each one sets out what it does, how it is put together, and what it was for."
+        title="Portfolio &amp; case studies"
+        intro="What we have built, and the work we have done. Each one sets out what it does, how it is put together, and what it was for."
         crumbs={CRUMBS}
         compact
       />
@@ -80,7 +80,7 @@ export default async function PortfolioPage() {
                     />
                   ) : null}
                   <span className="pf-card__meta">
-                    {e.kind === 'product' ? 'Product' : (e.attribution ?? 'Client work')}
+                    {studyLabel(e.kind, e.attribution)}
                     {sectorLabel(e.sector) ? ` · ${sectorLabel(e.sector)}` : ''}
                   </span>
                   <h2 className="pf-card__title">{e.title}</h2>
