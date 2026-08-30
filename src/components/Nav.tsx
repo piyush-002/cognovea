@@ -105,12 +105,11 @@ export default function Nav() {
                 </ul>
               </li>
 
-              <li>
-                <Link href="/data-health-check" aria-current={current('/data-health-check')}>
-                  Data Health Check
-                </Link>
-              </li>
-
+              {/* No text link to /data-health-check here: the CTA beside it points
+                  at the same page, and the footer, every page's closing band and
+                  a dozen in-body links point there too. Two identical links four
+                  inches apart in one nav add nothing a crawler can use, and cost
+                  a slot on a row people scan. */}
               {navPrimaryLinks
                 .filter((l) => l.href !== '/contact')
                 .map((l) => (
