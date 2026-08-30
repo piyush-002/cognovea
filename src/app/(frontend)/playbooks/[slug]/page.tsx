@@ -96,30 +96,43 @@ export default async function PlaybookPage({ params }: Props) {
       />
 
       <section className="band">
-        <div className="wrap pb">
-          <p className="pb__audience">{playbook.audience}</p>
+        <div className="wrap pb-layout">
+          {/* The contents are a sidebar, not a block dropped in the reading
+              column. A nine-item list set full width above the article pushes
+              the first thing worth reading below the fold and is scrolled past
+              rather than used; on the left it stays visible while you read, and
+              the industry motif gives the column something to sit under. */}
+          <aside className="pb-side">
+            {/* eslint-disable-next-line @next/next/no-img-element -- a 3KB
+                vector; the optimiser would cost a request and return more
+                bytes. Same reasoning as Figure() in Bits.tsx. */}
+            <img className="pb-side__art" src={playbook.image} alt="" width={600} height={400} />
 
-          <nav className="pb__toc" aria-label="On this page">
-            <span className="pb__toc-lab">On this page</span>
-            <ol>
-              {playbook.useCases.map((u) => (
-                <li key={u.id}>
-                  <a href={`#${u.id}`}>{u.name}</a>
+            <nav className="pb__toc" aria-label="On this page">
+              <span className="pb__toc-lab">On this page</span>
+              <ol>
+                {playbook.useCases.map((u) => (
+                  <li key={u.id}>
+                    <a href={`#${u.id}`}>{u.name}</a>
+                  </li>
+                ))}
+                <li>
+                  <a href="#readiness">Before any of it works</a>
                 </li>
-              ))}
-              <li>
-                <a href="#readiness">Before any of it works</a>
-              </li>
-              <li>
-                <a href="#questions">Questions people ask</a>
-              </li>
-              <li>
-                <a href="#sources">Sources</a>
-              </li>
-            </ol>
-          </nav>
+                <li>
+                  <a href="#questions">Questions people ask</a>
+                </li>
+                <li>
+                  <a href="#sources">Sources</a>
+                </li>
+              </ol>
+            </nav>
+          </aside>
 
-          <h2 className="pb__h2">The use cases</h2>
+          <div className="pb">
+            <p className="pb__audience">{playbook.audience}</p>
+
+            <h2 className="pb__h2">The use cases</h2>
 
           {playbook.useCases.map((u, i) => (
             <article key={u.id} id={u.id} className="pb__case">
@@ -227,10 +240,11 @@ export default async function PlaybookPage({ params }: Props) {
             <a href={`mailto:${site.email}`}>{site.email}</a> and it will be corrected.
           </p>
 
-          <p className="pb__more">
-            <Link href="/playbooks">All industry playbooks</Link> ·{' '}
-            <Link href="/tools/bi-automation-calculator">Work out what your reporting costs you</Link>
-          </p>
+            <p className="pb__more">
+              <Link href="/playbooks">All industry playbooks</Link> ·{' '}
+              <Link href="/tools/bi-automation-calculator">Work out what your reporting costs you</Link>
+            </p>
+          </div>
         </div>
       </section>
 

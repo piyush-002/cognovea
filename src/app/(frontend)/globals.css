@@ -4160,6 +4160,8 @@ tbody tr:hover {
   flex-direction: column;
   gap: 0.55rem;
   padding: 1.5rem;
+  /* Clips the full-bleed motif to the card's rounded corners. */
+  overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: #fff;
@@ -4193,6 +4195,25 @@ tbody tr:hover {
 }
 
 
+
+/* Full-bleed across the top of the card, so the motif reads as the card's
+   subject rather than as an icon set beside the text. The negative margin pulls
+   it back out through the card's own padding to reach the edges. */
+.pb-card__art {
+  inline-size: calc(100% + 3rem);
+  /* The reset sets max-width: 100% on every img, which silently clamps the
+     bleed back to the content box and leaves the motif stopping short of the
+     card's right edge. */
+  max-inline-size: none;
+  margin: -1.5rem -1.5rem 0.4rem;
+  block-size: auto;
+  border-block-end: 1px solid var(--line);
+}
+
+.pb-card--soon .pb-card__art {
+  opacity: 0.5;
+  border-block-end-style: dashed;
+}
 
 .pb-card__industry {
   font-size: 12px;
@@ -4249,6 +4270,35 @@ tbody tr:hover {
 
 /* --- the playbook itself ------------------------------------------------- */
 
+/* Two columns: contents on the left, the article beside it.
+   
+   The whole grid is pinned to the start of the wrap rather than centred. A
+   capped column inside .wrap inherits its margin-inline: auto and ends up
+   floating in the middle of a 1240px container with nothing either side, which
+   is what this replaced. */
+.pb-layout {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 46rem);
+  gap: 3rem;
+  align-items: start;
+  justify-content: start;
+}
+
+.pb-side {
+  position: sticky;
+  /* Clear of the sticky header. */
+  inset-block-start: 5.5rem;
+  display: grid;
+  gap: 1.1rem;
+}
+
+.pb-side__art {
+  inline-size: 100%;
+  block-size: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
 /* Measure, not full width. This is long-form reading and a 100-character line
    loses the reader between the end of one line and the start of the next. */
 .pb {
@@ -4265,7 +4315,6 @@ tbody tr:hover {
 }
 
 .pb__toc {
-  margin-block: 2rem;
   padding: 1.1rem 1.3rem;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -4291,6 +4340,10 @@ tbody tr:hover {
 
 .pb__h2 {
   margin-block: 2.6rem 0.9rem;
+}
+
+.pb > .pb__h2:first-of-type {
+  margin-block-start: 1.8rem;
   padding-block-end: 0.5rem;
   border-block-end: 1px solid var(--line);
   font-family: var(--f-head), system-ui, sans-serif;
@@ -4490,6 +4543,33 @@ tbody tr:hover {
 
 /* One breakpoint, and it comes after the base rules it overrides — see
    tools/test-css-order.mjs, which exists because that went wrong once. */
+/* Below this the two columns do not both fit, so the contents go back to a
+   block above the article — no longer sticky, because a sticky sidebar on a
+   phone is a box that follows you down the page. */
+@media (max-width: 64rem) {
+  .pb-layout {
+    grid-template-columns: minmax(0, 46rem);
+    gap: 1.6rem;
+  }
+
+  .pb-side {
+    position: static;
+    grid-template-columns: 10rem 1fr;
+    align-items: center;
+    gap: 1.2rem;
+  }
+}
+
+@media (max-width: 34rem) {
+  .pb-side {
+    grid-template-columns: 1fr;
+  }
+
+  .pb-side__art {
+    display: none;
+  }
+}
+
 @media (max-width: 40rem) {
   .pb__cols {
     grid-template-columns: 1fr;
