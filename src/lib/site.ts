@@ -159,7 +159,9 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   // Same reasoning as the calculator: these exist to be linked to, so they
   // outrank the pages that exist to be found.
   { path: '/playbooks', priority: 0.7, changeFrequency: 'monthly' },
-  { path: '/playbooks/manufacturing', priority: 0.9, changeFrequency: 'monthly' },
+  // Individual playbooks are not listed here. They are derived from the content
+  // module in sitemap.ts, so publishing one cannot leave it out of the sitemap
+  // by omission — which a hand-maintained list guarantees eventually.
   { path: '/insights', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/about-us', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/careers', priority: 0.6, changeFrequency: 'weekly' },

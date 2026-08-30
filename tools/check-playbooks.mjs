@@ -194,5 +194,24 @@ for (const p of PLAYBOOKS) {
   ok('every planned entry names its industry', PLANNED_PLAYBOOKS.every((p) => Boolean(p.industry?.trim())));
 }
 
+/* --- a published playbook must be reachable and submitted ----------------- */
+{
+  const sitemap = fs.readFileSync(path.join(root, 'src/app/(frontend)/sitemap.ts'), 'utf8');
+  const site = fs.readFileSync(path.join(root, 'src/lib/site.ts'), 'utf8');
+
+  /*
+   * Derived rather than listed, deliberately, and checked here so it stays that
+   * way. src/lib/site.ts used to carry a hand-written line per playbook, which
+   * works exactly until somebody publishes the sixth one and forgets — and a
+   * page missing from the sitemap is a page that was written to be linked to
+   * and never submitted.
+   */
+  ok('the sitemap builds playbook entries from the content module',
+    /publishedPlaybooks\(\)/.test(sitemap), 'no publishedPlaybooks() call in sitemap.ts');
+  ok('and site.ts does not hand-list individual playbooks',
+    !/path: '\/playbooks\/[a-z]/.test(site), 'found a hardcoded playbook route in routes[]');
+  ok('the section index is still listed', /path: '\/playbooks'/.test(site));
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

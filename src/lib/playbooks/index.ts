@@ -249,8 +249,345 @@ const manufacturing: Playbook = {
   updated: '2026-08-30',
 };
 
+
+const oilAndGas: Playbook = {
+  slug: 'oil-and-gas',
+  industry: 'Oil & Gas',
+  title: 'Data and AI Use Cases in Oil & Gas',
+  description:
+    'Six data and AI use cases in oil and gas, each with the data it needs, how to prove it worked, and where it fails. Sourced, including a published account of what a real offshore programme actually took.',
+  audience:
+    'Written for operations, integrity and digital leads at operators and service companies who need to separate what is running in production from what is running in a conference slide. It assumes no data science background.',
+  standfirst:
+    'Six things operators actually run on their data: rotating equipment monitoring, corrosion and integrity, production optimisation, flaring and emissions, drilling and completion analysis, and inventory for critical spares. For each one this sets out the data it needs, how you would prove it worked, and where it fails.',
+
+  useCases: [
+    {
+      id: 'rotating-equipment',
+      name: 'Rotating equipment monitoring',
+      summary: 'Catch a turbine, compressor or pump degrading before it trips.',
+      what:
+        'Vibration, temperature, pressure and flow are watched for the signature that precedes a failure on a specific machine. On a platform the value is not the repair cost — it is avoiding an unplanned shutdown of production, and avoiding a helicopter mobilisation to fix something that could have been done on the next scheduled visit.',
+      needs: [
+        'A historian that actually holds the tags at the resolution the fault needs, and that somebody can query without raising a ticket.',
+        'CMMS work orders that record what was found and what was replaced. The published offshore programme below hit exactly this: not all maintenance had gone through the work-order system.',
+        'Somebody onshore who owns the alert and can get it into the next offshore work pack.',
+        'Equipment engineers involved from the start. A modelling partner without domain knowledge slows the work rather than speeding it.',
+      ],
+      proof:
+        'Pick the assets and the failure modes first, and write down the current rate of unplanned trips on them. Six months later, count again. Also count alerts that led to an intervention against alerts that were dismissed — a model nobody acts on is a subscription, not a system.',
+      fails:
+        'It stalls on data availability far more often than on modelling, and the delay is measured in months not weeks. It also fails when the alert says only that something is abnormal: a "check engine" light on a compressor tells an offshore team nothing they can act on, and they stop opening them.',
+      evidence: FINDINGS.offshoreDataFirst,
+    },
+    {
+      id: 'corrosion-integrity',
+      name: 'Corrosion and asset integrity',
+      summary: 'Target inspection at the parts of the system most likely to be thinning.',
+      what:
+        'Inspection history, process conditions, fluid composition and material data are combined to rank circuits by likely degradation, so inspection effort goes where the risk is rather than where the schedule says.',
+      needs: [
+        'Inspection results in a queryable form, not as scanned PDFs of reports.',
+        'Consistent circuit and location identifiers across the systems. This is usually the hard part: the same line has three identifiers in three systems.',
+        'Process history for the same period as the inspection findings.',
+      ],
+      proof:
+        'Compare the ranking against what the next inspection campaign actually finds. It is a good sign when the model puts thinning at the top of the list before anyone has looked, and an honest failure when it does not.',
+      fails:
+        'Where inspection coverage has been driven by accessibility rather than risk, the history is biased towards what was easy to reach — and a model trained on it inherits that blind spot precisely where you most need it not to.',
+    },
+    {
+      id: 'production-optimisation',
+      name: 'Production optimisation',
+      summary: 'Find where wells and facilities are running below what conditions allow.',
+      what:
+        'Well tests, choke settings, pressures and facility constraints are used to find the gap between what a well is producing and what it could produce, and to say which constraint is binding.',
+      needs: [
+        'Well test data at a usable frequency, and honesty about how old each test is.',
+        'Facility constraints written down somewhere other than in an operator’s head.',
+        'Allocation that reconciles, or the model will optimise against a number that is already wrong.',
+      ],
+      proof:
+        'Against the current process, on the same wells, over a period long enough to cover normal variation. Uplift claimed against a best-ever month is not uplift.',
+      fails:
+        'When allocation is contested. If two departments disagree about what a well produced last month, no optimisation of that figure will be believed, and the argument is the project.',
+    },
+    {
+      id: 'flaring-emissions',
+      name: 'Flaring and emissions monitoring',
+      summary: 'Account for what is flared and vented, and find the recurring causes.',
+      what:
+        'Flare meter data, process events and equipment status are brought together to attribute flaring to causes — a compressor trip, a start-up, a specific plant upset — rather than reporting a monthly total nobody can act on.',
+      needs: [
+        'Flare metering that is calibrated, and known gaps where it is not.',
+        'Event and alarm history on the same clock as the flare data.',
+        'An agreed reporting basis, because the regulatory figure and the engineering figure are rarely the same number.',
+      ],
+      proof:
+        'Volume attributed to an identified cause, as a share of the total. Going from "we flared this much" to "this much of it came from these four causes" is the whole value, and it is measurable.',
+      fails:
+        'When metering is poor and the analysis quietly becomes an estimate presented with the confidence of a measurement — which is a problem if the number ends up in a regulatory return.',
+    },
+    {
+      id: 'drilling-analysis',
+      name: 'Drilling and completion analysis',
+      summary: 'Compare wells honestly enough to learn something from the last one.',
+      what:
+        'Daily reports, mud logs, bit records and time breakdowns are normalised so that wells can be compared — where non-productive time went, which parameter choices went with better runs.',
+      needs: [
+        'Daily drilling reports in a structured form. They are usually free text, and turning them into data is most of the work.',
+        'A consistent operations coding scheme across rigs and contractors.',
+        'Enough wells in comparable formations to draw any conclusion at all.',
+      ],
+      proof:
+        'Non-productive time per well section against the historical baseline for the same formation. Comparing against a different field is not a comparison.',
+      fails:
+        'On small samples. A dozen wells across three basins supports anecdote, not inference, and dressing that up as a model gives the anecdote unearned authority.',
+    },
+    {
+      id: 'critical-spares',
+      name: 'Critical spares and inventory',
+      summary: 'Hold what a shutdown would turn on, and stop holding the rest.',
+      what:
+        'Consumption, lead time and the cost of a stock-out set holdings for each part. In this sector the asymmetry is severe: an inexpensive seal can hold up production worth far more than the whole store.',
+      needs: [
+        'Real lead times, which for long-lead items are frequently recorded as the original quote rather than as delivered.',
+        'A criticality judgement per part, made by engineers rather than inferred from price.',
+        'Issue history at part level, including what was cannibalised from another unit.',
+      ],
+      proof:
+        'Value held against stock-outs that caused deferment. Report both or the exercise becomes a cost-cutting number with a production loss hidden behind it.',
+      fails:
+        'When criticality is inferred from cost. The part that stops the platform is often cheap, and the expensive one on the shelf is often the one that never fails.',
+    },
+  ],
+
+  readiness: [
+    {
+      name: 'The historian is reachable, and the tags mean what they say',
+      detail:
+        'Every use case here starts with time-series data somebody can query. Where the tag list is undocumented and half the names are inherited from a previous operator, that is the first piece of work and it is not a modelling task.',
+    },
+    {
+      name: 'Maintenance history records what failed, not just that somebody attended',
+      detail:
+        'This is the single most common gap, and it is documented in the offshore programme cited above: maintenance that never went through the work-order system leaves no history to learn from. It cannot be reconstructed later.',
+    },
+    {
+      name: 'One identifier per physical thing, across systems',
+      detail:
+        'A line, a vessel or a pump usually carries different identifiers in the historian, the CMMS and the inspection database. Until they can be joined, every one of these use cases is a manual reconciliation exercise wearing a model.',
+    },
+    {
+      name: 'An onshore owner for every alert',
+      detail:
+        'Offshore crews are busy and an alert without a named owner onshore is an alert that gets acknowledged and forgotten. This is a rota question, not a technology one, and it decides whether any of this survives its first six months.',
+    },
+  ],
+
+  faq: [
+    {
+      question: 'How long does an offshore predictive maintenance programme take to produce anything?',
+      answer:
+        'Longer than the pilot timeline usually says. In a published account of a 24-month programme across deepwater Gulf of Mexico platforms, the first predictive model went live six months after kickoff, and the operator attributed the delay to a lack of the required data rather than to modelling difficulty. Forty-six models were eventually running in production. Plan for the data work to be the schedule.',
+    },
+    {
+      question: 'What is the most common data problem in oil and gas AI projects?',
+      answer:
+        'Maintenance history that records an intervention but not a failure mode. The offshore programme cited here found that not all maintenance had been raised through the work-order system, so the record of what actually failed was incomplete. Sensor data is usually abundant; the labels that make it useful are usually not.',
+    },
+    {
+      question: 'Why do offshore crews stop acting on model alerts?',
+      answer:
+        'Because early alerts tend to behave like a check-engine light — they say something is abnormal without saying what or what to do. The published programme describes exactly this and had to retrain models to reduce false positives. An alert that cannot be turned into a work-pack line is an alert that gets dismissed, and once dismissal becomes habit the system is finished regardless of its accuracy.',
+    },
+    {
+      question: 'Do we need a data scientist or an equipment engineer?',
+      answer:
+        'Both, and the second is the one usually missing. The offshore programme reported that its service partner lacked sufficient expertise in oil and gas equipment, which hampered the work. A model that does not know a glycol system from a gas compressor produces alerts that a rotating equipment engineer can see are nonsense.',
+    },
+    {
+      question: 'Where should an operator start if none of this exists yet?',
+      answer:
+        'With whether the historian and the CMMS can be joined on a common identifier for the same physical asset. It needs no machine learning, it is the prerequisite for every use case above, and finding out that it cannot be done is worth knowing before a modelling contract is signed rather than after.',
+    },
+  ],
+
+  image: '/img/ind-energy.svg',
+  published: true,
+  updated: '2026-08-30',
+};
+
+
+const logistics: Playbook = {
+  slug: 'logistics',
+  industry: 'Logistics',
+  title: 'Data and AI Use Cases in Logistics',
+  description:
+    'Six data and AI use cases in logistics and distribution, each with the data it needs, how to prove it worked, and where it fails. Every figure sourced, with what the published forecasting evidence does and does not support.',
+  audience:
+    'Written for operations, network and IT leads at carriers, 3PLs and distributors who need to know which of these is worth starting and what each one will demand of their data first. It assumes no data science background.',
+  standfirst:
+    'Six things logistics operations actually run on their data: demand and volume forecasting, route and load planning, warehouse slotting, ETA prediction, fleet maintenance, and freight cost and invoice audit. Two of the six need no machine learning. For each one this sets out the data it needs, how you would prove it worked, and where it fails.',
+
+  useCases: [
+    {
+      id: 'volume-forecasting',
+      name: 'Demand and volume forecasting',
+      summary: 'Forecast what will need moving, to staff and book capacity against it.',
+      what:
+        'Order and shipment history, seasonality and known drivers project volume by lane, site and period. The output only matters if it changes something you commit to in advance — shifts rostered, vehicles booked, space taken.',
+      needs: [
+        'Several years of history at the granularity you actually plan at. A network total does not help a site manager staff a shift.',
+        'A record of what you turned away or could not move, or the history understates demand exactly where it was tightest.',
+        'Promotions, contract wins and losses marked, or the model learns a one-off customer as a season.',
+      ],
+      proof:
+        'Against your current method, which is usually last period plus judgement, on the same lanes over the same window. The published reviews report machine learning beating classical baselines by meaningful margins, but those are the authors’ datasets and not a promise about yours — your own baseline is the only comparison that decides anything.',
+      fails:
+        'On lanes dominated by a handful of customers, where one contract decision outweighs any pattern in the history. It also fails after a genuine step change in the network, because a model trained on the old shape is confident and wrong.',
+      evidence: FINDINGS.forecastGains,
+    },
+    {
+      id: 'route-load-planning',
+      name: 'Route and load planning',
+      summary: 'Build drops and loads that respect what the vehicle and the driver can actually do.',
+      what:
+        'Orders, vehicle capacities, time windows and driver hours are solved into routes. This is optimisation rather than learning, and it is one of the two here that involves no machine learning at all.',
+      needs: [
+        'Accurate service times per drop. Planned times that everyone knows are wrong produce routes nobody runs.',
+        'Real vehicle constraints, including the ones drivers work around informally.',
+        'Access restrictions and delivery windows as they are enforced, not as the customer master says.',
+      ],
+      proof:
+        'Planned versus actual, per route, over a month: how many drops moved, how much time was added, how often a driver rebuilt the run themselves. A plan the depot quietly overrides has failed however good the objective function looks.',
+      fails:
+        'When the model’s picture of a drop is a customer record and the driver’s is a loading bay with a locked gate at four o’clock. The gap between those two is where these projects die.',
+    },
+    {
+      id: 'warehouse-slotting',
+      name: 'Warehouse slotting',
+      summary: 'Put fast-moving stock where it costs least to pick.',
+      what:
+        'Pick history, product dimensions and affinity between items decide where each SKU sits, cutting travel per pick. Also not machine learning — it is counting and arithmetic, and it usually pays back faster than anything else on this list.',
+      needs: [
+        'Pick-level history with location and timestamp, not order-level summaries.',
+        'Accurate product dimensions and weights, which are very often wrong in the master data.',
+        'A window in which to physically move stock, which is an operational cost people forget to budget.',
+      ],
+      proof:
+        'Travel distance or picks per hour, measured before and after on comparable volume. Normalise for volume or a quiet month will look like an improvement.',
+      fails:
+        'When the analysis is run once and never again. Slotting decays as the range changes, and a layout optimised for last spring is worse than one nobody optimised.',
+    },
+    {
+      id: 'eta-prediction',
+      name: 'ETA prediction',
+      summary: 'Tell a customer when it will arrive, and be right often enough to be believed.',
+      what:
+        'Telematics, historical transit times, traffic and dwell patterns predict arrival windows for a consignment in flight.',
+      needs: [
+        'Position data at a frequency that captures dwell, not just departure and arrival.',
+        'Historical actuals per lane, including the bad days rather than a cleaned set.',
+        'A defined event for "arrived", because gate-in, unload and POD are three different times and pretending otherwise makes the whole measurement incoherent.',
+      ],
+      proof:
+        'The share of deliveries landing inside the promised window, and the size of the misses when they fall outside. Publishing a narrow window you hit half the time is worse than a wide window you hit reliably.',
+      fails:
+        'At the last leg and in yards, where the variance actually lives. A model that nails line-haul and cannot predict a three-hour wait for a door is a model that gets the customer promise wrong.',
+    },
+    {
+      id: 'fleet-maintenance',
+      name: 'Fleet maintenance',
+      summary: 'Take the vehicle off the road on your schedule, not on the hard shoulder.',
+      what:
+        'Telematics fault codes, service history and duty cycle are used to schedule work before a breakdown. The value is a planned VOR instead of a recovery and a failed delivery.',
+      needs: [
+        'Fault codes retained rather than cleared at service, which many workshops do by default.',
+        'Service history joined to the vehicle across its whole life, including under a previous operator.',
+        'Duty cycle, since the same vehicle on urban multi-drop and on trunking degrades differently.',
+      ],
+      proof:
+        'Roadside breakdowns per vehicle per year, against the same period before. Count planned VOR hours too — trading a breakdown for excessive precautionary downtime is not a win.',
+      fails:
+        'On mixed fleets with too few of any one model to learn from, and where the maintenance record lives with a contracted workshop who has no reason to give you the detail.',
+    },
+    {
+      id: 'freight-audit',
+      name: 'Freight cost and invoice audit',
+      summary: 'Check what you were charged against what was agreed and what moved.',
+      what:
+        'Carrier invoices are reconciled against rate cards, actual weights and dimensions, and the shipment record. Overcharges are usually not fraud — they are re-weighs, accessorials and surcharges that nobody has capacity to check line by line.',
+      needs: [
+        'Rate cards in a structured form. They frequently arrive as PDFs and turning them into data is the project.',
+        'Dimensional data captured at despatch, or you cannot dispute a re-weigh.',
+        'A shipment record that can be matched to an invoice line, which sounds trivial and rarely is.',
+      ],
+      proof:
+        'Recovered or avoided spend as a share of freight cost, and the share of invoice lines checked. The second matters: auditing a small sample and extrapolating from it is an estimate, not a finding.',
+      fails:
+        'When the dispute process costs more than the recovery. Finding an error you will never claim back is an expensive way to feel informed.',
+    },
+  ],
+
+  readiness: [
+    {
+      name: 'One identifier follows a consignment end to end',
+      detail:
+        'Order, shipment, consignment and invoice usually carry different references in different systems. Until they join, every use case here starts with a reconciliation exercise, and most of the effort goes there rather than into the analysis.',
+    },
+    {
+      name: 'Events are timestamped consistently, and "arrived" is defined',
+      detail:
+        'Gate-in, unload start and POD are three different moments. Where sites record them differently, transit and dwell figures are not comparable between them, and any model built on the mixture inherits the inconsistency.',
+    },
+    {
+      name: 'Master data reflects reality, not the contract',
+      detail:
+        'Service times, dimensions, access restrictions and delivery windows are frequently what was agreed years ago rather than what happens now. Planning against them produces plans the depot overrides, which is the most common way these projects quietly stop being used.',
+    },
+    {
+      name: 'Somebody owns the decision each output feeds',
+      detail:
+        'A forecast changes a staffing commitment; a route plan changes what a driver is handed; an audit finding changes a claim. Where no named person makes that call today, the output has nowhere to go, and a technically successful pilot gets abandoned anyway.',
+    },
+  ],
+
+  faq: [
+    {
+      question: 'Does machine learning actually forecast logistics demand better than traditional methods?',
+      answer:
+        'The published evidence says yes, with caveats worth knowing. A 2024 critical review of 119 studies found machine-learning forecasters reporting error reductions of roughly 15–20% against ARIMA, with hybrid models reporting further gains. Those figures are what each set of authors measured on their own data, not a promise about your lanes, and the same review names unreliable input data — missing history, or bias in what was recorded — as a limit that no choice of model removes. Your own current method is the only baseline that decides anything.',
+    },
+    {
+      question: 'Which logistics use case pays back fastest?',
+      answer:
+        'Usually warehouse slotting or freight invoice audit, and neither involves machine learning. Slotting is counting pick history and moving stock; audit is reconciling invoices against rate cards. Both are unglamorous, both are measurable within a quarter, and both are frequently skipped in favour of something with a better name.',
+    },
+    {
+      question: 'Why do route optimisation projects get rejected by depots?',
+      answer:
+        'Because the model plans against master data and the driver runs against reality — service times that are optimistic, a delivery window the customer enforces differently, a gate locked at four. When the plan and the ground disagree, the depot rebuilds the run by hand and the system becomes something to work around. The fix is fixing the master data, which is slower and less interesting than the optimisation.',
+    },
+    {
+      question: 'What data do we need before ETA prediction is worth attempting?',
+      answer:
+        'Position data frequent enough to show dwell rather than just departure and arrival, historical actuals per lane including the bad days, and an agreed definition of "arrived". That last one decides everything downstream: gate-in, unload and POD are three different times, and a model trained on a mixture of them cannot be accurate about any of them.',
+    },
+    {
+      question: 'Where should a logistics operation start if none of this exists yet?',
+      answer:
+        'By checking whether a consignment can be traced end to end on one identifier, and whether every site means the same thing by "arrived". Neither needs machine learning, both are prerequisites for most of the list above, and discovering that they do not hold is worth more than a forecasting pilot built on top of the gap.',
+    },
+  ],
+
+  image: '/img/ind-logistics.svg',
+  published: true,
+  updated: '2026-08-30',
+};
+
 /**
- * The other five, declared but not published.
+ * The rest, declared but not published.
  *
  * They appear on the index as in preparation rather than as pages, because a
  * thin page is worse for this section than no page: it competes with the real
@@ -258,14 +595,12 @@ const manufacturing: Playbook = {
  * links. They get built to the same standard or they do not go up.
  */
 const PLANNED = [
-  { slug: 'oil-and-gas', industry: 'Oil & Gas', image: '/img/ind-energy.svg' },
   { slug: 'fintech', industry: 'Fintech', image: '/img/ind-financial.svg' },
   { slug: 'retail-ecommerce', industry: 'Retail & E-commerce', image: '/img/ind-retail.svg' },
   { slug: 'healthcare', industry: 'Healthcare', image: '/img/ind-healthcare.svg' },
-  { slug: 'logistics', industry: 'Logistics', image: '/img/ind-logistics.svg' },
 ] as const;
 
-export const PLAYBOOKS: Playbook[] = [manufacturing];
+export const PLAYBOOKS: Playbook[] = [manufacturing, oilAndGas, logistics];
 
 export const PLANNED_PLAYBOOKS = PLANNED;
 

@@ -65,6 +65,32 @@ export const SOURCES: Record<string, Source> = {
       'A review of published work, so it inherits publication bias — approaches that failed are less likely to have been written up at all.',
   },
 
+  speOffshorePdm: {
+    id: 'speOffshorePdm',
+    label: 'Framework for AI- and ML-Based Predictive Maintenance for Offshore Rotating Equipment',
+    url: 'https://jpt.spe.org/framework-for-ai-and-ml-based-predictive-maintenance-for-offshore-rotating-equipment',
+    year: 2024,
+    publisher: 'Journal of Petroleum Technology (SPE)',
+    standing: 'peer-reviewed',
+    method:
+      'A 24-month deployment across Murphy Oil’s deepwater Gulf of Mexico platforms, covering production-critical rotating equipment — power-generation turbines, export gas compressors, glycol systems — using live sensor data, offshore and onshore historians, and CMMS work-order records. 46 models were put into production.',
+    caveat:
+      'An account of one operator’s programme, not a controlled comparison. It reports that false positives fell after retraining but publishes no accuracy figures, so it supports claims about what the work involves rather than about how well the models perform.',
+  },
+
+  mdpiForecastReview: {
+    id: 'mdpiForecastReview',
+    label: 'Machine Learning and Deep Learning Models for Demand Forecasting in Supply Chain Management: A Critical Review',
+    url: 'https://www.mdpi.com/2571-5577/7/5/93',
+    year: 2024,
+    publisher: 'Applied System Innovation (MDPI)',
+    standing: 'peer-reviewed',
+    method:
+      'Review of 119 papers published between 2015 and 2024, comparing machine-learning and deep-learning forecasting approaches against classical statistical baselines and recording the error reductions each reported.',
+    caveat:
+      'The improvements it collects are those the original authors reported on their own datasets, which are not directly comparable with each other and are not a promise about any particular business. Nearly three quarters of the papers were published in the last four years of the window, so the field is young.',
+  },
+
   powellSpreadsheetErrors: {
     id: 'powellSpreadsheetErrors',
     label: 'Errors in Operational Spreadsheets',
@@ -111,6 +137,26 @@ export const FINDINGS = {
       'The barrier repeatedly identified is not modelling but data: labelled failure examples are expensive and slow to obtain, and industrial datasets are heterogeneous and heavily imbalanced.',
     source: SOURCES.mdpiPdmReview,
   },
+  offshoreDataFirst: {
+    claim:
+      'On a 24-month offshore predictive-maintenance programme, the first model went live six months after kickoff, and the stated reason was a lack of the required data rather than anything to do with modelling.',
+    source: SOURCES.speOffshorePdm,
+  },
+  offshoreCmmsGaps: {
+    claim:
+      'The same programme found its maintenance records incomplete: not all maintenance had been raised through the work-order system, so the history the models needed was partly missing.',
+    source: SOURCES.speOffshorePdm,
+  },
+  forecastGains: {
+    claim:
+      'Across 119 reviewed studies, machine-learning forecasters reported error reductions of roughly 15–20% against ARIMA, with hybrid models reporting further gains — improvements measured on the authors’ own datasets rather than on yours.',
+    source: SOURCES.mdpiForecastReview,
+  },
+  forecastDataQuality: {
+    claim:
+      'The same review identifies unreliable input data — missing history, or biases built into what was recorded — as a recurring limit on forecast quality, independent of which model is used.',
+    source: SOURCES.mdpiForecastReview,
+  },
   spreadsheetErrorRate: {
     claim:
       '0.87% of formula cells in operational spreadsheets produce a wrong result, and 94% of the spreadsheets audited contained at least one error.',
@@ -120,10 +166,18 @@ export const FINDINGS = {
 
 export type FindingKey = keyof typeof FINDINGS;
 
-/** How each kind of source is labelled where it is cited inline. */
+/** How each kind of source should be described to a reader, in plain words. */
 export const STANDING_LABEL: Record<Standing, string> = {
   'peer-reviewed': 'Peer-reviewed',
   official: 'Official statistics',
   'vendor-research': 'Vendor research',
   editorial: 'Our assumption',
+};
+
+export const STANDING_NOTE: Record<Standing, string> = {
+  'peer-reviewed': 'Reviewed by other researchers before publication.',
+  official: 'Published by a government statistical office or standards body.',
+  'vendor-research':
+    'Published by a company that sells a remedy for the problem it measures. Often the only figure available, and worth reading with that in mind.',
+  editorial: 'Chosen by us, stated here so you can disagree with it.',
 };
