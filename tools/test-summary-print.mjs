@@ -210,21 +210,87 @@ for (const [name, query] of [
   ok(`${name}: offers the way back`, html.includes('/tools/bi-automation-calculator/'));
 }
 
-/* --- the browser must not draw its own header on it ------------------------ */
+/* --- the printed geometry, measured rather than read off the stylesheet ----- */
 {
   /*
-   * Chrome draws the document title and the URL in the page margins. It omits
-   * them only when @page leaves no margin to draw them in, so a non-zero margin
-   * here silently puts "Your reporting cost summary" across the top of every
-   * saved PDF — which no page-count check would ever notice. Asserted on the
-   * stylesheet because it is a fact about the CSS, not about a rendering.
+   * This block exists because the previous version of it was useless.
+   *
+   * It regexed globals.css for `.sheet { ... padding: 24mm }` and passed — while
+   * an @media print rule further down reset that padding to 0 and removed the
+   * width cap, so the live document printed edge to edge with its right-hand
+   * column cut off the page. The page count stayed at 1 throughout, because
+   * horizontal overflow does not add pages; it just loses the text.
+   *
+   * Reading the stylesheet tells you what somebody wrote. Only the computed
+   * layout tells you what the browser did with it. So: emulate print media,
+   * size the viewport to A4, and measure.
    */
+  const A4_WIDTH_PX = 794;   // 210mm at 96dpi
+  const A4_HEIGHT_PX = 1123; // 297mm
+
+  const page = await browser.newPage({ viewport: { width: A4_WIDTH_PX, height: A4_HEIGHT_PX } });
+  await page.emulateMedia({ media: 'print' });
+  await page.setContent((await render(q({ costPerDayOfDelay: 25000, investment: 750000 }))).page, {
+    waitUntil: 'load',
+  });
+
+  const m = await page.evaluate((pageWidth) => {
+    const sheet = document.querySelector('.sheet');
+    const cs = getComputedStyle(sheet);
+    const box = sheet.getBoundingClientRect();
+
+    // The furthest right any descendant reaches. This is the number that decides
+    // whether text is cut off the page.
+    let right = 0;
+    let left = Infinity;
+    let widest = null;
+    for (const el of document.querySelectorAll('.sheet *')) {
+      const r = el.getBoundingClientRect();
+      if (r.width <= 0) continue;
+      if (r.right > right) { right = r.right; widest = el.className || el.tagName; }
+      if (r.left < left) left = r.left;
+    }
+    return {
+      padTop: parseFloat(cs.paddingTop),
+      padLeft: parseFloat(cs.paddingLeft),
+      sheetHeight: box.height,
+      contentLeft: left,
+      contentRight: right,
+      widest: String(widest),
+      docScrollWidth: document.documentElement.scrollWidth,
+      pageWidth,
+    };
+  }, A4_WIDTH_PX);
+  await page.close();
+
+  /*
+   * The sheet box is the full page width now, so its own left edge sits at 0 —
+   * measuring the box would prove nothing. What matters is where the ink lands,
+   * so these measure the extents of the content inside it. 12mm and 15mm at
+   * 96dpi are about 45px and 57px; the assertions are loose because the claim
+   * is "there is a real margin", not a subpixel value.
+   */
+  ok('the sheet keeps its block padding when printing', m.padTop > 35, `${m.padTop}px`);
+  ok('and its inline padding', m.padLeft > 45, `${m.padLeft}px`);
+  ok('no content reaches the left edge of the page', m.contentLeft >= 40, `nearest content at ${m.contentLeft.toFixed(1)}px`);
+  ok('no content reaches the right edge of the page',
+    m.contentRight <= m.pageWidth - 40,
+    `widest element (${m.widest}) reaches ${m.contentRight.toFixed(1)}px of ${m.pageWidth}px`);
+  ok('the document does not scroll sideways when printing',
+    m.docScrollWidth <= m.pageWidth + 1, `scrollWidth ${m.docScrollWidth} vs page ${m.pageWidth}`);
+  ok('and it still fits the height of one sheet',
+    m.sheetHeight <= A4_HEIGHT_PX, `${m.sheetHeight.toFixed(0)}px of ${A4_HEIGHT_PX}px`);
+}
+
+/* --- and the @page rule still suppresses the browser's own header ---------- */
+{
+  // Chrome draws the document title and URL in the page margins, and omits them
+  // only when there is no margin to draw them in.
   const rule = /@page\s*\{[^}]*\}/.exec(css);
   ok('the stylesheet has an @page rule', rule !== null);
   const margin = rule && /margin:\s*([^;}]+)/.exec(rule[0]);
   ok('and its margin is zero, so no browser header is drawn',
-    margin !== null && /^0[a-z]*$/.test(margin[1].trim()), margin ? margin[1].trim() : 'no margin declared');
-  ok('the sheet carries the block margin instead', /\.sheet\s*\{[^}]*padding:\s*2[0-9]mm/.test(css));
+    margin !== null && /^0[a-z]*$/.test(margin[1].trim()), margin ? margin[1].trim() : 'none declared');
 }
 
 /* --- and the sheet is not indexable --------------------------------------- */
