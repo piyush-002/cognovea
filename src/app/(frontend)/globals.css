@@ -3755,3 +3755,9 @@ tbody tr:hover {
   font-size: 13px;
   color: var(--fg-3);
 }
+
+/* The Company menu holds two short entries, so it does not need the width the
+   services menu uses for its four descriptions. */
+.c-nav__menu--narrow {
+  min-inline-size: 15rem;
+}

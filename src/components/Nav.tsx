@@ -4,14 +4,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Logo from '@/components/Logo';
-import { companyLinks, serviceLinks } from '@/lib/site';
+import { companyLinks, navCompanyLinks, navPrimaryLinks, serviceLinks } from '@/lib/site';
 
 export default function Nav() {
   const pathname = usePathname();
   const [stuck, setStuck] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  /**
+   * Which dropdown is open, rather than a boolean each.
+   *
+   * With a boolean per menu, opening the second while the first is still open
+   * leaves two panels overlapping. A single value makes that unrepresentable:
+   * opening one closes the other by construction rather than by remembering to.
+   */
+  const [openMenu, setOpenMenu] = useState<'services' | 'company' | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const itemRef = useRef<HTMLLIElement | null>(null);
+  const navRef = useRef<HTMLElement | null>(null);
 
   // Solid backdrop once the page has scrolled. Re-synced on every route change:
   // the layout does not remount between routes, so without the pathname dep the
@@ -25,18 +32,19 @@ export default function Nav() {
 
   // Close menus on route change.
   useEffect(() => {
-    setServicesOpen(false);
+    setOpenMenu(null);
     setDrawerOpen(false);
   }, [pathname]);
 
-  // Click-away and Escape for the services dropdown.
+  // Click-away and Escape, for whichever dropdown is open. Scoped to the nav
+  // rather than to one item, so it covers both without a ref each.
   useEffect(() => {
-    if (!servicesOpen) return;
+    if (!openMenu) return;
     const onDown = (e: MouseEvent) => {
-      if (itemRef.current && !itemRef.current.contains(e.target as Node)) setServicesOpen(false);
+      if (navRef.current && !navRef.current.contains(e.target as Node)) setOpenMenu(null);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setServicesOpen(false);
+      if (e.key === 'Escape') setOpenMenu(null);
     };
     document.addEventListener('mousedown', onDown);
     document.addEventListener('keydown', onKey);
@@ -44,7 +52,7 @@ export default function Nav() {
       document.removeEventListener('mousedown', onDown);
       document.removeEventListener('keydown', onKey);
     };
-  }, [servicesOpen]);
+  }, [openMenu]);
 
   // Lock body scroll while the mobile drawer is open.
   useEffect(() => {
@@ -61,6 +69,7 @@ export default function Nav() {
 
   const current = (href: string) => (pathname === href || pathname === `${href}/` ? 'page' : undefined);
   const inServices = serviceLinks.some((l) => pathname.startsWith(l.href));
+  const inCompany = navCompanyLinks.some((l) => pathname.startsWith(l.href));
 
   return (
     <>
@@ -68,16 +77,16 @@ export default function Nav() {
         <div className="wrap c-nav__in">
           <Logo />
 
-          <nav aria-label="Primary">
+          <nav aria-label="Primary" ref={navRef}>
             <ul className="c-nav__links">
-              <li className={`c-nav__item${servicesOpen ? ' is-open' : ''}`} ref={itemRef}>
+              <li className={`c-nav__item${openMenu === 'services' ? ' is-open' : ''}`}>
                 <button
                   type="button"
                   className="c-nav__trigger"
-                  aria-expanded={servicesOpen}
+                  aria-expanded={openMenu === 'services'}
                   aria-haspopup="true"
                   style={inServices ? { color: 'var(--fg)' } : undefined}
-                  onClick={() => setServicesOpen((v) => !v)}
+                  onClick={() => setOpenMenu((v) => (v === 'services' ? null : 'services'))}
                 >
                   What We Do
                   <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
@@ -101,13 +110,50 @@ export default function Nav() {
                   Data Health Check
                 </Link>
               </li>
-              {companyLinks.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} aria-current={current(l.href)}>
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
+
+              {navPrimaryLinks
+                .filter((l) => l.href !== '/contact')
+                .map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} aria-current={current(l.href)}>
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+
+              <li className={`c-nav__item${openMenu === 'company' ? ' is-open' : ''}`}>
+                <button
+                  type="button"
+                  className="c-nav__trigger"
+                  aria-expanded={openMenu === 'company'}
+                  aria-haspopup="true"
+                  style={inCompany ? { color: 'var(--fg)' } : undefined}
+                  onClick={() => setOpenMenu((v) => (v === 'company' ? null : 'company'))}
+                >
+                  Company
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                    <path d="M2 4.5 6 8.5 10 4.5" />
+                  </svg>
+                </button>
+                <ul className="c-nav__menu c-nav__menu--narrow">
+                  {navCompanyLinks.map((l) => (
+                    <li key={l.href}>
+                      <Link href={l.href} aria-current={current(l.href)}>
+                        <strong>{l.label}</strong>
+                        {l.blurb ? <small>{l.blurb}</small> : null}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+
+              {/* Contact sits last, after the dropdown, because it is the one
+                  thing on this row somebody is trying to reach. */}
+              <li>
+                <Link href="/contact" aria-current={current('/contact')}>
+                  Contact
+                </Link>
+              </li>
             </ul>
           </nav>
 

@@ -53,7 +53,12 @@ function compile(projectRoot, rel) {
       jsx: ts.JsxEmit.ReactJSX,
       esModuleInterop: true,
     },
-    fileName: rel,
+    // The extension is normalised to .ts on purpose. TypeScript decides a
+    // file's module system from its name, and for a .mjs it leaves the ESM
+    // syntax alone — which then reaches the page as a bare `export` and takes
+    // the whole script tag down with a syntax error, so the module silently
+    // never registers.
+    fileName: rel.replace(/\.mjs$/, '.ts'),
   }).outputText;
 }
 
@@ -127,6 +132,51 @@ var process = { env: { NODE_ENV: 'development' } };
 <script>__def('react/jsx-runtime', function(exports, require, module) { ${r.jsxRuntime} });</script>
 <script>__def('react-dom', function(exports, require, module) { ${r.reactDom} });</script>
 <script>__def('react-dom/client', function(exports, require, module) { ${r.reactDomClient} });</script>
+
+<script>
+/*
+ * Next stubs.
+ *
+ * Enough for a component to mount and be driven, not a reimplementation of the
+ * framework. Link becomes a plain anchor, which is what it renders to anyway;
+ * usePathname reports the address bar, so active-link states are real rather
+ * than hardcoded.
+ */
+__def('next/link', function (exports, require, module) {
+  var React = require('react');
+  module.exports = {
+    __esModule: true,
+    default: function Link(props) {
+      var rest = Object.assign({}, props);
+      delete rest.href; delete rest.children; delete rest.prefetch; delete rest.replace; delete rest.scroll;
+      return React.createElement('a', Object.assign({ href: props.href }, rest), props.children);
+    },
+  };
+});
+
+__def('next/navigation', function (exports, require, module) {
+  module.exports = {
+    __esModule: true,
+    usePathname: function () { return window.location.pathname; },
+    useRouter: function () {
+      return { push: function (h) { window.location.assign(h); }, replace: function () {}, refresh: function () {} };
+    },
+    useSearchParams: function () { return new URLSearchParams(window.location.search); },
+  };
+});
+
+__def('next/image', function (exports, require, module) {
+  var React = require('react');
+  module.exports = {
+    __esModule: true,
+    default: function Image(props) {
+      var rest = Object.assign({}, props);
+      delete rest.priority; delete rest.quality; delete rest.sizes; delete rest.fill; delete rest.loader;
+      return React.createElement('img', rest);
+    },
+  };
+});
+</script>
 
 ${Object.entries(compiled)
   .map(([spec, code]) => `<script>__def(${JSON.stringify(spec)}, function(exports, require, module) { ${code} });</script>`)
