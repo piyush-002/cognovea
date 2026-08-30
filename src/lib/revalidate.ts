@@ -77,6 +77,13 @@ export const postHooks = revalidateFor((doc) => [
 ]);
 
 
+/** A portfolio entry has an index, a page of its own, and a sitemap line. */
+export const portfolioHooks = revalidateFor((doc) => [
+  '/portfolio',
+  doc?.slug ? `/portfolio/${doc.slug}` : null,
+  '/sitemap.xml',
+]);
+
 /** Jobs are listed on Careers and carry JobPosting structured data. */
 export const jobHooks = revalidateFor(() => ['/careers']);
 

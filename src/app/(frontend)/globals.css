@@ -4614,3 +4614,335 @@ tbody tr:hover {
     font-size: 1.15rem;
   }
 }
+
+/* ==========================================================================
+   Portfolio  (/portfolio and /portfolio/<slug>)
+   ========================================================================== */
+
+.pf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 1.4rem;
+}
+
+.pf-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.pf-card:hover,
+.pf-card:focus-visible {
+  border-color: var(--line-2);
+  transform: translateY(-2px);
+}
+
+/* Full-bleed across the top of the card. The reset caps every img at 100% of
+   its container, which would clamp the negative-margin bleed back inside the
+   padding — the same thing that left the playbook cards short of their right
+   edge. */
+.pf-card__img {
+  inline-size: calc(100% + 2.8rem);
+  max-inline-size: none;
+  margin: -1.4rem -1.4rem 0.5rem;
+  block-size: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-block-end: 1px solid var(--line);
+}
+
+.pf-card__meta {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--violet);
+}
+
+.pf-card__title {
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.pf-card__blurb {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--fg-3);
+}
+
+.pf-empty {
+  padding: 2rem 0;
+  font-size: 15px;
+  color: var(--fg-3);
+}
+
+/* --- one entry ------------------------------------------------------------ */
+
+/* A reading column, left aligned rather than centred in the wrap. */
+.pf {
+  max-inline-size: 46rem;
+}
+
+.pf__block {
+  margin-block: 2.4rem;
+  scroll-margin-block-start: 5rem;
+}
+
+.pf__block:first-child {
+  margin-block-start: 0;
+}
+
+/* An image that breaks the measure. Capped so it cannot exceed the wrap, and
+   allowed to grow past the reading column on a wide screen only. */
+.pf__block--wide {
+  inline-size: min(64rem, calc(100vw - 2 * var(--pad)));
+}
+
+.pf__head {
+  margin-block-end: 1rem;
+}
+
+.pf__eyebrow {
+  display: block;
+  margin-block-end: 0.4rem;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--violet);
+}
+
+.pf__head h2 {
+  padding-block-end: 0.5rem;
+  border-block-end: 1px solid var(--line);
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1.45rem;
+  font-weight: 600;
+}
+
+.pf__lead {
+  margin-block-end: 1.2rem;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--fg-3);
+}
+
+.pf__note {
+  margin-block-start: 1rem;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--fg-3);
+}
+
+/* --- feature grid --------------------------------------------------------- */
+
+.pf__grid {
+  display: grid;
+  gap: 1.1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pf__grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pf__grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pf__grid li {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fcfcfd;
+}
+
+.pf__grid h3 {
+  margin-block-end: 0.4rem;
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.pf__grid p {
+  font-size: 14px;
+  line-height: 1.62;
+  color: var(--fg-3);
+}
+
+/* --- numbered steps ------------------------------------------------------- */
+
+.pf__steps {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pf__steps li {
+  display: grid;
+  grid-template-columns: 2.4rem 1fr;
+  gap: 0.2rem 0.8rem;
+  align-items: baseline;
+}
+
+.pf__step-n {
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--violet);
+}
+
+.pf__step-l {
+  font-size: 15.5px;
+  font-weight: 600;
+}
+
+.pf__step-d {
+  grid-column: 2;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--fg-3);
+}
+
+/* --- flow ----------------------------------------------------------------- */
+
+/* Wraps rather than scrolls. A horizontal scroller for a diagram is a thing
+   people miss half of, and this has to work on a phone. */
+.pf__flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pf__flow li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.pf__flow li > span:first-child {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.3;
+  background: #fff;
+}
+
+.pf__flow-arrow {
+  color: var(--violet);
+  font-size: 14px;
+}
+
+/* --- images --------------------------------------------------------------- */
+
+.pf__fig {
+  margin: 0;
+}
+
+.pf__fig img {
+  inline-size: 100%;
+  block-size: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.pf__fig figcaption,
+.pf__cap {
+  margin-block-start: 0.55rem;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--fg-3);
+}
+
+.pf__pair,
+.pf__gal {
+  display: grid;
+  gap: 1rem;
+}
+
+.pf__pair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pf__pair .pf__cap {
+  grid-column: 1 / -1;
+  margin-block-start: 0;
+}
+
+.pf__gal--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pf__gal--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* --- quote ---------------------------------------------------------------- */
+
+.pf__quote {
+  padding-inline-start: 1.2rem;
+  border-inline-start: 3px solid var(--violet);
+}
+
+.pf__quote blockquote {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.pf__quote figcaption {
+  margin-block-start: 0.7rem;
+  font-size: 13.5px;
+  color: var(--fg-3);
+}
+
+.pf__quote figcaption span::before {
+  content: ' · ';
+}
+
+.pf__more {
+  margin-block-start: 2.4rem;
+  font-size: 14px;
+  color: var(--fg-3);
+}
+
+/* One breakpoint, after the base rules it overrides — see
+   tools/test-css-order.mjs, which exists because that once went the other way. */
+@media (max-width: 52rem) {
+  .pf__grid--2,
+  .pf__grid--3,
+  .pf__pair,
+  .pf__gal--2,
+  .pf__gal--3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* A wide image has nothing to break out of once the column is the screen. */
+  .pf__block--wide {
+    inline-size: auto;
+  }
+
+  .pf__head h2 {
+    font-size: 1.28rem;
+  }
+}
