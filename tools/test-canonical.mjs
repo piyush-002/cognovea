@@ -144,5 +144,27 @@ ok(
   /shouldAllowCrawling/.test(fs.readFileSync(path.join(root, 'src/app/(frontend)/robots.ts'), 'utf8')),
 );
 
+/* --- every CMS-backed section reaches the sitemap ------------------------- */
+{
+  /*
+   * A page written to be linked to, missing from the sitemap, is the quietest
+   * possible failure: it works, it just never gets submitted. It has happened
+   * once already — /playbooks was listed by hand and the individual playbooks
+   * were not — so each section that generates URLs from data has to derive them
+   * here rather than rely on somebody remembering.
+   */
+  const sitemap = fs.readFileSync(path.join(root, 'src/app/(frontend)/sitemap.ts'), 'utf8');
+  for (const [name, call] of [
+    ['playbooks', 'publishedPlaybooks()'],
+    ['portfolio', 'getPortfolio()'],
+    ['insights', 'getPosts('],
+  ]) {
+    ok(`the sitemap derives ${name} URLs from data`, sitemap.includes(call), `no ${call} in sitemap.ts`);
+  }
+  ok('and the derived lists are all in the returned array',
+    /return \[[^\]]*playbookEntries[^\]]*portfolioEntries[^\]]*postEntries/.test(sitemap),
+    'one of the derived lists is built and then not returned');
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);

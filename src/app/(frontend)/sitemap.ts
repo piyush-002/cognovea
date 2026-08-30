@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getPosts } from '@/lib/content';
 import { publishedPlaybooks } from '@/lib/playbooks';
+import { getPortfolio } from '@/lib/portfolio';
 import { abs, routes } from '@/lib/site';
 
 /**
@@ -31,6 +32,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
+  /* Portfolio entries, minus any marked noindex — an entry a client is content
+     to have on the site but not in a search index must not be submitted to one.
+     Derived like the playbooks, so publishing one cannot leave it out. */
+  const portfolio = await getPortfolio();
+  const portfolioEntries: MetadataRoute.Sitemap = portfolio
+    .filter((e) => !e.noindex)
+    .map((e) => ({
+      url: abs(`/portfolio/${e.slug}`),
+      lastModified: e.publishedAt ? new Date(e.publishedAt) : built,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    }));
+
   // Falls back to [] if the database is unreachable, so a transient outage
   // produces a sitemap missing its articles rather than a failed build.
   const posts = await getPosts(500);
@@ -42,5 +56,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticEntries, ...playbookEntries, ...postEntries];
+  return [...staticEntries, ...playbookEntries, ...portfolioEntries, ...postEntries];
 }
