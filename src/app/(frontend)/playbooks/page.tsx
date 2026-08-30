@@ -61,7 +61,7 @@ export default function PlaybooksPage() {
         crumbs={CRUMBS}
       />
 
-      <section className="sec">
+      <section className="band">
         <div className="wrap">
           <div className="pb-grid">
             {live.map((p) => (
@@ -76,19 +76,23 @@ export default function PlaybooksPage() {
             ))}
 
             {PLANNED_PLAYBOOKS.map((p) => (
-              <div key={p.slug} className="pb-card pb-card--soon" aria-disabled="true">
+              <div key={p.slug} className="pb-card pb-card--soon">
                 <span className="pb-card__industry">{p.industry}</span>
                 <h2 className="pb-card__title">AI Use Case Playbook</h2>
                 <p className="pb-card__blurb">
-                  In preparation. Each of these is researched and sourced the same way as the first, which takes longer
-                  than publishing a list would.
+                  In preparation. Researched and sourced the same way as the first.
                 </p>
                 <span className="pb-card__meta">Not yet published</span>
               </div>
             ))}
           </div>
 
-          <p className="pb-note">
+          {/* A footnote to the grid, not an entry in it: set across the full
+              width beneath the cards rather than in a column beside them. */}
+          <p className="pb-notes">
+            <span className="pb-notes__star" aria-hidden="true">
+              *
+            </span>
             These are written to be checked. Every figure carries the study it came from, how that study was conducted,
             and what it does not support — including where the most widely quoted number in the sector turns out to be a
             survey of 181 people commissioned by a company selling the remedy.

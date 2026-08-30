@@ -95,7 +95,7 @@ export default async function PlaybookPage({ params }: Props) {
         crumbs={crumbs}
       />
 
-      <section className="sec">
+      <section className="band">
         <div className="wrap pb">
           <p className="pb__audience">{playbook.audience}</p>
 

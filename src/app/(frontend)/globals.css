@@ -4174,7 +4174,8 @@ tbody tr:hover {
   transform: translateY(-2px);
 }
 
-/* Not a link, so it must not look like one or read as one to a screen reader. */
+/* Not a link, so it must not look like one. It carries no aria-disabled either:
+   that attribute belongs on something interactive, and a div is not. */
 .pb-card--soon {
   background: transparent;
   border-style: dashed;
@@ -4190,6 +4191,8 @@ tbody tr:hover {
 .pb-card--soon .pb-card__blurb {
   color: var(--fg-3);
 }
+
+
 
 .pb-card__industry {
   font-size: 12px;
@@ -4223,12 +4226,25 @@ tbody tr:hover {
   color: var(--fg-3);
 }
 
-.pb-note {
-  margin-block-start: 1.6rem;
-  max-inline-size: 62ch;
-  font-size: 14.5px;
-  line-height: 1.65;
+/* Footnotes to the grid, not content in it.
+   Full width rather than the 62ch measure the body copy uses: these sit under a
+   grid that spans the wrap, and a short column under a wide grid reads as an
+   unfinished third card. Italic and grey so the eye files them as an aside. */
+.pb-notes {
+  margin-block-start: 1.5rem;
+  padding-block-start: 1.2rem;
+  border-block-start: 1px solid var(--line);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.7;
   color: var(--fg-3);
+}
+
+.pb-notes__star {
+  margin-inline-end: 0.3em;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--violet);
 }
 
 /* --- the playbook itself ------------------------------------------------- */
