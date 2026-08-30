@@ -120,18 +120,10 @@ export const FINDINGS = {
 
 export type FindingKey = keyof typeof FINDINGS;
 
-/** How each kind of source should be described to a reader, in plain words. */
+/** How each kind of source is labelled where it is cited inline. */
 export const STANDING_LABEL: Record<Standing, string> = {
   'peer-reviewed': 'Peer-reviewed',
   official: 'Official statistics',
   'vendor-research': 'Vendor research',
   editorial: 'Our assumption',
-};
-
-export const STANDING_NOTE: Record<Standing, string> = {
-  'peer-reviewed': 'Reviewed by other researchers before publication.',
-  official: 'Published by a government statistical office or standards body.',
-  'vendor-research':
-    'Published by a company that sells a remedy for the problem it measures. Often the only figure available, and worth reading with that in mind.',
-  editorial: 'Chosen by us, stated here so you can disagree with it.',
 };

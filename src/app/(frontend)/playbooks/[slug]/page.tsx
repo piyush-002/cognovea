@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
 import JsonLd from '@/components/JsonLd';
 import { getPlaybook, publishedPlaybooks } from '@/lib/playbooks';
-import { SOURCES, STANDING_LABEL, STANDING_NOTE } from '@/lib/playbooks/sources';
+import { SOURCES, STANDING_LABEL } from '@/lib/playbooks/sources';
 import { faqSchema } from '@/lib/schema';
 import { pageMetadata } from '@/lib/seo';
 import { abs, site } from '@/lib/site';
@@ -50,8 +50,12 @@ export default async function PlaybookPage({ params }: Props) {
     { href: path, label: playbook.industry },
   ];
 
-  /* Only the sources actually cited on this page, so the list cannot advertise
-     research the reader will not find referenced above it. */
+  /* Only the sources actually referenced on the page.
+  
+     There is no visible reference list any more — each piece of evidence cites
+     itself inline, and the FAQ carries the method critique in prose. This feeds
+     the citation array in the Article schema, which is what a search engine or
+     an assistant reads to see the page rests on something. */
   const cited = Object.values(SOURCES).filter((s) =>
     playbook.useCases.some((u) => u.evidence?.source.id === s.id) ||
     playbook.faq.some((f) => f.answer.includes(s.publisher.split(' ')[0])),
@@ -121,9 +125,6 @@ export default async function PlaybookPage({ params }: Props) {
                 </li>
                 <li>
                   <a href="#questions">Questions people ask</a>
-                </li>
-                <li>
-                  <a href="#sources">Sources</a>
                 </li>
               </ol>
             </nav>
@@ -206,39 +207,6 @@ export default async function PlaybookPage({ params }: Props) {
               </div>
             ))}
           </dl>
-
-          <h2 className="pb__h2" id="sources">
-            Sources
-          </h2>
-          <p className="pb__lead">
-            Each with how it was arrived at and what it does not support, because those are the parts that decide how
-            much weight a figure can carry.
-          </p>
-          <ul className="pb__sources">
-            {cited.map((s) => (
-              <li key={s.id}>
-                <a href={s.url} rel="nofollow noopener" target="_blank">
-                  {s.label}
-                </a>
-                <span className="pb__src-meta">
-                  {s.publisher}, {s.year} · <b>{STANDING_LABEL[s.standing]}</b> — {STANDING_NOTE[s.standing]}
-                </span>
-                <p className="pb__src-method">
-                  <b>Method.</b> {s.method}
-                </p>
-                {s.caveat ? (
-                  <p className="pb__src-caveat">
-                    <b>What it does not support.</b> {s.caveat}
-                  </p>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-
-          <p className="pb__updated">
-            Last reviewed {playbook.updated}. If a figure here is out of date or wrong, tell us at{' '}
-            <a href={`mailto:${site.email}`}>{site.email}</a> and it will be corrected.
-          </p>
 
             <p className="pb__more">
               <Link href="/playbooks">All industry playbooks</Link> ·{' '}

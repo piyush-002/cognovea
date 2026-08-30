@@ -4502,39 +4502,6 @@ tbody tr:hover {
   color: var(--fg-3);
 }
 
-.pb__sources {
-  display: grid;
-  gap: 1.4rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.pb__sources > li {
-  padding-inline-start: 1rem;
-  border-inline-start: 2px solid var(--line);
-}
-
-.pb__src-meta {
-  display: block;
-  margin-block: 0.3rem 0.6rem;
-  font-size: 13px;
-  color: var(--fg-3);
-}
-
-.pb__src-method,
-.pb__src-caveat {
-  margin-block-end: 0.5rem;
-  font-size: 14px;
-  line-height: 1.62;
-  color: var(--fg-3);
-}
-
-.pb__src-caveat {
-  color: var(--fg);
-}
-
-.pb__updated,
 .pb__more {
   margin-block-start: 2rem;
   font-size: 14px;
