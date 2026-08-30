@@ -74,10 +74,17 @@ function toInputs(d: Draft): Partial<Inputs> {
   const n = (s: string) => (s.trim() === '' ? undefined : Number(s));
   return {
     industry: d.industry,
+    // The three required ones may pass undefined: the component refuses to
+    // calculate at all unless they are filled, so nothing downstream ever sees
+    // it. See `complete`.
     people: n(d.people),
     hoursPerWeek: n(d.hoursPerWeek),
     hourlyCost: n(d.hourlyCost),
-    reportsPerMonth: n(d.reportsPerMonth),
+    // The optional ones must resolve to nothing, not to undefined. Left
+    // undefined, normalise() supplied its fallback of 12 a month, and the
+    // result reported "around 144 times a year" from an empty field. Empty
+    // means none, and none is zero.
+    reportsPerMonth: n(d.reportsPerMonth) ?? 0,
     decisionLagDays: n(d.decisionLagDays) ?? 0,
     costPerDayOfDelay: d.costPerDayOfDelay.trim() === '' ? null : Number(d.costPerDayOfDelay),
     investment: d.investment.trim() === '' ? null : Number(d.investment),

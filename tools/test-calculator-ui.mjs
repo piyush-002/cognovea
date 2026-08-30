@@ -259,6 +259,68 @@ const fill = async (page, id, value) => {
   await ctx.close();
 }
 
+/* --- an empty OPTIONAL field must not invent a value either --------------- */
+{
+  // The same fault as the required fields, in the half that was not fixed.
+  // Reports a month left empty fell through to normalise()'s old fallback of
+  // 12, and the result announced "around 144 times a year" from a field
+  // showing only its placeholder.
+  const { ctx, page } = await open();
+  await fill(page, 'people', 4);
+  await fill(page, 'hours', 8);
+  await fill(page, 'cost', 1600);
+  await page.click('button[type=submit]');
+  await page.waitForSelector('.calc-res');
+
+  const emptyReports = await page.evaluate(() => document.getElementById('reports').value);
+  ok('reports a month is genuinely empty', emptyReports === '');
+
+  const note = (await page.locator('.calc-bar--unpriced').textContent()) ?? '';
+  ok('the page claims no decision count from an empty field', !/\d+\s*times a year/.test(note), note.slice(0, 160));
+  ok('and asks for the figure instead', /Add your reports a month/.test(note), note.slice(0, 160));
+
+  // Filling it in produces the count, and it is the visitor's own arithmetic.
+  await fill(page, 'reports', 12);
+  await page.waitForTimeout(250);
+  const filled = (await page.locator('.calc-bar--unpriced').textContent()) ?? '';
+  ok('filling it in states the real count', /144 times a year/.test(filled), filled.slice(0, 160));
+
+  // Emptying it again must take the claim away, not leave the last value.
+  await page.fill('#reports', '');
+  await page.waitForTimeout(250);
+  const cleared = (await page.locator('.calc-bar--unpriced').textContent()) ?? '';
+  ok('clearing it withdraws the count again', !/144 times a year/.test(cleared), cleared.slice(0, 160));
+
+  // And the headline never depended on it, so it must not have moved.
+  const big = (await page.locator('.calc-res__big').textContent())?.trim();
+  ok('the headline is unchanged throughout', big === 'Rs 23,75,690', big);
+  await ctx.close();
+}
+
+/* --- no fallback may be a plausible number -------------------------------- */
+{
+  // Defence in depth: if a guard fails again, the output must be visibly wrong
+  // rather than quietly plausible. A fallback of 8 hours a week is
+  // indistinguishable from a real answer; a fallback of 0 is not.
+  const src = fs.readFileSync(path.join(root, 'src/lib/calculator/model.ts'), 'utf8');
+  const block = src.slice(src.indexOf('export function normalise'), src.indexOf('export function calculate'));
+  // The limits are spread (...LIMITS.people), so the fallback is the argument
+  // after the spread rather than the fourth comma-separated one.
+  const fallbacks = [...block.matchAll(/sane\(raw\.(\w+),\s*\.\.\.LIMITS\.\w+,\s*(\d+(?:\.\d+)?)\)/g)]
+    .map((m) => ({ field: m[1], value: Number(m[2]) }));
+  ok('every fallback was found', fallbacks.length >= 5, JSON.stringify(fallbacks));
+
+  // timeReduction is excluded on purpose: its default is a real slider
+  // position the visitor is shown and can move, not a stand-in for a value
+  // they failed to supply.
+  const plausible = fallbacks.filter((f) => f.field !== 'timeReduction' && f.value > 1);
+  ok(
+    'no fallback is a plausible-looking value',
+    plausible.length === 0,
+    `${JSON.stringify(plausible)} — a missing value must not be able to pass for a real one`,
+  );
+}
+
 /* --- the whole form must clear a laptop fold ------------------------------ */
 {
   // A control below the fold is a control a share of visitors never reach, and

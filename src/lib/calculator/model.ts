@@ -79,14 +79,28 @@ export const LIMITS = {
   investment: [0, 1000000000],
 } as const;
 
+/**
+ * Clamp everything into range, and supply nothing where a value is missing.
+ *
+ * The fallbacks used to be 4 people, 8 hours a week, Rs 1600 an hour, 12 reports
+ * a month — plausible numbers, close to what somebody would type. That made a
+ * missing value indistinguishable from a real one: an empty field produced a
+ * confident, sensible-looking result that the visitor had not entered, and
+ * twice it took a person looking at a screenshot to notice.
+ *
+ * They are now the empty value for each field rather than a likely one. If a
+ * guard upstream ever fails again, the output is visibly zero instead of
+ * quietly wrong, and zero is a number somebody questions.
+ */
 export function normalise(raw: Partial<Inputs>): Inputs {
   return {
     industry: (raw.industry ?? 'other') as IndustryId,
-    people: Math.round(sane(raw.people, ...LIMITS.people, 4)),
-    hoursPerWeek: sane(raw.hoursPerWeek, ...LIMITS.hoursPerWeek, 8),
-    hourlyCost: sane(raw.hourlyCost, ...LIMITS.hourlyCost, 1600),
-    reportsPerMonth: Math.round(sane(raw.reportsPerMonth, ...LIMITS.reportsPerMonth, 12)),
-    decisionLagDays: sane(raw.decisionLagDays, ...LIMITS.decisionLagDays, 3),
+    // One, because the field cannot mean fewer than one person.
+    people: Math.round(sane(raw.people, ...LIMITS.people, 1)),
+    hoursPerWeek: sane(raw.hoursPerWeek, ...LIMITS.hoursPerWeek, 0),
+    hourlyCost: sane(raw.hourlyCost, ...LIMITS.hourlyCost, 0),
+    reportsPerMonth: Math.round(sane(raw.reportsPerMonth, ...LIMITS.reportsPerMonth, 0)),
+    decisionLagDays: sane(raw.decisionLagDays, ...LIMITS.decisionLagDays, 0),
     costPerDayOfDelay:
       raw.costPerDayOfDelay === null || raw.costPerDayOfDelay === undefined
         ? null
