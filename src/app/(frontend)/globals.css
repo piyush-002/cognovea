@@ -4497,6 +4497,19 @@ tbody tr:hover {
   .pb-side {
     position: static;
   }
+
+  /* A contents link is a 16px line of text, which is a poor target for a thumb.
+     Blocked out with vertical padding it becomes a ~40px row without changing
+     how it looks — the underline stays the same length, the row around it just
+     gets easier to hit. WCAG 2.5.8 asks for 24px; 40 is comfortable. */
+  .pb__toc a {
+    display: block;
+    padding-block: 0.6rem;
+  }
+
+  .pb__toc ol {
+    gap: 0;
+  }
 }
 
 @media (max-width: 40rem) {
