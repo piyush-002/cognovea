@@ -21,3 +21,7 @@ preview/
 
 # Transfer archives
 *.tgz
+
+# Scratch: files staged for deletion. This VM cannot unlink, so they are
+# moved here rather than removed. Safe to delete the whole folder.
+_to_delete/

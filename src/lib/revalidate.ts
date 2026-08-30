@@ -76,6 +76,7 @@ export const postHooks = revalidateFor((doc) => [
   '/sitemap.xml',
 ]);
 
+
 /** Jobs are listed on Careers and carry JobPosting structured data. */
 export const jobHooks = revalidateFor(() => ['/careers']);
 

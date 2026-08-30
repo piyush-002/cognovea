@@ -72,6 +72,7 @@ export interface Config {
     testimonials: Testimonial;
     clients: Client;
     enquiries: Enquiry;
+    'tool-leads': ToolLead;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -86,6 +87,7 @@ export interface Config {
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
     enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
+    'tool-leads': ToolLeadsSelect<false> | ToolLeadsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -450,6 +452,29 @@ export interface Enquiry {
   createdAt: string;
 }
 /**
+ * Email addresses left in exchange for a tool summary. These people asked for a document, not a call — treat them accordingly.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tool-leads".
+ */
+export interface ToolLead {
+  id: number;
+  email: string;
+  tool: 'bi-automation-calculator';
+  status?: ('new' | 'contacted' | 'not-a-fit' | 'spam') | null;
+  /**
+   * The figures they entered and what the tool returned. This is the useful part: it is the only place on this site where somebody has volunteered the size of their reporting problem.
+   */
+  summary?: string | null;
+  /**
+   * Opens their exact result. Paste it into a browser to see what they saw.
+   */
+  shareUrl?: string | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -518,6 +543,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'enquiries';
         value: number | Enquiry;
+      } | null)
+    | ({
+        relationTo: 'tool-leads';
+        value: number | ToolLead;
       } | null)
     | ({
         relationTo: 'media';
@@ -680,6 +709,20 @@ export interface EnquiriesSelect<T extends boolean = true> {
   industry?: T;
   hardestNumber?: T;
   goal?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tool-leads_select".
+ */
+export interface ToolLeadsSelect<T extends boolean = true> {
+  email?: T;
+  tool?: T;
+  status?: T;
+  summary?: T;
+  shareUrl?: T;
   notes?: T;
   updatedAt?: T;
   createdAt?: T;

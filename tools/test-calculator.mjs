@@ -81,7 +81,7 @@ const model = loadModule('./model');
 const urlState = loadModule('./url-state');
 
 const { calculate, normalise, formatCurrency, formatHours } = model;
-const { encodeInputs, decodeInputs, hasSharedState } = urlState;
+const { encodeInputs, decodeInputs, hasSharedState, hasCompleteState } = urlState;
 const { CELL_ERROR_RATE, TIME_REDUCTION, INDUSTRY_BENCHMARKS } = assumptions;
 
 let pass = 0;
@@ -251,6 +251,27 @@ const near = (a, b, tol = 0.5) => Math.abs(a - b) <= tol;
 
   ok('a bare URL is not treated as a shared result', hasSharedState('') === false);
   ok('a URL with inputs is', hasSharedState(encodeInputs(original)) === true);
+
+  /*
+   * hasCompleteState is the stricter one, and it exists because decodeInputs
+   * normalises as it decodes: a missing head-count comes back as 1 and
+   * everything else as 0, so a decoded object can never be asked whether the
+   * figures were actually supplied. Anything that stores or prints a result on
+   * somebody's behalf has to know the difference between "they entered one
+   * person" and "they entered nothing".
+   */
+  ok('a complete URL is complete', hasCompleteState(encodeInputs(original)) === true);
+  ok('an empty URL is not', hasCompleteState('') === false);
+  ok('junk is not', hasCompleteState('not=a&real=query') === false);
+  ok('one of the three is not enough', hasCompleteState('p=5') === false);
+  ok('two of the three is not enough', hasCompleteState('h=10&c=1600') === false);
+  ok('all three, but zero, is not enough', hasCompleteState('p=0&h=0&c=0') === false);
+  ok('a negative value is not enough', hasCompleteState('p=-5&h=10&c=1600') === false);
+  ok('a blank value is not enough', hasCompleteState('p=&h=10&c=1600') === false);
+  ok('a non-numeric value is not enough', hasCompleteState('p=five&h=10&c=1600') === false);
+  ok('all three positive is enough', hasCompleteState('p=5&h=10&c=1600') === true);
+  ok('a shared URL can be shared but incomplete',
+    hasSharedState('p=5') === true && hasCompleteState('p=5') === false);
 }
 
 /* --- a shared URL is untrusted input -------------------------------------- */

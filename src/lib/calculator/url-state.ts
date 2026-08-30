@@ -89,4 +89,26 @@ export function hasSharedState(query: string | URLSearchParams): boolean {
   return [KEYS.people, KEYS.hoursPerWeek, KEYS.hourlyCost].some((k) => p.has(k));
 }
 
+/**
+ * True when the URL carries all three figures the calculator refuses to answer
+ * without, each a real positive number.
+ *
+ * Stricter than hasSharedState, and needed because decodeInputs() runs its
+ * result through normalise(), which fills a missing head-count with 1 and
+ * everything else with 0. That is right for the live form — somebody mid-typing
+ * must not hit a division by zero — but it means a decoded object can never be
+ * asked whether the figures were actually supplied. Anything that stores or
+ * prints a result on behalf of a person has to ask that first, or it ends up
+ * presenting a number nobody entered as theirs.
+ */
+export function hasCompleteState(query: string | URLSearchParams): boolean {
+  const p = typeof query === 'string' ? new URLSearchParams(query) : query;
+  return [KEYS.people, KEYS.hoursPerWeek, KEYS.hourlyCost].every((k) => {
+    const raw = p.get(k);
+    if (raw === null || raw.trim() === '') return false;
+    const v = Number(raw);
+    return Number.isFinite(v) && v > 0;
+  });
+}
+
 export { LIMITS };

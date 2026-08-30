@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload';
 import { authenticated } from '@/access';
+import { notifyOnEnquiry } from '@/lib/notify';
 
 /**
  * Contact-form submissions.
@@ -16,6 +17,7 @@ import { authenticated } from '@/access';
  */
 export const Enquiries: CollectionConfig = {
   slug: 'enquiries',
+  hooks: { afterChange: [notifyOnEnquiry] },
   labels: { singular: 'Enquiry', plural: 'Enquiries' },
   admin: {
     useAsTitle: 'companyName',
