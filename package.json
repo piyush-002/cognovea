@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "description": "Cognovea \u2014 SEO-friendly 10-page marketing site (Next.js App Router, static export).",
+  "description": "Cognovea — SEO-friendly 10-page marketing site (Next.js App Router, static export).",
   "scripts": {
     "dev": "payload generate:importmap && next dev",
     "devsafe": "rm -rf .next && payload generate:importmap && next dev",
@@ -38,7 +38,9 @@
     "test:ssr": "node tools/test-ssr.mjs",
     "test:overflow": "node tools/test-overflow.mjs",
     "test:calculator": "node tools/test-calculator.mjs",
-    "test:calculator-ui": "node tools/test-calculator-ui.mjs"
+    "test:calculator-ui": "node tools/test-calculator-ui.mjs",
+    "test:tool-lead": "node tools/test-tool-lead.mjs",
+    "test:summary-print": "node tools/test-summary-print.mjs"
   },
   "dependencies": {
     "next": "~15.4.11",

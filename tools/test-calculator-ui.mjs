@@ -27,6 +27,11 @@ const MODULES = {
   '@/lib/calculator/url-state': 'src/lib/calculator/url-state.ts',
   '@/components/calculator/Results': 'src/components/calculator/Results.tsx',
   '@/components/calculator/InfoTip': 'src/components/calculator/InfoTip.tsx',
+  // The gate calls a Server Action, which cannot run in a browser. The stub
+  // records what it was called with so the test can check the component's half
+  // of the contract; the action's own half is proved in tools/test-tool-lead.mjs.
+  '@/actions/tool-lead': 'tools/stubs/tool-lead.ts',
+  '@/components/calculator/PdfGate': 'src/components/calculator/PdfGate.tsx',
   '@/components/calculator/Calculator': 'src/components/calculator/Calculator.tsx',
 };
 

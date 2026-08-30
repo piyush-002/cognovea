@@ -14,6 +14,7 @@ import { Jobs } from '@/collections/Jobs';
 import { Media } from '@/collections/Media';
 import { Posts } from '@/collections/Posts';
 import { Testimonials } from '@/collections/Testimonials';
+import { ToolLeads } from '@/collections/ToolLeads';
 import { Users } from '@/collections/Users';
 import { SiteSettings } from '@/globals/SiteSettings';
 import { chooseConnection } from '@/lib/db-endpoint';
@@ -181,7 +182,7 @@ export default buildConfig({
     avatar: 'default',
   },
 
-  collections: [Posts, Jobs, Testimonials, Clients, Enquiries, Media, Users],
+  collections: [Posts, Jobs, Testimonials, Clients, Enquiries, ToolLeads, Media, Users],
   globals: [SiteSettings],
 
   editor: lexicalEditor(),
