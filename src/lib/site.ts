@@ -80,8 +80,16 @@ export const serviceLinks: NavLink[] = [
  * The top nav shows a shorter list than the footer, and deriving both from one
  * set of objects is what stops a label being changed in one and not the other.
  */
-const TOOLS: NavLink = { href: '/tools', label: 'Free Tools' };
-const PLAYBOOKS: NavLink = { href: '/playbooks', label: 'Playbooks' };
+const TOOLS: NavLink = {
+  href: '/tools',
+  label: 'Free Tools',
+  blurb: 'Calculators that put a number on what your reporting costs.',
+};
+const PLAYBOOKS: NavLink = {
+  href: '/playbooks',
+  label: 'Industry Playbooks',
+  blurb: 'What AI is actually used for in your sector, and what each needs.',
+};
 const INSIGHTS: NavLink = { href: '/insights', label: 'Insights' };
 const CONTACT: NavLink = { href: '/contact', label: 'Contact' };
 const ABOUT: NavLink = {
@@ -95,8 +103,22 @@ const CAREERS: NavLink = {
   blurb: 'Open data and AI roles, and what the work looks like.',
 };
 
-/** Shown flat in the top nav. */
-export const navPrimaryLinks: NavLink[] = [TOOLS, PLAYBOOKS, INSIGHTS, CONTACT];
+/**
+ * Grouped under a Resources dropdown in the top nav.
+ *
+ * Both are ungated assets that exist to be linked to, and they belong together
+ * for the visitor's sake: somebody who wants the calculator and somebody who
+ * wants the manufacturing playbook are the same person at different points, and
+ * neither knows to look for the other under a label naming only one of them.
+ *
+ * Folding them in also keeps the top row short. There will be six playbooks and
+ * more than one tool before long, and the alternative is a row that grows by one
+ * every time an asset ships.
+ */
+export const navResourceLinks: NavLink[] = [TOOLS, PLAYBOOKS];
+
+/** Shown flat in the top nav, after the dropdowns. */
+export const navPrimaryLinks: NavLink[] = [INSIGHTS, CONTACT];
 
 /**
  * Grouped under a Company dropdown in the top nav.
@@ -113,6 +135,12 @@ export const navCompanyLinks: NavLink[] = [ABOUT, CAREERS];
  * the room, and a footer is where people go when the nav did not have it.
  */
 export const companyLinks: NavLink[] = [TOOLS, PLAYBOOKS, INSIGHTS, ABOUT, CAREERS, CONTACT];
+
+/* The mobile drawer, split the way the desktop nav is. Filing a playbook under
+   "Company" was near enough when that group was About and Careers; it is not
+   now. */
+export const drawerResourceLinks: NavLink[] = [TOOLS, PLAYBOOKS, INSIGHTS];
+export const drawerCompanyLinks: NavLink[] = [ABOUT, CAREERS, CONTACT];
 
 export const legalLinks: NavLink[] = [{ href: '/privacy-policy', label: 'Privacy Policy' }];
 
