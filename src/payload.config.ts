@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { postgresAdapter } from '@payloadcms/db-postgres';
+import { resendAdapter } from '@payloadcms/email-resend';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob';
 import { buildConfig } from 'payload';
@@ -14,10 +15,12 @@ import { Jobs } from '@/collections/Jobs';
 import { Media } from '@/collections/Media';
 import { Posts } from '@/collections/Posts';
 import { Testimonials } from '@/collections/Testimonials';
+import { ToolLeads } from '@/collections/ToolLeads';
 import { Users } from '@/collections/Users';
 import { SiteSettings } from '@/globals/SiteSettings';
 import { chooseConnection } from '@/lib/db-endpoint';
 import { allowedOrigins, canonicalServerUrl } from '@/lib/origins';
+import { CANONICAL_URL } from '@/lib/host-redirect.mjs';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,6 +28,24 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
  * Fail loudly and early rather than letting Payload boot with a signing secret
  * of `undefined`, which would produce session tokens that anyone can forge.
  */
+/**
+ * A sender on the wrong domain is silently fatal.
+ *
+ * Resend rejects any `from` address on a domain that is not verified on the
+ * account, so a single mistyped character in EMAIL_FROM turns every password
+ * reset and every notification into a rejected API call — visible only in a log
+ * nobody is reading. This already happened once, to `noreply@cogovea.com`.
+ *
+ * A warning rather than a throw: email being misconfigured is not a reason for
+ * the website to refuse to start.
+ */
+const from = process.env.EMAIL_FROM?.trim();
+if (from && !from.toLowerCase().endsWith(`@${new URL(CANONICAL_URL).hostname.replace(/^www\./, '')}`)) {
+  console.warn(
+    `[email] EMAIL_FROM is "${from}", which is not on the site's own domain. Resend will reject every send from an unverified domain — check for a typo.`,
+  );
+}
+
 const secret = process.env.PAYLOAD_SECRET;
 if (!secret) {
   throw new Error(
@@ -181,7 +202,7 @@ export default buildConfig({
     avatar: 'default',
   },
 
-  collections: [Posts, Jobs, Testimonials, Clients, Enquiries, Media, Users],
+  collections: [Posts, Jobs, Testimonials, Clients, Enquiries, ToolLeads, Media, Users],
   globals: [SiteSettings],
 
   editor: lexicalEditor(),
@@ -193,6 +214,45 @@ export default buildConfig({
     // these types, so a missing file breaks the build for everyone else.
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+
+
+  /**
+
+   * Without this, Payload logs a warning at startup and every send is a no-op:
+
+   * password resets are generated, recorded, and never delivered, which looks
+
+   * from the outside exactly like a broken account.
+
+   *
+
+   * The key is only present in deployed environments and in a developer's own
+
+   * .env.local. When it is absent the adapter is not registered at all rather
+
+   * than registered with an empty string, so the failure is the honest one
+
+   * Payload already reports instead of a rejected API call per email.
+
+   */
+
+  ...(process.env.RESEND_API_KEY
+
+    ? {
+
+        email: resendAdapter({
+
+          defaultFromAddress: process.env.EMAIL_FROM || 'noreply@cognovea.com',
+
+          defaultFromName: 'Cognovea',
+
+          apiKey: process.env.RESEND_API_KEY,
+
+        }),
+
+      }
+
+    : {}),
 
   db: postgresAdapter({
     pool: { connectionString },

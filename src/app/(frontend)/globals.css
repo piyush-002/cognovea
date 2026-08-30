@@ -3762,3 +3762,368 @@ tbody tr:hover {
   min-inline-size: 15rem;
 }
 
+
+/* ==========================================================================
+   Printable summary  (/tools/bi-automation-calculator/summary)
+   ========================================================================== */
+
+/* Sized in points rather than the site's rems. This page exists to become an
+   A4 sheet, and a point is the unit that survives the trip: a rem depends on a
+   root font size the print context is free to change. */
+@page {
+  size: A4;
+  /* Zero, deliberately, and the margins live on .sheet instead.
+     
+     A printed page's margins are where the browser draws its own header and
+     footer — the document title at the top, the URL and page number at the
+     bottom. Chrome only omits them when there is no margin to draw them in.
+     Leaving 12mm here put "Your reporting cost summary" across the top of every
+     saved PDF, and the only other way to remove it is the "Headers and footers"
+     checkbox in the print dialog, which is not something to ask a visitor to
+     find. The vertical space below is the same 24mm this replaces (12mm of page
+     margin plus 12mm of padding); the horizontal gutters fall out of .sheet's
+     180mm width centred on a 210mm page. */
+  margin: 0;
+}
+
+.sheet {
+  max-inline-size: 180mm;
+  margin-inline: auto;
+  /* 24mm block: replaces the 12mm of @page margin plus the 12mm that was here,
+     so the sheet looks exactly as it did before the header was removed. */
+  padding: 24mm 6mm;
+  color: #101828;
+  font-family: var(--f-body), system-ui, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.5;
+  background: #fff;
+}
+
+/* Shown when the address carries no figures. Deliberately unbranded: it is not
+   a document, it is a wrong turn, and dressing it as letterhead would make an
+   empty page look like a real one. */
+.sheet--empty {
+  padding-block: 22mm;
+  font-size: 12pt;
+}
+
+.sheet--empty h1 {
+  margin-block-end: 10pt;
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 20pt;
+}
+
+.sheet--empty p {
+  margin-block-end: 8pt;
+  max-inline-size: 62ch;
+}
+
+.sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8mm;
+  padding-block-end: 9pt;
+  border-block-end: 1.5pt solid var(--navy);
+}
+
+.sheet__brand {
+  display: flex;
+  align-items: center;
+  gap: 8pt;
+}
+
+.sheet__brand img {
+  inline-size: 34px;
+  block-size: 34px;
+  border-radius: 7px;
+}
+
+.sheet__brand b {
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 13pt;
+  letter-spacing: -0.02em;
+}
+
+.sheet__brand span {
+  display: block;
+  font-size: 6.5pt;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.sheet__meta {
+  text-align: end;
+  font-size: 7.6pt;
+  line-height: 1.4;
+  color: var(--fg-3);
+  max-inline-size: 52mm;
+}
+
+.sheet h1 {
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 14.5pt;
+  letter-spacing: -0.02em;
+  margin: 10pt 0 2pt;
+}
+
+.sheet__sub {
+  color: var(--fg-3);
+  font-size: 8.8pt;
+  margin: 0 0 9pt;
+}
+
+.sheet__headline {
+  background: var(--paper-2);
+  border: 0.75pt solid var(--line);
+  border-radius: 7pt;
+  padding: 9pt 12pt;
+}
+
+.sheet__lab {
+  font-size: 7.5pt;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue-ink);
+  font-weight: 700;
+}
+
+.sheet__big {
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 25pt;
+  letter-spacing: -0.035em;
+  margin: 2pt 0 1pt;
+}
+
+.sheet__note {
+  font-size: 8.5pt;
+  color: var(--fg-3);
+}
+
+.sheet h2 {
+  font-size: 9pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  font-weight: 700;
+  margin: 11pt 0 6pt;
+  padding-block-end: 3.5pt;
+  border-block-end: 0.75pt solid var(--line);
+}
+
+.sheet__bar {
+  margin-block-end: 7.5pt;
+}
+
+.sheet__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8pt;
+  margin-block-end: 2.5pt;
+}
+
+.sheet__n {
+  font-weight: 600;
+  font-size: 9.5pt;
+}
+
+.sheet__v {
+  font-size: 9.5pt;
+  font-variant-numeric: tabular-nums;
+}
+
+.sheet__v small {
+  color: var(--fg-3);
+  font-weight: 400;
+}
+
+.sheet__v--muted {
+  color: var(--fg-3);
+  font-style: italic;
+}
+
+.sheet__track {
+  block-size: 5pt;
+  background: #edeff3;
+  border-radius: 99pt;
+  overflow: hidden;
+  margin-block-end: 3pt;
+}
+
+.sheet__fill {
+  block-size: 100%;
+  border-radius: 99pt;
+}
+
+.sheet__fill--labour { background: var(--violet); }
+.sheet__fill--error  { background: var(--blue); }
+.sheet__fill--delay  { background: var(--cyan); }
+
+.sheet__bar p {
+  margin: 0;
+  font-size: 7.5pt;
+  line-height: 1.4;
+  color: var(--fg-3);
+}
+
+.sheet__two {
+  display: flex;
+  gap: 11pt;
+  margin-block-start: 3pt;
+}
+
+.sheet__card {
+  flex: 1;
+  border: 0.75pt solid var(--line);
+  border-radius: 7pt;
+  padding: 8pt 10pt;
+}
+
+.sheet__num {
+  font-family: var(--f-head), system-ui, sans-serif;
+  font-size: 15pt;
+  letter-spacing: -0.03em;
+  margin: 2pt 0 1pt;
+}
+
+.sheet__num--good {
+  color: var(--blue-ink);
+}
+
+.sheet__card p {
+  margin: 0;
+  font-size: 8pt;
+  color: var(--fg-3);
+}
+
+.sheet__payback {
+  margin-block-start: 7pt;
+  background: var(--violet-wash);
+  border-radius: 6pt;
+  padding: 6pt 10pt;
+  font-size: 8.8pt;
+}
+
+.sheet__table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: 8.2pt;
+}
+
+.sheet__table td {
+  padding-block: 1.8pt;
+  vertical-align: top;
+}
+
+.sheet__table td:first-child {
+  color: var(--fg-3);
+  inline-size: 52%;
+}
+
+.sheet__table td:last-child {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.sheet__assume {
+  font-size: 7.7pt;
+  line-height: 1.45;
+  color: var(--fg-2);
+  margin: 0;
+  padding-inline-start: 11pt;
+}
+
+.sheet__assume li {
+  margin-block-end: 2.4pt;
+}
+
+.sheet__assume b {
+  color: var(--fg);
+}
+
+.sheet__foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 8pt;
+  margin-block-start: 10pt;
+  padding-block-start: 7pt;
+  border-block-start: 0.75pt solid var(--line);
+  font-size: 7.8pt;
+  color: var(--fg-3);
+}
+
+/* Printing. The nav, footer and consent banner belong to the site, not to the
+   document somebody is about to file, and background colours have to be forced
+   or the bars print as empty outlines. */
+@media print {
+  .c-nav,
+  .c-foot,
+  .c-consent,
+  .c-drawer {
+    display: none !important;
+  }
+
+  .sheet {
+    max-inline-size: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* The PDF gate. Set below the share button, so the ungated action is the one
+   the eye reaches first. */
+.gate {
+  margin-block-start: 1.1rem;
+  padding-block-start: 1.1rem;
+  border-block-start: 1px solid var(--line);
+}
+
+.gate__note {
+  margin-block-start: 0.6rem;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.gate__lead {
+  font-size: 14.5px;
+  color: var(--fg);
+}
+
+.gate--form .field {
+  margin-block-end: 0.9rem;
+}
+
+.gate__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.gate__cancel {
+  background: none;
+  border: 0;
+  padding: 0.5rem 0;
+  font-size: 14px;
+  color: var(--fg-3);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  min-height: 44px;
+}
+
+.gate__cancel:hover {
+  color: var(--fg);
+}

@@ -5,6 +5,7 @@ import { COST_BANDS, INDUSTRIES, TIME_REDUCTION, type IndustryId } from '@/lib/c
 import { LIMITS, calculate, normalise, type Inputs } from '@/lib/calculator/model';
 import { decodeInputs, encodeInputs, hasSharedState } from '@/lib/calculator/url-state';
 import InfoTip from '@/components/calculator/InfoTip';
+import PdfGate from '@/components/calculator/PdfGate';
 import Results from '@/components/calculator/Results';
 
 /**
@@ -401,6 +402,7 @@ export default function Calculator() {
               <p className="calc__share-note">
                 The link carries your numbers, so whoever opens it sees this result rather than an empty form.
               </p>
+              <PdfGate query={encodeInputs(normalise(toInputs(draft)))} />
             </div>
           </>
         ) : (
