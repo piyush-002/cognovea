@@ -2287,6 +2287,47 @@ tbody tr:hover {
   color: var(--fg-3);
 }
 
+/* Certification marks, bottom of the footer's first column.
+   
+   Set as quiet outlined chips rather than anything shouty: on a footer these
+   are reassurance for somebody already interested, not a claim to win
+   attention with. The wrapping is deliberate — three of these do not fit one
+   line in the column on a phone, and a horizontal scroll for three words would
+   be absurd. */
+/* `.c-foot ul` sets display:grid at a higher specificity than a single class,
+   so this has to match it or the chips stack into a column — which is what they
+   did, silently, and looked deliberate. */
+.c-foot ul.c-foot__certs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-block-start: 1.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.c-foot__certs li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+}
+
+.c-foot__cert-name {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+}
+
+.c-foot__cert-meta {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
 /* h2 rather than h4: as h4 these jumped two levels from the page's last h2,
    which a screen-reader user hears as missing sections. Inside the footer
    landmark an h2 column heading is both valid and flat. */

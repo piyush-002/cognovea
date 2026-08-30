@@ -142,6 +142,35 @@ export const companyLinks: NavLink[] = [TOOLS, PLAYBOOKS, INSIGHTS, ABOUT, CAREE
 export const drawerResourceLinks: NavLink[] = [TOOLS, PLAYBOOKS, INSIGHTS];
 export const drawerCompanyLinks: NavLink[] = [ABOUT, CAREERS, CONTACT];
 
+/**
+ * Certifications shown in the footer.
+ *
+ * Text, not logos, and deliberately. ISO does not certify anyone — certification
+ * bodies do — and ISO's own rules prohibit using the ISO logo to advertise it.
+ * What you may use is your certification body's mark, under that body's rules.
+ * The CMMI marks belong to ISACA and are governed too. So until somebody
+ * confirms which body issued each certificate and what its mark rules permit,
+ * the honest and safe version is the words.
+ *
+ * `body` and `ref` are optional and render only when set. They are worth
+ * filling: a certificate number and an issuing body turn a claim into something
+ * a buyer's procurement team can verify, and unverifiable claims are the ones
+ * that get challenged. They are left empty rather than invented.
+ */
+export type Certification = {
+  name: string;
+  /** The certifying body. Not the standard's author. */
+  body?: string;
+  /** Certificate number, or the appraisal ID for CMMI. */
+  ref?: string;
+};
+
+export const certifications: Certification[] = [
+  { name: 'ISO/IEC 27001' },
+  { name: 'ISO 9001' },
+  { name: 'CMMI Level 3' },
+];
+
 export const legalLinks: NavLink[] = [{ href: '/privacy-policy', label: 'Privacy Policy' }];
 
 /** Every indexable route, used to generate sitemap.xml. */

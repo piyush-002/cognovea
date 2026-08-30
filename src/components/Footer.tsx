@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import CookieSettings from '@/components/CookieSettings';
-import { companyLinks, legalLinks, serviceLinks, site } from '@/lib/site';
+import { certifications, companyLinks, legalLinks, serviceLinks, site } from '@/lib/site';
 
 export default function Footer() {
   const year = 2026;
@@ -16,6 +16,26 @@ export default function Footer() {
               Where data becomes intelligence. Data engineering, analytics, business intelligence and AI for growing
               enterprises.
             </p>
+
+            {/* Bottom of the left column, under the mark and the line that says
+                what we do — where a reader looks for reassurance once they have
+                decided we might be relevant.
+
+                Words rather than logos: ISO does not certify anyone and forbids
+                use of its own logo for this; the usable mark belongs to whoever
+                issued the certificate, under their rules. */}
+            <ul className="c-foot__certs" aria-label="Certifications">
+              {certifications.map((c) => (
+                <li key={c.name}>
+                  <span className="c-foot__cert-name">{c.name}</span>
+                  {c.body || c.ref ? (
+                    <span className="c-foot__cert-meta">
+                      {[c.body, c.ref].filter(Boolean).join(' · ')}
+                    </span>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div>
