@@ -41,7 +41,8 @@
     "test:calculator-ui": "node tools/test-calculator-ui.mjs",
     "test:tool-lead": "node tools/test-tool-lead.mjs",
     "test:summary-print": "node tools/test-summary-print.mjs",
-    "test:notify": "node tools/test-notify.mjs"
+    "test:notify": "node tools/test-notify.mjs",
+    "test:rate-limit": "node tools/test-rate-limit.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",

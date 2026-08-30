@@ -3,6 +3,7 @@ import { CELL_ERROR_RATE, INDUSTRIES, TIME_REDUCTION, WORKING_WEEKS_PER_YEAR } f
 import { calculate, formatCurrency, formatHours, normalise } from '@/lib/calculator/model';
 import { decodeInputs, hasCompleteState } from '@/lib/calculator/url-state';
 import PrintTrigger from '@/components/calculator/PrintTrigger';
+import { LIMITS, callerKey, rateLimit } from '@/lib/rate-limit';
 
 /**
  * The one-page summary, laid out for A4.
@@ -36,6 +37,29 @@ export default async function SummaryPage({ searchParams }: Props) {
       v === undefined ? [] : Array.isArray(v) ? v.map((x) => [k, x] as [string, string]) : [[k, v] as [string, string]],
     ),
   );
+
+  /*
+   * Loose by design. This route writes nothing and sends nothing — it renders a
+   * page from the query string — so the limit is not protecting much, and a real
+   * person reprinting after changing their figures is a case worth keeping. It
+   * is here so the route cannot be used as a free render loop.
+   */
+  const limit = await rateLimit('summary', await callerKey(), LIMITS.summary.limit, LIMITS.summary.windowSeconds);
+  if (!limit.allowed) {
+    return (
+      <main className="sheet sheet--empty">
+        <PrintTrigger enabled={false} />
+        <h1>Too many summaries from this connection</h1>
+        <p>
+          This has been opened a lot in the last hour. Give it a little while and it will work again — your figures are
+          in the link, so nothing has been lost.
+        </p>
+        <p>
+          <a href="/tools/bi-automation-calculator/">Back to the calculator</a>
+        </p>
+      </main>
+    );
+  }
 
   // Nothing is printed on our letterhead unless the link actually carries the
   // person's figures. decodeInputs() normalises as it decodes — a missing

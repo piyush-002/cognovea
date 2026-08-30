@@ -57,6 +57,8 @@ const FILES = {
   '@/lib/calculator/model': 'src/lib/calculator/model.ts',
   '@/lib/calculator/url-state': 'src/lib/calculator/url-state.ts',
   '@/app/summary': 'src/app/(frontend)/tools/bi-automation-calculator/summary/page.tsx',
+  // Stubbed to always allow; the limiter has its own suite.
+  '@/lib/rate-limit': 'tools/stubs/rate-limit.ts',
   './assumptions': 'src/lib/calculator/assumptions.ts',
   './model': 'src/lib/calculator/model.ts',
   './url-state': 'src/lib/calculator/url-state.ts',

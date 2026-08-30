@@ -4,6 +4,7 @@ import { CANONICAL_URL } from '@/lib/host-redirect.mjs';
 import { calculate, formatCurrency, formatHours, normalise } from '@/lib/calculator/model';
 import { decodeInputs, hasCompleteState } from '@/lib/calculator/url-state';
 import { getPayloadClient } from '@/lib/payload';
+import { LIMITS, callerKey, rateLimit } from '@/lib/rate-limit';
 
 /**
  * Records an email left in exchange for a tool summary.
@@ -34,6 +35,17 @@ export async function submitToolLead(formData: FormData): Promise<ToolLeadResult
   // Honeypot, as on the enquiry form. Reports success: telling a scraper it was
   // caught only invites a second attempt without the trap.
   if (clean(formData.get('website'), 200)) return { ok: true };
+
+  // Looser than the contact form: somebody may legitimately run the calculator
+  // again with different figures and want the sheet each time. Same reasoning
+  // otherwise — this path writes a row and sends mail.
+  const limit = await rateLimit('tool-lead', await callerKey(), LIMITS.toolLead.limit, LIMITS.toolLead.windowSeconds);
+  if (!limit.allowed) {
+    return {
+      ok: false,
+      error: 'We could not prepare that just now. Please try again in a little while.',
+    };
+  }
 
   const email = clean(formData.get('email'), 200).toLowerCase();
   if (!email || !EMAIL.test(email) || NEVER_REAL.test(email)) {
