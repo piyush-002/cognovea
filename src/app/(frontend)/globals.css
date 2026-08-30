@@ -3787,11 +3787,22 @@ tbody tr:hover {
 }
 
 .sheet {
-  max-inline-size: 180mm;
+  /* A full A4 width, with the margins as padding.
+  
+     These numbers reproduce exactly the geometry this layout was signed off at:
+     back when @page carried 12mm/15mm and an @media print rule zeroed .sheet's
+     own padding, the printed document had 12mm top and bottom, 15mm either
+     side, and a 180mm column. It has to be expressed this way round because
+     @page must stay at margin:0 to keep the browser from printing its own
+     header — so the page box is the full 210mm and the document's margins live
+     here.
+  
+     Do not shrink the column to 180mm and add padding on top of it: that leaves
+     a 150mm column, which is narrower than the layout was measured at, and
+     narrower text is taller text. It runs to a second page. */
+  max-inline-size: 210mm;
   margin-inline: auto;
-  /* 24mm block: replaces the 12mm of @page margin plus the 12mm that was here,
-     so the sheet looks exactly as it did before the header was removed. */
-  padding: 24mm 6mm;
+  padding: 12mm 15mm;
   color: #101828;
   font-family: var(--f-body), system-ui, sans-serif;
   font-size: 10.5pt;
@@ -4065,11 +4076,16 @@ tbody tr:hover {
     display: none !important;
   }
 
-  .sheet {
-    max-inline-size: none;
-    margin: 0;
-    padding: 0;
-  }
+  /* .sheet is deliberately NOT overridden here.
+  
+     It used to be: when @page carried 12mm/15mm margins, the printed sheet went
+     full-bleed with no padding of its own and the page margins made the gutters.
+     Moving the margins onto .sheet to suppress the browser's print header made
+     that override actively harmful — it stripped the padding back to zero and
+     removed the width cap, so the document printed edge to edge with no margins
+     at all and the right-hand column was cut off the page. The screen and print
+     geometry are now the same thing, which is the point of sizing this in
+     millimetres. */
 
   body {
     background: #fff;

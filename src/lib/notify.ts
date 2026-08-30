@@ -1,5 +1,6 @@
 import type { CollectionAfterChangeHook } from 'payload';
 import { CANONICAL_URL } from '@/lib/host-redirect.mjs';
+import { LIMITS, rateLimit, redact } from '@/lib/rate-limit';
 
 /**
  * Tells somebody a form was filled in.
@@ -53,6 +54,27 @@ async function send(payload: Payload, subject: string, text: string, label: stri
   const to = target();
   if (!to) return false;
 
+  /*
+   * The ceiling on outbound mail, and the reason it is here rather than only on
+   * the forms.
+   *
+   * Resend's free plan allows 100 emails a day and password resets come out of
+   * the same allowance, so anything that can burn the quota can lock an admin
+   * out of their own site. The per-address limits on the two forms are the first
+   * line; this is the one that holds when those are bypassed — a botnet with a
+   * thousand addresses defeats a per-IP limit trivially and does not touch this.
+   *
+   * Keyed on a constant, so every notification the site sends counts against one
+   * bucket regardless of which form produced it.
+   */
+  const cap = await rateLimit('mail', 'global', LIMITS.mail.limit, LIMITS.mail.windowSeconds);
+  if (!cap.allowed) {
+    console.warn(
+      `[notify] ${label}: suppressed — ${cap.count} notifications this hour, over the cap of ${LIMITS.mail.limit}. The record was still saved.`,
+    );
+    return false;
+  }
+
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     const deadline = new Promise<never>((_, reject) => {
@@ -71,8 +93,9 @@ async function send(payload: Payload, subject: string, text: string, label: stri
     return true;
   } catch (error) {
     // The message, never the error object: a provider's rejection can carry the
-    // request it was given, and that request contains the API key.
-    console.warn(`[notify] ${label}: not sent —`, (error as Error)?.message ?? 'unknown error');
+    // request it was given, and that request contains the API key. Redacted on
+    // top of that, because a message can quote a URI with credentials in it.
+    console.warn(`[notify] ${label}: not sent —`, redact((error as Error)?.message ?? 'unknown error'));
     return false;
   } finally {
     if (timer) clearTimeout(timer);

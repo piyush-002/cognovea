@@ -39,6 +39,10 @@ const compile = (rel) =>
 const FILES = {
   '@/lib/notify': 'src/lib/notify.ts',
   '@/lib/host-redirect.mjs': 'src/lib/host-redirect.mjs',
+  // Allows everything, so these cases exercise the sending path rather than the
+  // cap. The cap itself is checked in test-rate-limit.mjs, against a real
+  // database, along with the rest of the limiter.
+  '@/lib/rate-limit': 'tools/stubs/rate-limit.ts',
 };
 
 const cache = {};
