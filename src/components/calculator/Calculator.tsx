@@ -222,10 +222,7 @@ export default function Calculator() {
           <div className="field">
             <label htmlFor="industry">
               Industry
-              <InfoTip label="industry">
-                Changes the wording only — every number below is yours. We found no public benchmark for reporting
-                hours by sector worth citing, so there are none here rather than invented ones.
-              </InfoTip>
+              <InfoTip label="industry">Changes the wording only — every number below is yours.</InfoTip>
             </label>
             <select id="industry" value={draft.industry} onChange={(e) => set('industry', e.target.value)}>
               {INDUSTRIES.map((i) => (
