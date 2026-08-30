@@ -1,4 +1,14 @@
-/* ==========================================================================
+/* A white plate behind the mark rather than a filter over it.
+   
+   These are colour marks — blue seals, an orange numeral — so the invert trick
+   used for single-colour artwork would destroy them. On a navy footer they need
+   an opaque light ground, which is also how a certification body would expect
+   its mark to be reproduced: as issued, unaltered, with clear space around it. */
+.c-foot__cert--logo img {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #fff;
+}/* ==========================================================================
    Cognovea, design system v3
    Purple → Blue → Cyan on a white canvas, with deep navy for weight.
 
@@ -2328,7 +2338,7 @@ tbody tr:hover {
   color: rgba(255, 255, 255, 0.45);
 }
 
-/* A supplied certification mark, once there is one.
+/* A supplied certification mark.
    
    No border and no padding around it: certification bodies set clear-space
    rules for their marks, and a box drawn tight around one usually breaks them.
@@ -2342,7 +2352,10 @@ tbody tr:hover {
 }
 
 .c-foot__cert--logo img {
-  block-size: 42px;
+  /* 58px, not 42: the supplied artwork is 168px tall and the version numbers
+     inside the seals are unreadable much below this. Still under a third of the
+     source height, so nothing is being upscaled. */
+  block-size: 58px;
   inline-size: auto;
   max-inline-size: none;
 }
