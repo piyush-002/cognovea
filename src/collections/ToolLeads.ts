@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload';
 import { authenticated } from '@/access';
-import { toolLeadHooks } from '@/lib/revalidate';
+import { notifyOnToolLead } from '@/lib/notify';
 
 /**
  * Someone who downloaded a summary from a free tool.
@@ -34,7 +34,9 @@ export const ToolLeads: CollectionConfig = {
     update: authenticated,
     delete: authenticated,
   },
-  hooks: toolLeadHooks,
+  // Nothing to revalidate — no public page renders these — but somebody should
+  // be told, or a download is indistinguishable from no download.
+  hooks: { afterChange: [notifyOnToolLead] },
   fields: [
     { name: 'email', type: 'email', required: true, index: true },
     {

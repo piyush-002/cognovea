@@ -76,12 +76,6 @@ export const postHooks = revalidateFor((doc) => [
   '/sitemap.xml',
 ]);
 
-/**
- * Tool downloads change nothing a visitor sees, so nothing is rebuilt. The
- * hooks exist only so the collection has the same shape as the others; adding
- * paths here would rebuild the site every time somebody downloads a summary.
- */
-export const toolLeadHooks = { afterChange: [], afterDelete: [] };
 
 /** Jobs are listed on Careers and carry JobPosting structured data. */
 export const jobHooks = revalidateFor(() => ['/careers']);

@@ -210,6 +210,23 @@ for (const [name, query] of [
   ok(`${name}: offers the way back`, html.includes('/tools/bi-automation-calculator/'));
 }
 
+/* --- the browser must not draw its own header on it ------------------------ */
+{
+  /*
+   * Chrome draws the document title and the URL in the page margins. It omits
+   * them only when @page leaves no margin to draw them in, so a non-zero margin
+   * here silently puts "Your reporting cost summary" across the top of every
+   * saved PDF — which no page-count check would ever notice. Asserted on the
+   * stylesheet because it is a fact about the CSS, not about a rendering.
+   */
+  const rule = /@page\s*\{[^}]*\}/.exec(css);
+  ok('the stylesheet has an @page rule', rule !== null);
+  const margin = rule && /margin:\s*([^;}]+)/.exec(rule[0]);
+  ok('and its margin is zero, so no browser header is drawn',
+    margin !== null && /^0[a-z]*$/.test(margin[1].trim()), margin ? margin[1].trim() : 'no margin declared');
+  ok('the sheet carries the block margin instead', /\.sheet\s*\{[^}]*padding:\s*2[0-9]mm/.test(css));
+}
+
 /* --- and the sheet is not indexable --------------------------------------- */
 {
   const mod = load('@/app/summary');

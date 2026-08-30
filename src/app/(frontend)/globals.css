@@ -3772,13 +3772,26 @@ tbody tr:hover {
    root font size the print context is free to change. */
 @page {
   size: A4;
-  margin: 12mm 15mm;
+  /* Zero, deliberately, and the margins live on .sheet instead.
+     
+     A printed page's margins are where the browser draws its own header and
+     footer — the document title at the top, the URL and page number at the
+     bottom. Chrome only omits them when there is no margin to draw them in.
+     Leaving 12mm here put "Your reporting cost summary" across the top of every
+     saved PDF, and the only other way to remove it is the "Headers and footers"
+     checkbox in the print dialog, which is not something to ask a visitor to
+     find. The vertical space below is the same 24mm this replaces (12mm of page
+     margin plus 12mm of padding); the horizontal gutters fall out of .sheet's
+     180mm width centred on a 210mm page. */
+  margin: 0;
 }
 
 .sheet {
   max-inline-size: 180mm;
   margin-inline: auto;
-  padding: 12mm 6mm;
+  /* 24mm block: replaces the 12mm of @page margin plus the 12mm that was here,
+     so the sheet looks exactly as it did before the header was removed. */
+  padding: 24mm 6mm;
   color: #101828;
   font-family: var(--f-body), system-ui, sans-serif;
   font-size: 10.5pt;
