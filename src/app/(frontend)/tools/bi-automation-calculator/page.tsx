@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CtaBand, PageHero, breadcrumbSchema } from '@/components/Bits';
+import Faq from '@/components/Faq';
 import Calculator from '@/components/calculator/Calculator';
 import Methodology from '@/components/calculator/Methodology';
 import JsonLd from '@/components/JsonLd';
 import { CELL_ERROR_RATE } from '@/lib/calculator/assumptions';
+import { faqSchema, type FaqItem } from '@/lib/schema';
 import { pageMetadata } from '@/lib/seo';
 import { abs, site } from '@/lib/site';
 
@@ -18,12 +20,60 @@ const PATH = '/tools/bi-automation-calculator';
  * under /insights would make every link that ever points here point at an
  * article instead.
  */
+/*
+ * The title carries the phrase people type. Searches in this space cluster on
+ * "automation ROI calculator" and "cost of manual reporting calculator"; the
+ * previous title, "BI Automation Savings Calculator", used a phrase nobody
+ * queries and put the brand where a keyword should be.
+ *
+ * "Free" earns its place rather than padding: it is the word that gets a tool
+ * into a resource roundup, and the qualifier a reader scans for before deciding
+ * whether clicking will cost them an email address.
+ */
 export const metadata: Metadata = pageMetadata({
-  title: 'BI Automation Savings Calculator | Cognovea',
+  title: 'Manual Reporting Cost Calculator | Free ROI Tool',
   description:
-    'Work out what manual reporting costs your business each year, and what automating it would recover. Free, no sign-up, and every assumption is shown and sourced.',
+    'Work out what manual reporting costs your business a year — the hours, the rework and the cost of late decisions — and what automating it would recover. Free, no sign-up, every assumption sourced.',
   path: PATH,
 });
+
+/**
+ * Questions phrased the way people ask them, answered in full sentences that
+ * stand on their own.
+ *
+ * This is the part an answer engine can lift. A model summarising "how do you
+ * calculate the cost of manual reporting" needs a self-contained paragraph with
+ * the method in it and a source attached; a page that only makes sense while
+ * you are looking at the widget gives it nothing to quote. Every figure below
+ * carries its citation for the same reason — an uncited number is one an engine
+ * has no reason to repeat and a reader has no reason to trust.
+ */
+const FAQS: FaqItem[] = [
+  {
+    q: 'How do you calculate the cost of manual reporting?',
+    a: 'Multiply the number of people doing the reporting by the hours each spends on it a week, then by the working weeks in a year, then by their fully loaded hourly cost. Cognovea uses 46 working weeks rather than 52, allowing for leave and public holidays. That gives the labour cost. Two further costs sit underneath it: rework, where a report is found to be wrong and built again, and the cost of decisions taken on data that is already several days old.',
+  },
+  {
+    q: 'How many spreadsheet reports contain errors?',
+    a: 'An audit of 50 operational spreadsheets by Powell, Baker and Lawson, published in the Journal of Organizational and End User Computing in 2009, examined 270,722 formulas and found 483 errors. 0.87% of formulas produced a wrong result under their restrictive definition, and 94% of the spreadsheets audited contained at least one error. This calculator uses the 0.87% figure, which counts only errors somebody catches and redoes.',
+  },
+  {
+    q: 'How much time does automating reporting actually save?',
+    a: 'It depends entirely on how consistent the source systems are, so this calculator asks rather than assumes: the reduction is a slider you set, defaulting to 60%, which is the conservative end of what pipeline and reporting automation typically removes. What survives automation is exception handling, interpretation and the judgement calls a person still has to make. Any vendor quoting a single percentage for this is quoting a sales figure, not a measurement.',
+  },
+  {
+    q: 'What does it cost when decisions are made on stale data?',
+    a: 'Nobody outside your business can answer that, and this calculator does not pretend to. It reports the finding — how many working days old your data is when someone acts on it, and how often that happens a year — and converts it to money only if you supply what a day of delay is worth to you. A day of stale stock data costs a retailer something entirely unlike what it costs a hospital.',
+  },
+  {
+    q: 'Is this calculator free, and does it need an email address?',
+    a: 'It is free and nothing is gated. There is no sign-up, no email capture and no account. You can also share a result as a link, which carries your numbers so the person who opens it sees your figures rather than an empty form.',
+  },
+  {
+    q: 'Where do the numbers in this calculator come from?',
+    a: 'Every figure is either something you entered or one of four disclosed assumptions, each labelled as published research, our own position, or your figure. The methodology panel on this page lists all of them with sources. There are deliberately no industry benchmarks: no credible published figures exist for reporting hours by sector, so the industry selector changes the wording and nothing about the arithmetic.',
+  },
+];
 
 const CRUMBS = [
   { href: '/tools', label: 'Tools' },
@@ -36,6 +86,9 @@ export default function CalculatorPage() {
       <JsonLd
         data={[
           breadcrumbSchema(CRUMBS),
+          // Built from the same array the page renders, so the markup and the
+          // visible answers cannot drift apart.
+          faqSchema(FAQS),
           {
             '@context': 'https://schema.org',
             // WebApplication, not Article. It is a thing you use, and the type
@@ -57,15 +110,36 @@ export default function CalculatorPage() {
       />
 
       <PageHero
-        eyebrow="Free Tool"
-        title="What Is Manual Reporting Actually Costing You?"
+        eyebrow="Free Tool · No Sign-Up"
+        title="Manual Reporting Cost Calculator"
         crumbs={CRUMBS}
         compact
-        intro="Enter what your team does today. The tool works out the annual cost in three parts — the hours, the rework, and how late your decisions are — and what automating it would give back. No sign-up, and every assumption is shown."
+        intro="Work out what your team's recurring reporting costs a year — the hours, the rework, and the price of decisions made on stale data — and what automating it would give back. Nothing is gated and every assumption is shown and sourced."
       />
 
       <section className="band">
         <div className="wrap">
+          {/* The short answer, before the tool.
+              A calculator page that only makes sense while you are using it
+              gives an answer engine nothing to quote and a hurried reader
+              nothing to take away. This states the method in full sentences
+              that stand alone, which is what gets cited. */}
+          <div className="answer rv">
+            <h2 className="h-sm">The short version</h2>
+            <p>
+              To work out what manual reporting costs you a year: multiply the people doing it by the hours each
+              spends a week, by 46 working weeks, by their fully loaded hourly cost. Add the rework — roughly{' '}
+              {(CELL_ERROR_RATE.value * 100).toFixed(2)}% of spreadsheet formulas produce a wrong result, from an
+              audit of 50 operational spreadsheets covering 270,722 formulas — and add what it costs you when
+              decisions wait on data that is already days old.
+            </p>
+            <p>
+              The calculator below does that arithmetic on your figures and splits the total three ways, so you can
+              see which part is worth acting on. It is free, nothing is gated, and every assumption it makes is listed
+              with its source further down this page.
+            </p>
+          </div>
+
           <Calculator />
         </div>
       </section>
@@ -116,6 +190,18 @@ export default function CalculatorPage() {
                 A Data Health Check measures this properly
               </Link>
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="band" id="questions">
+        <div className="wrap">
+          <div className="s-head rv">
+            <p className="eyebrow">Questions</p>
+            <h2 className="h-lg">Working Out the Cost of Manual Reporting</h2>
+          </div>
+          <div className="rv">
+            <Faq items={FAQS} />
           </div>
         </div>
       </section>

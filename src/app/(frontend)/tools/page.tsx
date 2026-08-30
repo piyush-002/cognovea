@@ -19,9 +19,9 @@ const PATH = '/tools';
  * URL.
  */
 export const metadata: Metadata = pageMetadata({
-  title: 'Free Data & BI Tools | Cognovea',
+  title: 'Free Data & BI Calculators | No Sign-Up',
   description:
-    'Free tools from Cognovea for working out what your data and reporting actually cost. No sign-up, and every assumption is shown and sourced.',
+    'Free calculators for working out what your data and reporting actually cost, and what automating them would recover. No sign-up, and every assumption is shown and sourced.',
   path: PATH,
 });
 
@@ -63,10 +63,10 @@ export default function ToolsPage() {
 
       <PageHero
         eyebrow="Tools"
-        title="Free Tools, No Sign-Up"
+        title="Free Data & BI Calculators"
         crumbs={CRUMBS}
         compact
-        intro="Working tools rather than lead magnets. Nothing here is gated, every assumption is shown and sourced, and you can share a result without sending anyone your email address."
+        intro="Working calculators rather than lead magnets. Nothing here is gated, every assumption is shown and sourced, and you can share a result without sending anyone your email address."
       />
 
       <section className="band">
