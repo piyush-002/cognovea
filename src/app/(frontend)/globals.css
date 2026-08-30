@@ -2328,6 +2328,35 @@ tbody tr:hover {
   color: rgba(255, 255, 255, 0.45);
 }
 
+/* A supplied certification mark, once there is one.
+   
+   No border and no padding around it: certification bodies set clear-space
+   rules for their marks, and a box drawn tight around one usually breaks them.
+   Height is fixed so three marks from three different bodies line up; width
+   follows the artwork. */
+.c-foot__certs li.c-foot__cert--logo {
+  padding: 0;
+  border: 0;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.c-foot__cert--logo img {
+  block-size: 42px;
+  inline-size: auto;
+  max-inline-size: none;
+}
+
+/* Most of these marks are supplied as dark artwork for light backgrounds. On a
+   navy footer that reads as a black rectangle, so unless the body supplies a
+   reversed version this lifts it. Remove the filter if they send white
+   artwork — and check the body's rules before altering a mark at all. */
+.c-foot__cert--logo img[src$='.svg'],
+.c-foot__cert--logo img[src$='.png'] {
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+
 /* h2 rather than h4: as h4 these jumped two levels from the page's last h2,
    which a screen-reader user hears as missing sections. Inside the footer
    landmark an h2 column heading is both valid and flat. */

@@ -145,24 +145,38 @@ export const drawerCompanyLinks: NavLink[] = [ABOUT, CAREERS, CONTACT];
 /**
  * Certifications shown in the footer.
  *
- * Text, not logos, and deliberately. ISO does not certify anyone — certification
- * bodies do — and ISO's own rules prohibit using the ISO logo to advertise it.
- * What you may use is your certification body's mark, under that body's rules.
- * The CMMI marks belong to ISACA and are governed too. So until somebody
- * confirms which body issued each certificate and what its mark rules permit,
- * the honest and safe version is the words.
+ * `logo` is optional. When it is set the mark is rendered; when it is not, the
+ * name is rendered as a text chip. That fallback is not a placeholder waiting to
+ * be replaced with any image — it is what should be shown until the *right*
+ * image exists, because the right image is not downloadable.
  *
- * `body` and `ref` are optional and render only when set. They are worth
- * filling: a certificate number and an issuing body turn a claim into something
- * a buyer's procurement team can verify, and unverifiable claims are the ones
- * that get challenged. They are left empty rather than invented.
+ * There is no such thing as an "ISO 27001 logo" to fetch. ISO does not certify
+ * anyone and forbids use of its own logo to advertise certification. What a
+ * certified organisation may display is the certification mark issued by the
+ * body that audited it — BSI, TÜV, DNV, Bureau Veritas, Intertek or similar —
+ * supplied as an artwork pack with rules attached, usually including that the
+ * certificate number appears with it. The CMMI badge is licensed by ISACA to
+ * organisations holding a current appraisal, and they supply that artwork too.
+ *
+ * A generic badge taken off the web is a trademark problem and, to any buyer who
+ * knows this, a signal that the certification may not be real. So: the files
+ * come from the certification body, and until they do, these stay as words.
  */
 export type Certification = {
   name: string;
-  /** The certifying body. Not the standard's author. */
+  /** The certifying body. Not the standard's author — ISO certifies nobody. */
   body?: string;
   /** Certificate number, or the appraisal ID for CMMI. */
   ref?: string;
+  /**
+   * Path under /public to the mark supplied by the certification body.
+   * Rendered at the height set in CSS; supply at 2x that or better.
+   */
+  logo?: string;
+  /** Height in pixels of the supplied file, so the browser can reserve space. */
+  logoHeight?: number;
+  /** Width in pixels of the supplied file. */
+  logoWidth?: number;
 };
 
 export const certifications: Certification[] = [
