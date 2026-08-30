@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     posts: Post;
+    portfolio: Portfolio;
     jobs: Job;
     testimonials: Testimonial;
     clients: Client;
@@ -84,6 +85,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
+    portfolio: PortfolioSelect<false> | PortfolioSelect<true>;
     jobs: JobsSelect<false> | JobsSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
@@ -270,6 +272,181 @@ export interface Media {
       filename?: string | null;
     };
   };
+}
+/**
+ * Case studies of what we have built and the work we have done. Drafts stay private until published.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio".
+ */
+export interface Portfolio {
+  id: number;
+  /**
+   * The page H1. Keep it under about 60 characters or a search result truncates it.
+   */
+  title: string;
+  /**
+   * The URL for this entry. Filled in automatically from the title, but you can edit it. Avoid changing it after publishing. The old URL will stop working.
+   */
+  slug: string;
+  /**
+   * Decides whether the client fields below apply.
+   */
+  kind: 'product' | 'client';
+  sector?:
+    | ('manufacturing' | 'oil-and-gas' | 'fintech' | 'retail-ecommerce' | 'healthcare' | 'logistics' | 'cross-industry')
+    | null;
+  /**
+   * Shown only if the permission box below is ticked.
+   */
+  clientName?: string | null;
+  /**
+   * Left unticked, the entry publishes with the sector instead of the name — "a manufacturer in the Midlands" rather than the company. Ticking this is a claim that somebody actually agreed.
+   */
+  clientPermission?: boolean | null;
+  /**
+   * One or two sentences. Used as the meta description and on the index card, so write it to be read out of context.
+   */
+  summary: string;
+  /**
+   * Used on the index card and as the social share image.
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * Add blocks in any order. Images can sit anywhere — between paragraphs, in pairs, or as a gallery.
+   */
+  body?:
+    | (
+        | {
+            /**
+             * Small label above the heading. Optional.
+             */
+            eyebrow?: string | null;
+            heading?: string | null;
+            text: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'prose';
+          }
+        | {
+            eyebrow?: string | null;
+            heading?: string | null;
+            items?:
+              | {
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            columns?: ('2' | '3') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'featureGrid';
+          }
+        | {
+            eyebrow?: string | null;
+            heading?: string | null;
+            intro?: string | null;
+            items?:
+              | {
+                  label: string;
+                  detail?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * A line under the steps. Optional.
+             */
+            note?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'steps';
+          }
+        | {
+            image: number | Media;
+            caption?: string | null;
+            /**
+             * For a dashboard or a wide diagram.
+             */
+            wide?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'imageFull';
+          }
+        | {
+            left: number | Media;
+            right: number | Media;
+            caption?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'imagePair';
+          }
+        | {
+            items?:
+              | {
+                  image: number | Media;
+                  caption?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            columns?: ('2' | '3') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+        | {
+            eyebrow?: string | null;
+            heading?: string | null;
+            intro?: string | null;
+            /**
+             * Each stage is one step in a left-to-right chain, joined by arrows. Keep the labels short — they wrap onto several rows on a phone.
+             */
+            stages?:
+              | {
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'flow';
+          }
+        | {
+            quote: string;
+            attribution?: string | null;
+            role?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'quote';
+          }
+      )[]
+    | null;
+  /**
+   * Pinned to the top of the index.
+   */
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  /**
+   * For work a client is happy to have on the site but not indexed.
+   */
+  noindex?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * Openings listed on /careers.
@@ -543,6 +720,10 @@ export interface PayloadLockedDocument {
         value: number | Post;
       } | null)
     | ({
+        relationTo: 'portfolio';
+        value: number | Portfolio;
+      } | null)
+    | ({
         relationTo: 'jobs';
         value: number | Job;
       } | null)
@@ -645,6 +826,128 @@ export interface PostsSelect<T extends boolean = true> {
   readingMinutes?: T;
   metaTitle?: T;
   metaDescription?: T;
+  noindex?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio_select".
+ */
+export interface PortfolioSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  kind?: T;
+  sector?: T;
+  clientName?: T;
+  clientPermission?: T;
+  summary?: T;
+  coverImage?: T;
+  body?:
+    | T
+    | {
+        prose?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              text?: T;
+              id?: T;
+              blockName?: T;
+            };
+        featureGrid?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              columns?: T;
+              id?: T;
+              blockName?: T;
+            };
+        steps?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              intro?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    detail?: T;
+                    id?: T;
+                  };
+              note?: T;
+              id?: T;
+              blockName?: T;
+            };
+        imageFull?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              wide?: T;
+              id?: T;
+              blockName?: T;
+            };
+        imagePair?:
+          | T
+          | {
+              left?: T;
+              right?: T;
+              caption?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    image?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              columns?: T;
+              id?: T;
+              blockName?: T;
+            };
+        flow?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              intro?: T;
+              stages?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        quote?:
+          | T
+          | {
+              quote?: T;
+              attribution?: T;
+              role?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  featured?: T;
+  publishedAt?: T;
   noindex?: T;
   updatedAt?: T;
   createdAt?: T;

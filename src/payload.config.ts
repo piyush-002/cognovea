@@ -13,6 +13,7 @@ import { Clients } from '@/collections/Clients';
 import { Enquiries } from '@/collections/Enquiries';
 import { Jobs } from '@/collections/Jobs';
 import { Media } from '@/collections/Media';
+import { Portfolio } from '@/collections/Portfolio';
 import { Posts } from '@/collections/Posts';
 import { RateLimits } from '@/collections/RateLimits';
 import { Testimonials } from '@/collections/Testimonials';
@@ -203,7 +204,7 @@ export default buildConfig({
     avatar: 'default',
   },
 
-  collections: [Posts, Jobs, Testimonials, Clients, Enquiries, ToolLeads, Media, Users, RateLimits],
+  collections: [Posts, Portfolio, Jobs, Testimonials, Clients, Enquiries, ToolLeads, Media, Users, RateLimits],
   globals: [SiteSettings],
 
   editor: lexicalEditor(),
