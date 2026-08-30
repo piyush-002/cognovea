@@ -90,6 +90,11 @@ const PLAYBOOKS: NavLink = {
   label: 'Industry Playbooks',
   blurb: 'What AI is actually used for in your sector, and what each needs.',
 };
+const PORTFOLIO: NavLink = {
+  href: '/portfolio',
+  label: 'Portfolio & Case Studies',
+  blurb: 'What we have built, and the work we have done.',
+};
 const INSIGHTS: NavLink = { href: '/insights', label: 'Insights' };
 const CONTACT: NavLink = { href: '/contact', label: 'Contact' };
 const ABOUT: NavLink = {
@@ -128,19 +133,19 @@ export const navPrimaryLinks: NavLink[] = [INSIGHTS, CONTACT];
  * already interested. Folding them in takes the top row from seven items to
  * five, which is the difference between a row you scan and one you read.
  */
-export const navCompanyLinks: NavLink[] = [ABOUT, CAREERS];
+export const navCompanyLinks: NavLink[] = [PORTFOLIO, ABOUT, CAREERS];
 
 /**
  * Everything, in reading order, for the footer and the mobile drawer. Both have
  * the room, and a footer is where people go when the nav did not have it.
  */
-export const companyLinks: NavLink[] = [TOOLS, PLAYBOOKS, INSIGHTS, ABOUT, CAREERS, CONTACT];
+export const companyLinks: NavLink[] = [TOOLS, PLAYBOOKS, INSIGHTS, PORTFOLIO, ABOUT, CAREERS, CONTACT];
 
 /* The mobile drawer, split the way the desktop nav is. Filing a playbook under
    "Company" was near enough when that group was About and Careers; it is not
    now. */
 export const drawerResourceLinks: NavLink[] = [TOOLS, PLAYBOOKS, INSIGHTS];
-export const drawerCompanyLinks: NavLink[] = [ABOUT, CAREERS, CONTACT];
+export const drawerCompanyLinks: NavLink[] = [PORTFOLIO, ABOUT, CAREERS, CONTACT];
 
 /**
  * Certifications shown in the footer.
@@ -202,6 +207,7 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   // Same reasoning as the calculator: these exist to be linked to, so they
   // outrank the pages that exist to be found.
   { path: '/playbooks', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/portfolio', priority: 0.8, changeFrequency: 'monthly' },
   // Individual playbooks are not listed here. They are derived from the content
   // module in sitemap.ts, so publishing one cannot leave it out of the sitemap
   // by omission — which a hand-maintained list guarantees eventually.

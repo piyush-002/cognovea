@@ -22,5 +22,13 @@
  * Before generating another Payload migration, read SETUP.md: on a database
  * whose schema was built by dev push, a first migration has to be baselined,
  * not applied.
+ *
+ * If you do run `migrate:create` to learn what Payload wants — which is the
+ * only sane way to get the table names for a blocks field — note that it also
+ * rewrites THIS file to import and register what it generated. Deleting the
+ * generated file is not enough; this import has to go too, or `npm run migrate`
+ * finds a registration pointing at nothing. That is how the portfolio schema
+ * was captured: generate, extract the additive statements into manual/, delete
+ * the generated file, and restore this one.
  */
 export const migrations = [];

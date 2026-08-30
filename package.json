@@ -46,7 +46,9 @@
     "check:cycles": "node tools/check-cycles.mjs",
     "check:playbooks": "node tools/check-playbooks.mjs",
     "test:nav": "node tools/test-nav.mjs",
-    "test:playbooks-ui": "node tools/test-playbooks-ui.mjs"
+    "test:playbooks-ui": "node tools/test-playbooks-ui.mjs",
+    "seed:predictx": "payload run src/seed/predictx.ts",
+    "portfolio:status": "node tools/portfolio-status.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
