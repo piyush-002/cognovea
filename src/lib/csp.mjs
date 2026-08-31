@@ -33,47 +33,53 @@
  */
 
 /**
- * The Talkbar assistant widget.
+ * Everywhere the Talkbar widget pulls from.
  *
- * Its own snippet says only "paste this in <head>", which on a site with a CSP
- * is not enough: without these entries the browser refuses the script and every
- * request it makes, silently as far as the page is concerned. The widget never
- * appears, and nothing in the build, the logs or the deploy says why.
+ * None of this is in Talkbar's snippet, which says only "paste this in <head>".
+ * Each host arrived as a console violation, one reload at a time: the loader
+ * names ui-server and api-server, the controller then reaches for a CloudFront
+ * distribution, that stylesheet turns out to be an Adobe Typekit kit, and the
+ * launcher's own icon comes from a fourth host again. That is the real cost of
+ * a third-party widget on a site with a policy — not the script tag, the
+ * supply chain behind it.
  *
- * The hosts are the ones the loader itself names — ui-server for the script and
- * the chat panel it opens, api-server for the API it talks to. wss: is listed
- * alongside https: on the API host because a chat widget that streams replies
- * does it over a websocket, and connect-src governs that too.
+ * Grouped by directive rather than by host, because the directives are not
+ * interchangeable and the difference is where the time goes: style-src governs
+ * a .css file, and the @font-face targets inside that file are font-src. Allow
+ * only the first and you get a stylesheet that loads and still no glyphs.
  *
- * If something in the widget still fails, the browser console names the exact
- * directive and origin it wanted. Add that one host here rather than widening
- * to a wildcard.
+ * Every host is named exactly. No wildcards, and specifically not
+ * https://*.cloudfront.net or https://*.typekit.net — both are shared
+ * infrastructure, and allowing either would open a large slice of the internet
+ * to this site for the sake of one widget's fonts. If Talkbar moves a host, the
+ * widget degrades visibly and the console names the replacement, which is a
+ * better failure than a policy that cannot fail.
+ *
+ * Note what is NOT here. Only ui-server may execute scripts: the asset hosts
+ * have so far only served assets, and a CDN is not granted code execution
+ * pre-emptively. Only api-server may be connected to. If either ever needs
+ * more, the console will say so.
  */
 export const TALKBAR_UI = 'https://ui-server.app.talkbar.ai';
 export const TALKBAR_API = 'https://api-server.app.talkbar.ai';
 export const TALKBAR_WS = 'wss://api-server.app.talkbar.ai';
+/** Talkbar's own asset CDN. Serves the launcher icon. */
+export const TALKBAR_ASSETS = 'https://cdn.talkbar.ai';
+/** A CloudFront distribution the controller pulls font CSS from. */
+export const TALKBAR_CLOUDFRONT = 'https://d2di5t1ylkcchn.cloudfront.net';
+/** Adobe Typekit, kit aik3pol. p. serves the CSS, use. serves the font files. */
+export const TYPEKIT_CSS = 'https://p.typekit.net';
+export const TYPEKIT_FONTS = 'https://use.typekit.net';
 
-/**
- * The widget's asset CDN.
- *
- * Nothing in Talkbar's snippet or its loader mentions this host. It surfaced
- * only as a console violation: the controller pulls an icon webfont from it, so
- * with the stylesheet blocked the widget rendered with no icons at all — the
- * bubble was there, the glyphs were not.
- *
- * Named exactly rather than as https://*.cloudfront.net. The wildcard would be
- * easier and would survive Talkbar changing distributions, but CloudFront is
- * shared infrastructure: allowing the whole of it would let any page on this
- * site pull styles, fonts and images from a large fraction of the internet,
- * which gives up most of what the policy is for. If this ID does change, the
- * widget's icons disappear and the console names the new host, which is a
- * better failure than a policy that cannot fail.
- *
- * Passive assets only. It is not in script-src: a third-party CDN that has not
- * asked to execute code should not be granted it pre-emptively, and if the
- * controller ever does load JavaScript from here the console will say so.
- */
-export const TALKBAR_CDN = 'https://d2di5t1ylkcchn.cloudfront.net';
+/** What the widget needs, per directive. Iterated by tools/test-headers.mjs. */
+export const TALKBAR_HOSTS = {
+  'script-src': [TALKBAR_UI],
+  'connect-src': [TALKBAR_API, TALKBAR_WS, TALKBAR_UI],
+  'frame-src': [TALKBAR_UI],
+  'img-src': [TALKBAR_UI, TALKBAR_ASSETS, TALKBAR_CLOUDFRONT],
+  'style-src': [TALKBAR_UI, TALKBAR_ASSETS, TALKBAR_CLOUDFRONT, TYPEKIT_CSS, TYPEKIT_FONTS],
+  'font-src': [TALKBAR_UI, TALKBAR_ASSETS, TALKBAR_CLOUDFRONT, TYPEKIT_FONTS],
+};
 
 const join = (parts) => parts.filter(Boolean).join(' ');
 
@@ -99,20 +105,20 @@ export function buildCsp({ isDev = false, isPreview = false, talkbar = false } =
       'https://www.google-analytics.com',
       // Vercel's preview toolbar. Never on the live site.
       isPreview ? 'https://vercel.live' : '',
-      talkbar ? TALKBAR_UI : '',
+      talkbar ? TALKBAR_HOSTS['script-src'].join(' ') : '',
     ]),
     // Inline style attributes are used throughout the pages. No external
     // stylesheet host for the site's own design: fonts are self-hosted by
     // next/font, so the Google origins that used to be allowed here have been
     // removed rather than left open.
-    join(["style-src 'self' 'unsafe-inline'", talkbar ? `${TALKBAR_UI} ${TALKBAR_CDN}` : '']),
-    join(["font-src 'self' data:", talkbar ? `${TALKBAR_UI} ${TALKBAR_CDN}` : '']),
+    join(["style-src 'self' 'unsafe-inline'", talkbar ? TALKBAR_HOSTS['style-src'].join(' ') : '']),
+    join(["font-src 'self' data:", talkbar ? TALKBAR_HOSTS['font-src'].join(' ') : '']),
     join([
       "img-src 'self' data: blob:",
       'https://www.google-analytics.com',
       'https://www.googletagmanager.com',
       'https://*.public.blob.vercel-storage.com',
-      talkbar ? `${TALKBAR_UI} ${TALKBAR_CDN}` : '',
+      talkbar ? TALKBAR_HOSTS['img-src'].join(' ') : '',
     ]),
     join([
       "connect-src 'self'",
@@ -120,7 +126,7 @@ export function buildCsp({ isDev = false, isPreview = false, talkbar = false } =
       'https://analytics.google.com',
       'https://*.google-analytics.com',
       'https://*.googletagmanager.com',
-      talkbar ? `${TALKBAR_API} ${TALKBAR_WS} ${TALKBAR_UI}` : '',
+      talkbar ? TALKBAR_HOSTS['connect-src'].join(' ') : '',
       // The dev server's HMR websocket. Not restricted to localhost: `next dev`
       // also serves on the LAN address it prints as "Network", and the websocket
       // then connects to that host, not to localhost.
@@ -136,7 +142,11 @@ export function buildCsp({ isDev = false, isPreview = false, talkbar = false } =
        Omitted entirely when neither applies, so the fallback to 'self' is what
        governs rather than a directive that lists nothing. */
     isPreview || talkbar
-      ? join(["frame-src 'self'", isPreview ? 'https://vercel.live' : '', talkbar ? TALKBAR_UI : ''])
+      ? join([
+          "frame-src 'self'",
+          isPreview ? 'https://vercel.live' : '',
+          talkbar ? TALKBAR_HOSTS['frame-src'].join(' ') : '',
+        ])
       : '',
     "base-uri 'self'",
     "form-action 'self'",

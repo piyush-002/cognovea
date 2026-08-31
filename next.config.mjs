@@ -6,7 +6,7 @@
  * package.json, because Payload requires them to match; `npm install` is now
  * enough on a fresh clone.
  */
-import { TALKBAR_API, TALKBAR_CDN, TALKBAR_UI, buildCsp } from './src/lib/csp.mjs';
+import { TALKBAR_API, TALKBAR_CLOUDFRONT, TALKBAR_UI, buildCsp } from './src/lib/csp.mjs';
 import { hostRedirects } from './src/lib/host-redirect.mjs';
 
 let withPayload;
@@ -73,7 +73,7 @@ const { site: siteCsp, admin: adminCsp } = buildCsp({ isDev, isPreview, talkbar 
  */
 console.log(
   talkbar
-    ? `Talkbar: enabled — CSP allows ${[TALKBAR_UI, TALKBAR_API, TALKBAR_CDN]
+    ? `Talkbar: enabled — CSP allows ${[TALKBAR_UI, TALKBAR_API, TALKBAR_CLOUDFRONT]
         .map((u) => u.replace('https://', ''))
         .join(', ')}`
     : 'Talkbar: disabled (NEXT_PUBLIC_TALKBAR_APP_ID / _PUBLISHABLE_KEY not set)',

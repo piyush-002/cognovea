@@ -99,7 +99,7 @@ for (const p of PATHS) {
    on the wrong thing. src/lib/csp.mjs exists so this can call it with each set
    of conditions and read the string a browser would actually receive. */
 
-const { buildCsp, TALKBAR_UI, TALKBAR_API, TALKBAR_WS, TALKBAR_CDN } = await import(
+const { buildCsp, TALKBAR_UI, TALKBAR_API, TALKBAR_WS, TALKBAR_HOSTS } = await import(
   `file://${path.join(root, 'src/lib/csp.mjs')}`
 );
 
@@ -164,51 +164,84 @@ ok('vercel.live is present on a preview', preview['script-src'].includes('https:
    as it goes, and the widget just never appears. The only signal is a console
    message in somebody's browser, which is not a thing a deploy checks. */
 
-ok('the widget script host is allowed', withBar['script-src'].includes(TALKBAR_UI));
-ok('the widget API host is allowed to connect', withBar['connect-src'].includes(TALKBAR_API));
-ok(
-  'the widget can open a websocket',
-  withBar['connect-src'].includes(TALKBAR_WS),
-  'a chat widget that streams replies needs wss:, and connect-src governs it',
-);
-ok(
-  'the widget can be framed',
-  withBar['frame-src']?.includes(TALKBAR_UI),
-  "frame-src falls back to default-src 'self' when unset, which blocks the chat panel",
-);
-ok('the widget can load its images', withBar['img-src'].includes(TALKBAR_UI));
-ok('the widget can load its styles', withBar['style-src'].includes(TALKBAR_UI));
-ok('the widget can load its fonts', withBar['font-src'].includes(TALKBAR_UI));
+/* Every host the widget needs, in every directive it needs it in — driven by
+   the map in csp.mjs rather than restated here, so adding a host to the map
+   without wiring it into the policy fails, and wiring one in without recording
+   it fails too.
 
-/* The asset CDN. Undocumented by Talkbar and found only from a console
-   violation: the widget's icons are glyphs in a webfont served from here, so a
-   blocked stylesheet renders the bubble with no icons in it. Asserted per
-   directive because the stylesheet and the font files it @font-faces are
-   governed by two different ones, and allowing only the first gets you a
-   stylesheet that loads and still no icons. */
-ok('the widget CDN can serve the icon stylesheet', withBar['style-src'].includes(TALKBAR_CDN));
+   Iterating matters because the directives are not interchangeable and the
+   difference is where the debugging time went: style-src governs a .css file
+   and the @font-face targets inside it are font-src, so allowing only the
+   first gets you a stylesheet that loads and still no glyphs. */
+for (const [directive, hosts] of Object.entries(TALKBAR_HOSTS)) {
+  for (const host of hosts) {
+    ok(
+      `${directive} allows ${host.replace(/^\w+:\/\//, '')}`,
+      (withBar[directive] || []).includes(host),
+      `${directive} is: ${(withBar[directive] || ['(absent)']).join(' ')}`,
+    );
+  }
+}
+
+/* The loop above is driven by TALKBAR_HOSTS, which means deleting a host from
+   the map deletes its assertion too — it passes with one fewer test rather
+   than failing. So the hosts we have actually watched fail are pinned here,
+   independently of the map. Each line below is a console violation somebody
+   read off a real page:
+
+     img-src      cdn.talkbar.ai .............. the launcher icon
+     style-src    <cloudfront>/WebAI/fonts .... the font stylesheet
+     style-src    p.typekit.net ............... which turned out to be a Typekit kit
+     font-src     use.typekit.net ............. the font files that kit points at
+     script-src   ui-server ................... the loader in Talkbar's own snippet
+
+   Removing any of them from csp.mjs now fails here, whatever the map says. */
+const OBSERVED = {
+  'script-src': [TALKBAR_UI],
+  'img-src': ['https://cdn.talkbar.ai'],
+  'style-src': ['https://d2di5t1ylkcchn.cloudfront.net', 'https://p.typekit.net'],
+  'font-src': ['https://use.typekit.net'],
+  'connect-src': [TALKBAR_API, TALKBAR_WS],
+  'frame-src': [TALKBAR_UI],
+};
+for (const [directive, hosts] of Object.entries(OBSERVED)) {
+  for (const host of hosts) {
+    ok(
+      `${directive} still allows ${host.replace(/^\w+:\/\//, '')}, which was seen to fail without it`,
+      (withBar[directive] || []).includes(host),
+    );
+  }
+}
+
+ok('the API host is what connect-src names', TALKBAR_HOSTS['connect-src'].includes(TALKBAR_API));
+ok('the websocket is listed too', TALKBAR_HOSTS['connect-src'].includes(TALKBAR_WS));
+ok('the script host is the only one allowed to execute', 
+  TALKBAR_HOSTS['script-src'].length === 1 && TALKBAR_HOSTS['script-src'][0] === TALKBAR_UI,
+  'asset CDNs should not be granted code execution pre-emptively');
 ok(
-  'and the font files that stylesheet asks for',
-  withBar['font-src'].includes(TALKBAR_CDN),
-  'style-src covers the .css; the @font-face targets inside it are font-src',
+  'the asset hosts cannot execute scripts',
+  ['img-src', 'style-src', 'font-src']
+    .flatMap((d) => TALKBAR_HOSTS[d])
+    .filter((h) => h !== TALKBAR_UI)
+    .every((h) => !withBar['script-src'].includes(h)),
 );
-ok('and its images', withBar['img-src'].includes(TALKBAR_CDN));
 ok(
-  'the CDN is not allowed to execute scripts',
-  !withBar['script-src'].includes(TALKBAR_CDN),
-  'a third-party CDN that only serves assets should not be granted code execution',
-);
-ok(
-  'the CDN is named exactly, not by wildcard',
-  !JSON.stringify(withBar).includes('*.cloudfront.net'),
-  'allowing all of CloudFront would open a large fraction of the internet',
+  'nothing but the API host may be connected to',
+  withBar['connect-src'].filter((h) => /talkbar|typekit|cloudfront/.test(h)).length ===
+    TALKBAR_HOSTS['connect-src'].length,
 );
 
-/* And closes again when it is not configured. An environment without the keys
-   renders no widget, so it should not be advertising the origins either. */
+/* No wildcards. CloudFront and Typekit are shared infrastructure: allowing
+   either wholesale would open a large slice of the internet to this site for
+   the sake of one widget's fonts. */
+for (const shared of ['*.cloudfront.net', '*.typekit.net', '*.talkbar.ai']) {
+  ok(`${shared} is not allowed wholesale`, !JSON.stringify(withBar).includes(shared));
+}
+
+/* And all of it closes when the widget is unconfigured. */
 ok(
   'none of it is allowed when the widget is unconfigured',
-  !JSON.stringify(prod).includes('talkbar.ai') && !JSON.stringify(prod).includes('cloudfront.net'),
+  !/talkbar|typekit|cloudfront/.test(JSON.stringify(prod)),
 );
 ok(
   'frame-src is omitted entirely when nothing needs it',
@@ -225,7 +258,7 @@ ok(
 );
 ok(
   'the admin does not run the third-party widget',
-  !JSON.stringify(admin).includes('talkbar.ai') && !JSON.stringify(admin).includes('cloudfront.net'),
+  !/talkbar|typekit|cloudfront/.test(JSON.stringify(admin)),
   'a support widget on the marketing site is one thing; the same script inside an authenticated CMS session is another',
 );
 ok('the admin is marked noindex', /X-Robots-Tag/.test(src) && /noindex/.test(src));
