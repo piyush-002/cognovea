@@ -53,6 +53,28 @@ export const TALKBAR_UI = 'https://ui-server.app.talkbar.ai';
 export const TALKBAR_API = 'https://api-server.app.talkbar.ai';
 export const TALKBAR_WS = 'wss://api-server.app.talkbar.ai';
 
+/**
+ * The widget's asset CDN.
+ *
+ * Nothing in Talkbar's snippet or its loader mentions this host. It surfaced
+ * only as a console violation: the controller pulls an icon webfont from it, so
+ * with the stylesheet blocked the widget rendered with no icons at all — the
+ * bubble was there, the glyphs were not.
+ *
+ * Named exactly rather than as https://*.cloudfront.net. The wildcard would be
+ * easier and would survive Talkbar changing distributions, but CloudFront is
+ * shared infrastructure: allowing the whole of it would let any page on this
+ * site pull styles, fonts and images from a large fraction of the internet,
+ * which gives up most of what the policy is for. If this ID does change, the
+ * widget's icons disappear and the console names the new host, which is a
+ * better failure than a policy that cannot fail.
+ *
+ * Passive assets only. It is not in script-src: a third-party CDN that has not
+ * asked to execute code should not be granted it pre-emptively, and if the
+ * controller ever does load JavaScript from here the console will say so.
+ */
+export const TALKBAR_CDN = 'https://d2di5t1ylkcchn.cloudfront.net';
+
 const join = (parts) => parts.filter(Boolean).join(' ');
 
 /**
@@ -83,14 +105,14 @@ export function buildCsp({ isDev = false, isPreview = false, talkbar = false } =
     // stylesheet host for the site's own design: fonts are self-hosted by
     // next/font, so the Google origins that used to be allowed here have been
     // removed rather than left open.
-    join(["style-src 'self' 'unsafe-inline'", talkbar ? TALKBAR_UI : '']),
-    join(["font-src 'self' data:", talkbar ? TALKBAR_UI : '']),
+    join(["style-src 'self' 'unsafe-inline'", talkbar ? `${TALKBAR_UI} ${TALKBAR_CDN}` : '']),
+    join(["font-src 'self' data:", talkbar ? `${TALKBAR_UI} ${TALKBAR_CDN}` : '']),
     join([
       "img-src 'self' data: blob:",
       'https://www.google-analytics.com',
       'https://www.googletagmanager.com',
       'https://*.public.blob.vercel-storage.com',
-      talkbar ? TALKBAR_UI : '',
+      talkbar ? `${TALKBAR_UI} ${TALKBAR_CDN}` : '',
     ]),
     join([
       "connect-src 'self'",

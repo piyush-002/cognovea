@@ -99,7 +99,7 @@ for (const p of PATHS) {
    on the wrong thing. src/lib/csp.mjs exists so this can call it with each set
    of conditions and read the string a browser would actually receive. */
 
-const { buildCsp, TALKBAR_UI, TALKBAR_API, TALKBAR_WS } = await import(
+const { buildCsp, TALKBAR_UI, TALKBAR_API, TALKBAR_WS, TALKBAR_CDN } = await import(
   `file://${path.join(root, 'src/lib/csp.mjs')}`
 );
 
@@ -180,11 +180,35 @@ ok('the widget can load its images', withBar['img-src'].includes(TALKBAR_UI));
 ok('the widget can load its styles', withBar['style-src'].includes(TALKBAR_UI));
 ok('the widget can load its fonts', withBar['font-src'].includes(TALKBAR_UI));
 
+/* The asset CDN. Undocumented by Talkbar and found only from a console
+   violation: the widget's icons are glyphs in a webfont served from here, so a
+   blocked stylesheet renders the bubble with no icons in it. Asserted per
+   directive because the stylesheet and the font files it @font-faces are
+   governed by two different ones, and allowing only the first gets you a
+   stylesheet that loads and still no icons. */
+ok('the widget CDN can serve the icon stylesheet', withBar['style-src'].includes(TALKBAR_CDN));
+ok(
+  'and the font files that stylesheet asks for',
+  withBar['font-src'].includes(TALKBAR_CDN),
+  'style-src covers the .css; the @font-face targets inside it are font-src',
+);
+ok('and its images', withBar['img-src'].includes(TALKBAR_CDN));
+ok(
+  'the CDN is not allowed to execute scripts',
+  !withBar['script-src'].includes(TALKBAR_CDN),
+  'a third-party CDN that only serves assets should not be granted code execution',
+);
+ok(
+  'the CDN is named exactly, not by wildcard',
+  !JSON.stringify(withBar).includes('*.cloudfront.net'),
+  'allowing all of CloudFront would open a large fraction of the internet',
+);
+
 /* And closes again when it is not configured. An environment without the keys
    renders no widget, so it should not be advertising the origins either. */
 ok(
   'none of it is allowed when the widget is unconfigured',
-  !JSON.stringify(prod).includes('talkbar.ai'),
+  !JSON.stringify(prod).includes('talkbar.ai') && !JSON.stringify(prod).includes('cloudfront.net'),
 );
 ok(
   'frame-src is omitted entirely when nothing needs it',
@@ -201,7 +225,7 @@ ok(
 );
 ok(
   'the admin does not run the third-party widget',
-  !JSON.stringify(admin).includes('talkbar.ai'),
+  !JSON.stringify(admin).includes('talkbar.ai') && !JSON.stringify(admin).includes('cloudfront.net'),
   'a support widget on the marketing site is one thing; the same script inside an authenticated CMS session is another',
 );
 ok('the admin is marked noindex', /X-Robots-Tag/.test(src) && /noindex/.test(src));
