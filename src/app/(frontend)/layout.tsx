@@ -6,6 +6,7 @@ import JsonLd from '@/components/JsonLd';
 import Nav from '@/components/Nav';
 import Reveal from '@/components/Reveal';
 import ScrollProgress from '@/components/ScrollProgress';
+import Talkbar from '@/components/Talkbar';
 import { abs, site } from '@/lib/site';
 import './globals.css';
 
@@ -216,6 +217,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <Reveal />
         <Analytics />
+        <Talkbar />
       </body>
     </html>
   );
