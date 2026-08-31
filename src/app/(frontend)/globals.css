@@ -1000,39 +1000,53 @@ html:not(.rv-ready) .rv {
   overflow: visible;
 }
 
-.mark__dot {
-  transform-box: fill-box;
+/* The mark's rings settle inward, outermost last.
+
+   The dots carry no per-element offsets any more — they are traced from the
+   artwork and grouped into concentric bands, so the stagger lives here instead
+   of on 275 style attributes. transform-box: view-box makes the scale happen
+   about the mark's centre rather than each band's own bounding box, which is
+   what turns it into a contraction instead of eight unrelated shrinks. */
+.mark__band {
+  transform-box: view-box;
   transform-origin: center;
-  animation: mark-resolve 1.15s var(--ease) both;
-  animation-delay: var(--d, 0ms);
+  animation: mark-settle 0.9s var(--ease) both;
 }
 
-/* Scatter -> resolve, the hero's idea compressed into 34px. */
-@keyframes mark-resolve {
+.mark__band--0 { animation-delay: 0ms; }
+.mark__band--1 { animation-delay: 40ms; }
+.mark__band--2 { animation-delay: 80ms; }
+.mark__band--3 { animation-delay: 120ms; }
+.mark__band--4 { animation-delay: 160ms; }
+.mark__band--5 { animation-delay: 200ms; }
+.mark__band--6 { animation-delay: 240ms; }
+.mark__band--7 { animation-delay: 280ms; }
+
+@keyframes mark-settle {
   from {
     opacity: 0;
-    transform: translate(var(--dx, 0), var(--dy, 0));
+    transform: scale(1.22);
   }
   to {
-    opacity: var(--o, 1);
+    opacity: 1;
     transform: none;
   }
 }
 
-.logo:hover .mark__dot {
-  animation-name: mark-nudge;
-  animation-duration: 0.9s;
+/* Hover breathes the rings apart a little. Same idea as the hero's cursor
+   repulsion, at a size where a per-dot version would be invisible anyway. */
+.logo:hover .mark__band {
+  animation-name: mark-breathe;
+  animation-duration: 0.8s;
 }
 
-@keyframes mark-nudge {
-  0% {
-    transform: none;
-  }
-  35% {
-    transform: translate(calc(var(--dx, 0) * 0.13), calc(var(--dy, 0) * 0.13));
-  }
+@keyframes mark-breathe {
+  0%,
   100% {
     transform: none;
+  }
+  40% {
+    transform: scale(1.07);
   }
 }
 
@@ -1046,10 +1060,17 @@ html:not(.rv-ready) .rv {
   line-height: 1;
 }
 
-/* "vea" carries the ramp, as on the live site. */
+/* "vea" carries the ramp.
+
+   Not var(--grad): that one runs at 96deg, which is near enough to vertical
+   that across a 14px-tall word you get the middle of the ramp top to bottom
+   and no travel at all left to right — "vea" came out uniformly blue, with the
+   violet the logo opens on nowhere on the page. These stops are the colours
+   sampled off logo.png at the start, middle and end of the word, running the
+   way the artwork runs them: v violet, e blue, a cyan. */
 .logo__word em {
   font-style: normal;
-  background: var(--grad);
+  background: linear-gradient(90deg, #7433fc 0%, #4a66fc 49%, #12b9fd 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -2514,9 +2535,9 @@ tbody tr:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mark__dot {
+  .mark__band {
     animation: none;
-    opacity: var(--o, 1);
+    opacity: 1;
     transform: none;
   }
 }

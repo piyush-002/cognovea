@@ -44,6 +44,8 @@
     "test:notify": "node tools/test-notify.mjs",
     "test:rate-limit": "node tools/test-rate-limit.mjs",
     "check:cycles": "node tools/check-cycles.mjs",
+    "test:mark": "node tools/test-mark.mjs",
+    "trace:mark": "node tools/trace-mark.mjs",
     "check:playbooks": "node tools/check-playbooks.mjs",
     "test:nav": "node tools/test-nav.mjs",
     "test:playbooks-ui": "node tools/test-playbooks-ui.mjs",

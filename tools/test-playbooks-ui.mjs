@@ -113,7 +113,7 @@ const load = (spec) => {
   if (key === '@/components/JsonLd') return (cache[key] = { __esModule: true, default: () => null });
   if (key === '@/components/Faq') return (cache[key] = { __esModule: true, default: FaqStub });
   if (key === '@/components/Mark') return (cache[key] = { __esModule: true, default: () => null });
-  if (key === '@/lib/mark') return (cache[key] = { markPath: () => '' });
+  if (key === '@/lib/mark-dots') return (cache[key] = { BANDS: 8, DOTS: [] });
   if (key === '@/lib/content') return (cache[key] = {});
   if (!FILES[key]) throw new Error(`unexpected import: ${key}`);
   const m = { exports: {} };
