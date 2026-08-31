@@ -908,10 +908,33 @@ b {
   transition-delay: var(--rv-delay, 0ms);
 }
 
-.rv.is-in {
+/* The revealed state lives on a data attribute, not a class.
+
+   Reveal.tsx used to add a class here. className is a prop React owns on these
+   elements, and Reveal writes to the DOM from an IntersectionObserver — so on
+   anything that arrives inside a <Suspense> boundary, the observer can stamp
+   the class onto the node before React has hydrated it, and hydration then
+   finds a class it did not render. React reports that as a mismatch and
+   declines to patch it up.
+
+   An attribute React never renders has nothing to disagree with, whatever the
+   order. The specificity is unchanged — a class and an attribute selector both
+   weigh 0,1,0 — so nothing else in this stylesheet shifts. --rv-delay moved
+   here for the same reason: setting it through el.style writes a `style`
+   attribute onto an element that has no style prop, which is the identical
+   hazard. */
+.rv[data-rv='in'] {
   opacity: 1;
   transform: none;
 }
+
+/* The stagger, as static rules rather than an inline style. Reveal.tsx sets
+   data-rv-i to the element's index among its siblings, capped at 5. */
+.rv[data-rv-i='1'] { --rv-delay: 80ms; }
+.rv[data-rv-i='2'] { --rv-delay: 160ms; }
+.rv[data-rv-i='3'] { --rv-delay: 240ms; }
+.rv[data-rv-i='4'] { --rv-delay: 320ms; }
+.rv[data-rv-i='5'] { --rv-delay: 400ms; }
 
 /* Failsafe for when JavaScript does not run at all.
    Reveal.tsx stamps `rv-ready` on <html> as soon as it mounts, so in the normal
@@ -949,9 +972,9 @@ html:not(.rv-ready) .rv {
   transform: scale(0.965);
 }
 
-.rv--left.is-in,
-.rv--right.is-in,
-.rv--scale.is-in {
+.rv--left[data-rv='in'],
+.rv--right[data-rv='in'],
+.rv--scale[data-rv='in'] {
   transform: none;
 }
 
@@ -961,7 +984,7 @@ html:not(.rv-ready) .rv {
   }
 
   .rv,
-  .rv.is-in {
+  .rv[data-rv='in'] {
     opacity: 1;
     transform: none;
     transition: none;
@@ -2553,8 +2576,8 @@ tbody tr:hover {
     transform: translateY(26px);
   }
 
-  .rv--left.is-in,
-  .rv--right.is-in {
+  .rv--left[data-rv='in'],
+  .rv--right[data-rv='in'] {
     transform: none;
   }
 }

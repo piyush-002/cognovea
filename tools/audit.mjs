@@ -147,7 +147,7 @@ for (const pg of pages) {
   const name = pg.replace('.html', '');
   const p = await browser.newPage({ viewport: { width, height: 900 } });
   await p.goto(`http://127.0.0.1:5610/${pg}`, { waitUntil: 'load' });
-  await p.evaluate(() => document.querySelectorAll('.rv').forEach((e) => e.classList.add('is-in')));
+  await p.evaluate(() => document.querySelectorAll('.rv').forEach((e) => e.setAttribute('data-rv','in')));
 
   const res = await p.evaluate(() => {
     const out = {};

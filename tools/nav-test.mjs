@@ -52,7 +52,7 @@ const state = async (id) =>
     const el = document.getElementById(sel);
     if (!el) return 'MISSING';
     return {
-      isIn: el.classList.contains('is-in'),
+      isIn: el.getAttribute('data-rv') === 'in',
       opacity: getComputedStyle(el).opacity,
     };
   }, id);
