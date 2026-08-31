@@ -6,7 +6,7 @@
  * package.json, because Payload requires them to match; `npm install` is now
  * enough on a fresh clone.
  */
-import { buildCsp } from './src/lib/csp.mjs';
+import { TALKBAR_API, TALKBAR_CDN, TALKBAR_UI, buildCsp } from './src/lib/csp.mjs';
 import { hostRedirects } from './src/lib/host-redirect.mjs';
 
 let withPayload;
@@ -56,6 +56,28 @@ const talkbar = Boolean(
 );
 
 const { site: siteCsp, admin: adminCsp } = buildCsp({ isDev, isPreview, talkbar });
+
+/**
+ * Say, at boot, whether the widget is on and which hosts the policy opens for.
+ *
+ * A CSP is invisible when it is wrong. The page still serves, the header is
+ * still well-formed, and the only evidence is a console message in whoever's
+ * browser happened to load the widget. Worse, this policy is built in a module
+ * next.config.mjs imports, and the dev server watches next.config.mjs itself —
+ * so editing the policy can leave a running server serving the previous one
+ * indefinitely while the source on disk looks correct.
+ *
+ * One line at startup makes both conditions observable at the moment they are
+ * decided. Hostnames only: the key is never printed anywhere, and the app id is
+ * not worth the noise.
+ */
+console.log(
+  talkbar
+    ? `Talkbar: enabled — CSP allows ${[TALKBAR_UI, TALKBAR_API, TALKBAR_CDN]
+        .map((u) => u.replace('https://', ''))
+        .join(', ')}`
+    : 'Talkbar: disabled (NEXT_PUBLIC_TALKBAR_APP_ID / _PUBLISHABLE_KEY not set)',
+);
 
 /** Headers that apply everywhere, admin included. */
 const baseHeaders = [
