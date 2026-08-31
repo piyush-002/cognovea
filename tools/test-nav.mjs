@@ -26,7 +26,7 @@ const MODULES = {
   '@/lib/host-redirect.mjs': 'src/lib/host-redirect.mjs',
   '@/components/Logo': 'src/components/Logo.tsx',
   '@/components/Mark': 'src/components/Mark.tsx',
-  '@/lib/mark': 'src/lib/mark.ts',
+  '@/lib/mark-dots': 'src/lib/mark-dots.ts',
   '@/components/Nav': 'src/components/Nav.tsx',
 };
 

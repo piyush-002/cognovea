@@ -5,7 +5,7 @@
  * Mounts the REAL <Reveal /> from src/components in a browser, in the same
  * shape the app uses it (rendered once, above content that swaps underneath it,
  * never remounting), then simulates a navigation and asserts the new page's
- * .rv elements get .is-in. Driven by tools/nav-test.mjs.
+ * .rv elements get data-rv="in". Driven by tools/nav-test.mjs.
  */
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -52,7 +52,7 @@ function App() {
 
       {/* key forces React to discard the old DOM nodes and create new ones,
           without it React reconciles the two pages onto the SAME elements,
-          which keep their .is-in class and hide the bug entirely. */}
+          which keep their  data-rv attribute and hide the bug entirely. */}
       {route === 'a' ? <Page key="a" id="a" /> : <Page key="b" id="b" />}
     </>
   );

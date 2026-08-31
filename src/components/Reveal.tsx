@@ -4,7 +4,16 @@ import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
 /**
- * Adds `.is-in` to every `.rv` element as it scrolls into view.
+ * Marks every `.rv` element as revealed when it scrolls into view.
+ *
+ * The mark is `data-rv="in"`, not a class, and the stagger is `data-rv-i`
+ * rather than an inline style. Both are attributes React never renders, and
+ * that is the whole point: this writes to the DOM from an IntersectionObserver,
+ * which for anything inside a <Suspense> boundary can land before React has
+ * hydrated that node. Writing to `className` there left React hydrating against
+ * a class it had not rendered — a mismatch it reports and refuses to patch up.
+ * An attribute React does not know about cannot disagree with anything,
+ * whichever order the two happen in.
  *
  * This component lives in the root layout, which does NOT remount on client-side
  * navigation. A mount-only effect would therefore observe the first page's
@@ -19,6 +28,12 @@ import { useEffect } from 'react';
  * cancels that when JavaScript is unavailable, so a JS-less reader gets the
  * full page rather than a blank one.
  */
+/** Everything not yet revealed. */
+const SELECTOR = '.rv:not([data-rv])';
+
+/** The one place the revealed state is written. */
+const reveal = (el: HTMLElement) => el.setAttribute('data-rv', 'in');
+
 export default function Reveal() {
   const pathname = usePathname();
 
@@ -46,7 +61,7 @@ export default function Reveal() {
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const showAll = () => {
-      document.querySelectorAll<HTMLElement>('.rv:not(.is-in)').forEach((n) => n.classList.add('is-in'));
+      document.querySelectorAll<HTMLElement>(SELECTOR).forEach(reveal);
     };
 
     if (reduced || typeof IntersectionObserver === 'undefined') {
@@ -63,9 +78,9 @@ export default function Reveal() {
           // Stagger siblings inside the same grid/row for a gentle cascade.
           const siblings = el.parentElement ? Array.from(el.parentElement.children) : [];
           const index = siblings.indexOf(el);
-          el.style.setProperty('--rv-delay', `${Math.min(Math.max(index, 0), 5) * 80}ms`);
+          el.setAttribute('data-rv-i', String(Math.min(Math.max(index, 0), 5)));
 
-          el.classList.add('is-in');
+          reveal(el);
           io.unobserve(el);
         });
       },
@@ -83,7 +98,7 @@ export default function Reveal() {
     );
 
     const observeAll = () => {
-      document.querySelectorAll<HTMLElement>('.rv:not(.is-in)').forEach((n) => io.observe(n));
+      document.querySelectorAll<HTMLElement>(SELECTOR).forEach((n) => io.observe(n));
     };
 
     observeAll();
@@ -116,7 +131,7 @@ export default function Reveal() {
       // With ~36 revealable elements that is 36 synchronous layouts in one tick,
       // which is most of the "forced reflow" Lighthouse reports. Collecting
       // first and writing second costs one layout in total.
-      const nodes = [...document.querySelectorAll<HTMLElement>('.rv:not(.is-in)')];
+      const nodes = [...document.querySelectorAll<HTMLElement>(SELECTOR)];
       const viewportHeight = window.innerHeight;
       // A viewport's worth of slack below the fold. The failure this guards
       // against is content that never appears at all, and revealing something
@@ -125,7 +140,7 @@ export default function Reveal() {
         const rect = n.getBoundingClientRect();
         return rect.top < viewportHeight * 2 && rect.bottom > -viewportHeight;
       });
-      onScreen.forEach((n) => n.classList.add('is-in'));
+      onScreen.forEach(reveal);
     }, 600);
 
     return () => {

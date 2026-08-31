@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { shade } from '@/lib/mark';
+import { DOTS } from '@/lib/mark-dots';
 
 type P = {
   tx: number;
@@ -48,59 +48,35 @@ export default function MarkCanvas({ label }: { label: string }) {
     let visible = true;
     const pointer = { x: -9999, y: -9999, on: false };
 
-    /** Dense along the stroke, fraying at the tips, dissolving outward. */
+    /**
+     * The hero mark is the same artwork as the lockup, scaled up.
+     *
+     * It used to build its own scatter with the same generator the small mark
+     * used — which meant the hero was a lookalike too, and a different one on
+     * every load. The dots now come from the traced logo, so the hero, the nav
+     * and the favicon are one object at three sizes.
+     *
+     * What stays random is only motion: where each dot flies in from, its drift
+     * phase and amplitude. Math.random is safe for that here — this is a Client
+     * Component and the canvas is never server-rendered, so there is nothing to
+     * mismatch.
+     */
     function build(size: number): P[] {
-      const cx = size / 2;
-      const cy = size / 2;
-      const R = size * 0.295;
-      const A0 = (54 * Math.PI) / 180;
-      const A1 = (306 * Math.PI) / 180;
-      const mid = (A0 + A1) / 2;
-      const N = Math.round(size * 0.86);
-      const out: P[] = [];
-
-      for (let i = 0; i < N; i++) {
-        const a = A0 + Math.random() * (A1 - A0);
-        const near = 1 - Math.abs(a - mid) / ((A1 - A0) / 2);
-
-        const u = Math.random();
-        let off: number;
-        let core: number;
-        if (u < 0.6) {
-          off = (Math.random() - 0.5) * size * 0.08;
-          core = 1;
-        } else if (u < 0.87) {
-          off = (Math.random() * 0.55 + 0.28) * size * 0.1 * (Math.random() < 0.42 ? -1 : 1);
-          core = 0.6;
-        } else {
-          off = (Math.random() * 1.05 + 0.42) * size * 0.115;
-          core = 0.22;
-        }
-
-        if (core < 1 && Math.random() > near * 0.62 + 0.34) continue;
-
-        const r = R + off;
-        const x = cx + Math.cos(a) * r;
-        const y = cy - Math.sin(a) * r;
-        const k = Math.max(0, Math.min(1, ((x - cx) / R + (y - cy) / R) / 3.4 + 0.5));
-
-        out.push({
-          tx: x,
-          ty: y,
-          x: cx + (Math.random() - 0.5) * size * 1.5,
-          y: cy + (Math.random() - 0.5) * size * 1.5,
-          r:
-            core === 1
-              ? size * (0.0068 + Math.random() * 0.0072)
-              : size * (0.003 + Math.random() * 0.0052 * core + 0.0012),
-          c: shade(k),
-          al: core === 1 ? 0.94 : 0.3 + core * 0.52,
-          ph: Math.random() * Math.PI * 2,
-          dr: 0.5 + Math.random() * 1.1,
-          dl: Math.random() * 0.36,
-        });
-      }
-      return out;
+      const k = size / 100; // the traced dots live in a 100x100 box
+      return DOTS.map((d) => ({
+        tx: d.x * k,
+        ty: d.y * k,
+        x: size / 2 + (Math.random() - 0.5) * size * 1.5,
+        y: size / 2 + (Math.random() - 0.5) * size * 1.5,
+        r: d.r * k,
+        c: d.c,
+        // The artwork carries its own weighting in dot size and colour; a second
+        // opacity ramp on top of it only muddies the mark.
+        al: 1,
+        ph: Math.random() * Math.PI * 2,
+        dr: 0.5 + Math.random() * 1.1,
+        dl: Math.random() * 0.36,
+      }));
     }
 
     function paint(now: number) {
