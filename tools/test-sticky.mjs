@@ -55,7 +55,7 @@ for (const pg of pages) {
   const p = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await p.goto(`http://127.0.0.1:5599/${pg}`, { waitUntil: 'load' });
   await p.evaluate(() => {
-    document.querySelectorAll('.rv').forEach((e) => e.classList.add('is-in'));
+    document.querySelectorAll('.rv').forEach((e) => e.setAttribute('data-rv','in'));
     document.documentElement.style.scrollBehavior = 'auto';
   });
 
@@ -80,7 +80,7 @@ for (const pg of pages) {
   const p = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await p.goto(`http://127.0.0.1:5599/${pg}`, { waitUntil: 'load' });
   await p.evaluate(() => {
-    document.querySelectorAll('.rv').forEach((e) => e.classList.add('is-in'));
+    document.querySelectorAll('.rv').forEach((e) => e.setAttribute('data-rv','in'));
     document.documentElement.style.scrollBehavior = 'auto';
   });
 
@@ -122,7 +122,7 @@ for (const pg of pages) {
   const p = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await p.goto(`http://127.0.0.1:5599/${pg}`, { waitUntil: 'load' });
   await p.evaluate(() => {
-    document.querySelectorAll('.rv').forEach((e) => e.classList.add('is-in'));
+    document.querySelectorAll('.rv').forEach((e) => e.setAttribute('data-rv','in'));
     document.documentElement.style.scrollBehavior = 'auto';
   });
 
@@ -167,7 +167,7 @@ for (const w of [390, 768, 1440]) {
   for (const pg of pages) {
     await p.goto(`http://127.0.0.1:5599/${pg}`, { waitUntil: 'load' });
     await p.evaluate(() => {
-    document.querySelectorAll('.rv').forEach((e) => e.classList.add('is-in'));
+    document.querySelectorAll('.rv').forEach((e) => e.setAttribute('data-rv','in'));
     document.documentElement.style.scrollBehavior = 'auto';
   });
     const over = await p.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);

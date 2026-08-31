@@ -1,42 +1,37 @@
-import { buildMark } from '@/lib/mark';
+import { BANDS, DOTS } from '@/lib/mark-dots';
 
 /**
- * The small lockup mark. An SVG rendering of the same particle C used on the
- * hero canvas, sized for the nav, drawer and footer.
+ * The Cognovea mark, at lockup scale.
  *
- * SVG rather than canvas here because there are several instances on every
- * page and none of them need interaction; this way they paint with the HTML and
- * cost nothing at runtime. The points are seeded, so server and client agree.
+ * The dots are the ones in public/logo.png, measured off the artwork by
+ * tools/trace-mark.mjs — not a generated approximation of it. That distinction
+ * mattered: the previous version was a seeded random scatter tuned to resemble
+ * the C, and at 34px in the header it resolved into a smudge with a detached
+ * blob near the top, which is not the logo by any reading.
  *
- * Each point animates in from its scatter origin on a stagger, which is the
- * same scatter → resolve idea as the hero, compressed into 34px.
+ * SVG rather than an image because the mark appears in the nav, the drawer and
+ * the footer of every page, needs to stay crisp from 28px to hero scale, and
+ * animates on entry.
+ *
+ * The dots are grouped into concentric bands rather than carrying their own
+ * inline animation offsets. Eight wrapper elements cost nothing; 275 style
+ * attributes would have added about 25KB to every page for an effect the
+ * stylesheet can express on its own.
  */
-
-const SIZE = 100;
-// Sparse and chunky: at 34px the native point size renders under half a pixel,
-// so the lockup uses roughly half the points at ~3x the radius.
-const POINTS = buildMark(SIZE, 58, 11, 3.2);
-
 export default function Mark({ className = 'logo__mark' }: { className?: string }) {
   return (
-    <svg className={className} viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true">
-      {POINTS.map((p, i) => (
-        <circle
-          key={i}
-          className="mark__dot"
-          cx={p.x.toFixed(2)}
-          cy={p.y.toFixed(2)}
-          r={p.r.toFixed(2)}
-          fill={p.c}
-          style={{
-            opacity: p.a,
-            ['--dx' as string]: `${(p.sx - p.x).toFixed(1)}px`,
-            ['--dy' as string]: `${(p.sy - p.y).toFixed(1)}px`,
-            ['--d' as string]: `${(i % 14) * 34}ms`,
-            ['--o' as string]: p.a,
-          }}
-        />
-      ))}
+    <svg className={className} viewBox="0 0 100 100" aria-hidden="true">
+      {Array.from({ length: BANDS }, (_, b) => {
+        const dots = DOTS.filter((d) => d.b === b);
+        if (!dots.length) return null;
+        return (
+          <g key={b} className={`mark__band mark__band--${b}`}>
+            {dots.map((d, i) => (
+              <circle key={i} cx={d.x} cy={d.y} r={d.r} fill={d.c} />
+            ))}
+          </g>
+        );
+      })}
     </svg>
   );
 }
