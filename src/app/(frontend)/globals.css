@@ -631,6 +631,44 @@ b {
   transform: translateX(5px);
 }
 
+/* Whole-card click target.
+
+   The link stays a real link in the markup and keeps its own text; an
+   absolutely positioned pseudo-element on it is stretched over the card. That
+   is deliberately not the same as wrapping the card in an <a>, which would
+   hand a screen reader the entire card contents as the link's name, nor an
+   onClick on the article, which is invisible to the keyboard and breaks
+   middle-click and open-in-new-tab.
+
+   It resolves against .card because .card is position: relative and nothing
+   between them is positioned. Anything else interactive inside the card would
+   need position: relative and a z-index above this. */
+.card__stretch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+/* The overlay sits above the arrow, so the arrow can never be hovered on its
+   own. Drive both from the card instead, or the affordance goes dead exactly
+   when the card is being pointed at. */
+.card:hover .link-arrow {
+  color: var(--violet);
+}
+
+.card:hover .link-arrow::after {
+  transform: translateX(5px);
+}
+
+/* Keyboard focus lands on the link, whose outline would draw around the
+   heading text alone. Since the whole card is the target, show it there. */
+.card:has(.card__stretch:focus-visible) {
+  outline: 2px solid var(--link);
+  outline-offset: 3px;
+}
+
 /* ==========================================================================
    Cards, flat and white. No gradient fills.
    ========================================================================== */
