@@ -66,26 +66,26 @@ const POSSIBLE = [
   {
     h: 'See the Business Clearly',
     p: 'The landscape of your enterprise becomes unmistakable when disparate sources are unified and translated into clarity. Through robust business intelligence, sophisticated data visualization, and real-time analytics, we transform scattered data points into a singular, strategic lens on your most critical operations.',
-    art: '/img/art-clarity.svg',
-    alt: 'Abstract radar sweep resolving scattered data points into a clear picture',
+    art: '/img/possible-see.webp',
+    alt: 'A magnifying glass enlarging a rising bar chart, with further charts around it',
   },
   {
     h: 'Know What’s Next',
     p: 'The true merit of intelligence goes beyond historical reflection. Through the deployment of predictive analytics, data science, and advanced predictive modeling, we illuminate the path forward, empowering your organization to anticipate market shifts and move with strategic foresight instead of mere reaction.',
-    art: '/img/art-predict.svg',
-    alt: 'Abstract chart of historical data opening into a forecast confidence cone',
+    art: '/img/possible-predict.webp',
+    alt: 'A glowing brain inside a glass sphere beside a road leading toward a city skyline',
   },
   {
     h: 'Work Smarter',
     p: 'AI becomes most valuable when it moves beyond experimentation and into everyday work. From intelligent automation and AI agents to generative AI and enterprise AI, Cognovea helps organizations reduce repetitive work, accelerate processes, and create systems that work alongside their people.',
-    art: '/img/art-automate.svg',
-    alt: 'Abstract diagram of scattered inputs routed through a pipeline into structured outputs',
+    art: '/img/possible-automate.webp',
+    alt: 'A robotic arm and a small AI assistant either side of an automated line, under a neural core',
   },
   {
     h: 'Move With Confidence',
     p: 'Strategic clarity is born from superior intelligence. By unifying data intelligence, enterprise analytics, actionable insights, and data-driven decision making, Cognovea empowers leaders to bridge the gap between ambiguity and precise, high-impact organizational momentum.',
-    art: '/img/art-confidence.svg',
-    alt: 'Abstract illustration of many uncertain paths converging on a single decision point',
+    art: '/img/possible-confidence.webp',
+    alt: 'Many streams of light converging to a single point in front of a group of figures',
   },
 ];
 
@@ -149,32 +149,32 @@ const INDUSTRIES = [
   {
     h: 'Retail & Consumer',
     p: 'Understanding customers is the foundation of every retail decision. Through focused retail analytics and customer analytics, we help businesses see buying patterns clearly and respond to them faster.',
-    art: '/img/ind-retail.svg',
-    alt: 'Abstract overlapping demand curves representing retail buying patterns',
+    art: '/img/industry-retail.webp',
+    alt: 'A shopping trolley and a group of shoppers beside a dashboard of sales trends and category mix',
   },
   {
     h: 'Manufacturing',
     p: 'Efficiency on the floor starts with visibility across it. Using manufacturing analytics and supply chain analytics, we help teams spot bottlenecks before they become costly.',
-    art: '/img/ind-manufacturing.svg',
-    alt: 'Abstract production line with one stage highlighted as a bottleneck',
+    art: '/img/industry-manufacturing.webp',
+    alt: 'Robotic arms working a packing line in a plant, with throughput charts overlaid',
   },
   {
     h: 'Financial Services',
     p: 'Trust is built on accuracy and speed. With financial analytics and risk analytics, we help institutions make sound decisions while staying ahead of exposure.',
-    art: '/img/ind-financial.svg',
-    alt: 'Abstract trend line inside a widening risk band',
+    art: '/img/industry-financial.webp',
+    alt: 'A bank building between a rising bar chart and a security shield, over a world map',
   },
   {
     h: 'Healthcare',
     p: 'Every decision in healthcare carries weight. Through healthcare analytics, we help organizations turn complex data into insight that supports better outcomes.',
-    art: '/img/ind-healthcare.svg',
-    alt: 'Abstract steady monitoring trace with one point marked',
+    art: '/img/industry-healthcare.webp',
+    alt: 'A stethoscope and heart-rate trace beside a patient dashboard and a DNA helix',
   },
   {
     h: 'Energy & Industrial',
     p: 'Operations at this scale demand precision. Using industrial analytics and predictive analytics, we help teams anticipate issues instead of reacting to them.',
-    art: '/img/ind-energy.svg',
-    alt: 'Abstract load-profile bar chart with peak periods highlighted',
+    art: '/img/industry-energy.webp',
+    alt: 'A wind turbine, solar array, refinery and pumpjacks connected by data flows to a control view',
   },
 ];
 
