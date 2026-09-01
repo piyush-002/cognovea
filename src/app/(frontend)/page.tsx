@@ -334,8 +334,8 @@ export default function HomePage() {
             <div className="feature__media rv rv--right">
               <div className="figure figure--wide">
                 <img
-                  src="/img/art-clarity.svg"
-                  alt="Abstract radar sweep resolving scattered data points into a clear picture"
+                  src="/img/feature-decisions.webp"
+                  alt="An analyst studying three dashboards of performance, activity and geography"
                   width={800}
                   height={520}
                   loading="lazy"
@@ -488,8 +488,8 @@ export default function HomePage() {
             <div className="feature__media rv rv--left">
               <div className="figure figure--wide">
                 <img
-                  src="/img/art-automate.svg"
-                  alt="Abstract diagram of separate systems routed through one platform into shared outputs"
+                  src="/img/feature-connected.webp"
+                  alt="CRM, e-commerce, HR, finance and marketing systems feeding one platform, then into dashboards"
                   width={800}
                   height={520}
                   loading="lazy"
