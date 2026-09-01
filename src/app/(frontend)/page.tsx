@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Arrow } from '@/components/Bits';
 import ClientLogos from '@/components/ClientLogos';
@@ -374,7 +375,14 @@ export default function HomePage() {
             {POSSIBLE.map((c) => (
               <article className="card rv rv--scale" key={c.h}>
                 <div className="card__art">
-                  <img src={c.art} alt={c.alt} width={800} height={520} loading="lazy" decoding="async" />
+                  <Image
+                    src={c.art}
+                    alt={c.alt}
+                    width={1600}
+                    height={600}
+                    sizes="(max-width: 700px) 88vw, (max-width: 1100px) 46vw, 24vw"
+                    loading="lazy"
+                  />
                 </div>
                 <h3 className="h-md">{c.h}</h3>
                 <p>{c.p}</p>
@@ -512,7 +520,14 @@ export default function HomePage() {
                 node: (
                   <article className="card" style={{ height: '100%' }}>
                     <div className="card__art">
-                      <img src={c.art} alt={c.alt} width={600} height={400} loading="lazy" decoding="async" />
+                      <Image
+                        src={c.art}
+                        alt={c.alt}
+                        width={1600}
+                        height={600}
+                        sizes="(max-width: 700px) 88vw, (max-width: 1100px) 46vw, 33vw"
+                        loading="lazy"
+                      />
                     </div>
                     <h3 className="h-sm">{c.h}</h3>
                     <p>{c.p}</p>

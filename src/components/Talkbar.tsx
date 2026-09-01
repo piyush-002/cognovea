@@ -18,14 +18,20 @@ import Script from 'next/script';
  *    into it. Whatever goes here is readable by every visitor; the name should
  *    say so at the point somebody fills it in.
  *
- * 2. It loads after hydration rather than blocking in <head>. A synchronous
- *    third-party script in the head sits directly in front of first paint: the
- *    browser cannot render until it has resolved DNS for a host it has never
- *    seen, opened TLS, and executed whatever comes back. That is the same cost
- *    that got the Google Fonts <link> removed from this layout, and it would be
- *    paid on every page for a widget nobody sees until they look at the corner
- *    of the screen. `afterInteractive` still loads it on every page, still
- *    site-wide, just not in front of the content.
+ * 2. It loads on idle, not in <head> and not even straight after hydration.
+ *    A synchronous third-party script in the head sits directly in front of
+ *    first paint. But `afterInteractive` was not far enough either: this one
+ *    widget reaches seven origins — its own UI and API hosts, a websocket, an
+ *    asset CDN, a CloudFront distribution and two Adobe Typekit hosts — each
+ *    needing DNS, TLS and a round trip, and one of them serving a webfont.
+ *    That is precisely the cost this layout removed when it stopped loading
+ *    Google Fonts, reintroduced sevenfold for a bubble in the corner that
+ *    nobody looks at in the first seconds.
+ *
+ *    `lazyOnload` defers all of it until the browser is idle, after the page
+ *    has loaded and settled. The widget appears a beat later, which no visitor
+ *    will notice, and it stops competing with the content for bandwidth and
+ *    main thread during the window Core Web Vitals actually measures.
  *
  * Nothing renders unless both values are set, so a preview deploy or a local
  * checkout without them simply has no widget rather than a broken one — and the
@@ -41,7 +47,7 @@ export default function Talkbar() {
     <Script
       id="talkbar"
       src="https://ui-server.app.talkbar.ai/integration/talkbar.js"
-      strategy="afterInteractive"
+      strategy="lazyOnload"
       data-app-id={APP_ID}
       data-api-key={PUBLISHABLE_KEY}
     />

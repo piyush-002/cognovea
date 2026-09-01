@@ -45,6 +45,7 @@
     "test:rate-limit": "node tools/test-rate-limit.mjs",
     "check:cycles": "node tools/check-cycles.mjs",
     "test:mark": "node tools/test-mark.mjs",
+    "test:vitals": "node tools/test-vitals.mjs",
     "test:talkbar": "node tools/test-talkbar.mjs",
     "trace:mark": "node tools/trace-mark.mjs",
     "check:playbooks": "node tools/check-playbooks.mjs",
