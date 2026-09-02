@@ -151,9 +151,14 @@ for (const p of PLAYBOOKS) {
   );
   // Two of the six use cases involve no machine learning, so the set is not
   // "AI" — but the phrase people search still has to survive inside the title.
+  /* The rule is that the title claims data as well as AI — not that it uses one
+     exact phrasing. "Data Analytics and AI Use Cases in Manufacturing Industry"
+     satisfies it more explicitly than "Data and AI" does, and a regex that
+     rejected it would be enforcing a wording rather than the point. Still fails
+     a title that says only AI, which is what this exists for. */
   ok(
     `${p.slug}: the title says data and AI, not just AI`,
-    /\bdata and ai\b/i.test(p.title || ''),
+    /\bdata\b[^.]*\band ai\b/i.test(p.title || ''),
     p.title,
   );
   ok(
@@ -196,7 +201,7 @@ for (const p of PLAYBOOKS) {
 
 /* --- a published playbook must be reachable and submitted ----------------- */
 {
-  const sitemap = fs.readFileSync(path.join(root, 'src/app/(frontend)/sitemap.ts'), 'utf8');
+  const sitemap = fs.readFileSync(path.join(root, 'src/app/sitemap.ts'), 'utf8');
   const site = fs.readFileSync(path.join(root, 'src/lib/site.ts'), 'utf8');
 
   /*

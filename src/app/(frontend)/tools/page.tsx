@@ -76,15 +76,22 @@ export default function ToolsPage() {
               <article className="card rv" key={t.href}>
                 <p className="eyebrow">{t.time}</p>
                 <h2 className="h-sm" style={{ marginTop: '0.7rem' }}>
-                  <Link href={t.href} style={{ color: 'inherit', textDecoration: 'none' }}>
+                  {/* The whole card is the click target, via an overlay on this
+                      link (see .card__stretch). The heading carries the link
+                      rather than the arrow below it, because a screen reader
+                      listing the page's links should read the tool's name, not
+                      "Open the tool" three times over. */}
+                  <Link className="card__stretch" href={t.href} style={{ color: 'inherit', textDecoration: 'none' }}>
                     {t.name}
                   </Link>
                 </h2>
                 <p>{t.blurb}</p>
-                <p style={{ marginTop: '1rem' }}>
-                  <Link className="link-arrow" href={t.href}>
-                    Open the tool
-                  </Link>
+                {/* Decorative. It was a second link to the same href, which put
+                    two identical destinations in the accessibility tree for one
+                    card; now it is the visual affordance and the heading is the
+                    link. */}
+                <p style={{ marginTop: '1rem' }} aria-hidden="true">
+                  <span className="link-arrow">Open the tool</span>
                 </p>
               </article>
             ))}
