@@ -96,6 +96,18 @@ const baseHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  /* Turns on app/global-not-found.tsx, which is what serves the 404 for a URL
+     matching no route. Needed because this app has two root layouts —
+     (frontend) and (payload) — so there is no single root layout for a plain
+     app/not-found.tsx to hang from, and Next refuses to compile one without.
+     Experimental, and introduced in 15.4.0; this project is on 15.4.11. If it
+     is ever removed, the file goes back to being dead code and unmatched URLs
+     silently fall through to the host's default 404 again — which is the exact
+     failure this pair was added to fix. */
+  experimental: {
+    globalNotFound: true,
+  },
+
   // `output: 'export'` was removed deliberately. Payload mounts an admin UI and
   // REST/GraphQL route handlers, all of which need a Node runtime; a static
   // export has no server to run them on. The marketing pages are still
