@@ -244,5 +244,94 @@ for (const f of ['robots.ts', 'sitemap.ts']) {
     'one of the derived lists is built and then not returned');
 }
 
+/* --- the 404 has to be reachable, which is a question of where it lives ----- */
+/*
+ * Same trap that swallowed robots.ts and sitemap.ts, and it is worth naming
+ * because nothing about it is visible in the file itself: a not-found.tsx inside
+ * a route group is only reached by a notFound() call from a page that already
+ * matched inside that group. A URL matching no route at all belongs to neither
+ * (frontend) nor (payload), so Next applies neither layout and looks only at
+ * app/not-found.tsx. Without that file the request falls through to the host's
+ * default 404 — which is what visitors were getting while a perfectly good 404
+ * page sat in the repo.
+ *
+ * The consequence of having no layout is that the root one has to draw its own
+ * document, and the group one must not, or the site ends up serving nested
+ * <html> elements. Both directions are checked.
+ */
+{
+  const rootPath = path.join(root, 'src/app/global-not-found.tsx');
+  const groupPath = path.join(root, 'src/app/(frontend)/not-found.tsx');
+
+  ok('a global-not-found.tsx exists, so unmatched URLs get our 404',
+    fs.existsSync(rootPath),
+    'src/app/global-not-found.tsx is missing — unmatched URLs fall through to the host 404');
+
+  if (fs.existsSync(rootPath)) {
+    const rootSrc = fs.readFileSync(rootPath, 'utf8');
+    // No layout wraps it, so it is responsible for the whole document.
+    ok('the global 404 renders its own <html>', /<html\b/.test(rootSrc));
+    ok('the global 404 renders its own <body>', /<body\b/.test(rootSrc));
+    ok('the global 404 pulls in the stylesheet itself', /globals\.css/.test(rootSrc));
+    ok('the global 404 is not indexable', /index:\s*false/.test(rootSrc));
+    // follow, not nofollow: this one URL stands in for every mistyped address.
+    ok('but its links still pass', /follow:\s*true/.test(rootSrc));
+  }
+
+  if (fs.existsSync(groupPath)) {
+    const groupSrc = fs.readFileSync(groupPath, 'utf8');
+    ok('the in-segment 404 does NOT render a second <html>',
+      !/<html\b/.test(groupSrc),
+      'it renders inside the frontend layout, which already supplies the document');
+    ok('the in-segment 404 is not indexable', /index:\s*false/.test(groupSrc));
+  }
+
+  // One set of words, so the two cannot drift into saying different things.
+  const shared = path.join(root, 'src/components/NotFoundBody.tsx');
+  ok('both 404s render one shared body', fs.existsSync(shared));
+  for (const [label, p] of [['global', rootPath], ['in-segment', groupPath]]) {
+    if (!fs.existsSync(p)) continue;
+    ok(`the ${label} 404 uses the shared body rather than its own copy`,
+      /NotFoundBody/.test(fs.readFileSync(p, 'utf8')));
+  }
+  /* global-not-found.tsx is inert without the flag, and the flag is pointless
+     without the file. Checking either alone would pass while the site served
+     the host's 404, which is the failure this whole block exists to catch. */
+  const cfg = fs.readFileSync(path.join(root, 'next.config.mjs'), 'utf8');
+  ok('next.config.mjs enables experimental.globalNotFound',
+    /globalNotFound:\s*true/.test(cfg),
+    'the file is present but switched off — unmatched URLs still get the host 404');
+
+  /* Next refuses to compile a root app/not-found.tsx when there is no root
+     layout, and this app has two. Adding one back breaks the build outright. */
+  ok('and no root app/not-found.tsx was reintroduced',
+    !fs.existsSync(path.join(root, 'src/app/not-found.tsx')),
+    'a root not-found.tsx needs a root layout this app does not have');
+}
+
+/* --- third-party script cost stays behind a real visitor ------------------- */
+/*
+ * Talkbar reaches seven origins and executes a third-party bundle on the main
+ * thread. Whether that lands inside the window Core Web Vitals is scored over
+ * comes down to one prop, which is easy to "simplify" back to something eager
+ * during an unrelated edit. `lazyOnload` in particular reads like it is enough
+ * and is not — browser idle arrives while the page is still being measured.
+ */
+{
+  const p = path.join(root, 'src/components/Talkbar.tsx');
+  if (fs.existsSync(p)) {
+    const src = fs.readFileSync(p, 'utf8');
+    ok('Talkbar waits for a real interaction before loading',
+      /addEventListener/.test(src) && /pointermove|scroll|touchstart/.test(src),
+      'no interaction gate — the widget loads during first paint again');
+    ok('and it renders nothing until then',
+      /return null/.test(src),
+      'the <Script> is rendered unconditionally');
+    ok('Talkbar credentials still come from the environment',
+      !/data-app-id=["'][0-9a-f]{8}-/.test(src),
+      'an app id was hardcoded back into the component');
+  }
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);
