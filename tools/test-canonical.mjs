@@ -178,6 +178,50 @@ for (const f of ['robots.ts', 'sitemap.ts']) {
   );
 }
 
+/* --- the favicon Google can actually fetch --------------------------------
+
+   A favicon only reaches a search result if Google can crawl it as a resource.
+   The previous value was a data: URI — perfectly good in a browser tab, and
+   impossible for Google, because there is no URL to request. That failure is
+   invisible: the tab looks right, so nothing prompts anyone to check.
+
+   So this asserts the shape Google needs rather than that an icon exists at
+   all: real files, at fixed paths, one of them a multiple of 48px square, and
+   none of them behind a robots.txt disallow. */
+{
+  const layout = fs.readFileSync(path.join(root, 'src/app/(frontend)/layout.tsx'), 'utf8');
+  const iconBlock = layout.slice(layout.indexOf('  icons: {'), layout.indexOf('};', layout.indexOf('  icons: {')));
+
+  ok(
+    'no icon is declared as a data: URI',
+    !/data:image/.test(iconBlock),
+    'Google fetches the favicon as a resource; a data URI gives it nothing to fetch',
+  );
+
+  const declared = [...iconBlock.matchAll(/url: '(\/[^']+)'/g)].map((m) => m[1]);
+  ok('the layout declares at least one icon file', declared.length > 0);
+
+  for (const url of declared) {
+    ok(`${url} exists in public/`, fs.existsSync(path.join(root, 'public', url.replace(/^\//, ''))));
+  }
+
+  ok(
+    'one icon is a multiple of 48px square, as Google asks',
+    declared.some((u) => /-(192|48|96|144|240|288|384|480|512)\.png$/.test(u)),
+    `declared: ${declared.join(', ')}`,
+  );
+
+  /* The icons sit at the site root, and robots.txt only disallows /admin and
+     /api — but if that ever widens, the favicon goes with it silently. */
+  const robots = fs.readFileSync(path.join(root, 'src/app/robots.ts'), 'utf8');
+  const disallows = [...robots.matchAll(/'(\/[a-z-]*)'/g)].map((m) => m[1]).filter((d) => d !== '/');
+  ok(
+    'no disallow rule covers the icon paths',
+    declared.every((u) => !disallows.some((d) => d.length > 1 && u.startsWith(d))),
+    `disallows: ${disallows.join(', ') || 'none'}`,
+  );
+}
+
 /* --- every CMS-backed section reaches the sitemap ------------------------- */
 {
   /*
