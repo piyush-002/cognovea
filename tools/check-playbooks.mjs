@@ -196,7 +196,7 @@ for (const p of PLAYBOOKS) {
 
 /* --- a published playbook must be reachable and submitted ----------------- */
 {
-  const sitemap = fs.readFileSync(path.join(root, 'src/app/(frontend)/sitemap.ts'), 'utf8');
+  const sitemap = fs.readFileSync(path.join(root, 'src/app/sitemap.ts'), 'utf8');
   const site = fs.readFileSync(path.join(root, 'src/lib/site.ts'), 'utf8');
 
   /*
