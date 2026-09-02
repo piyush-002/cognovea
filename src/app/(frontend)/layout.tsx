@@ -88,14 +88,27 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
   },
+  /* Real files at stable URLs, not an inline data: URI.
+
+     The previous value was a data URI holding a hand-drawn seven-circle
+     approximation of the mark. It painted a browser tab, and it could never
+     appear beside a Google result: Google fetches the favicon as a resource,
+     and there is no URL to fetch. It also was not the logo.
+
+     These are generated from the same traced artwork as the header mark, so
+     the tab, the search result and the page all show one object. 192 is a
+     multiple of 48, which is what Google asks for; the .ico carries 16, 32 and
+     48 layers with the smallest simplified, because the full 275-dot mark
+     turns to grey mush at 16px. The URLs are fixed and unhashed — Google
+     caches the favicon, and a URL that changes each deploy resets that clock. */
   icons: {
     icon: [
-      {
-        url:
-          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='6' r='2.4' fill='%236D3BEF'/%3E%3Ccircle cx='8' cy='10' r='2.4' fill='%236D3BEF'/%3E%3Ccircle cx='5' cy='16' r='2.4' fill='%232563EB'/%3E%3Ccircle cx='8' cy='22' r='2.4' fill='%232563EB'/%3E%3Ccircle cx='16' cy='26' r='2.4' fill='%2322D3EE'/%3E%3Ccircle cx='23' cy='24' r='1.6' fill='%2322D3EE'/%3E%3Ccircle cx='23' cy='8' r='1.6' fill='%232563EB'/%3E%3C/svg%3E",
-        type: 'image/svg+xml',
-      },
+      { url: '/favicon.ico', sizes: '16x16 32x32 48x48', type: 'image/x-icon' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
     ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+    shortcut: ['/favicon.ico'],
   },
 };
 
