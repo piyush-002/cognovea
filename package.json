@@ -4,6 +4,13 @@
   "type": "module",
   "private": true,
   "description": "Cognovea — SEO-friendly 10-page marketing site (Next.js App Router, static export).",
+  "browserslist": [
+    "chrome >= 100",
+    "edge >= 100",
+    "firefox >= 100",
+    "safari >= 15.4",
+    "not dead"
+  ],
   "scripts": {
     "dev": "payload generate:importmap && next dev",
     "devsafe": "rm -rf .next && payload generate:importmap && next dev",

@@ -185,9 +185,9 @@ export type Certification = {
 };
 
 export const certifications: Certification[] = [
-  { name: 'ISO/IEC 27001', logo: '/img/cert-iso-27001.png', logoWidth: 168, logoHeight: 168 },
-  { name: 'ISO 9001', logo: '/img/cert-iso-9001.png', logoWidth: 167, logoHeight: 168 },
-  { name: 'CMMI Level 3', logo: '/img/cert-cmmi-3.png', logoWidth: 242, logoHeight: 168 },
+  { name: 'ISO/IEC 27001', logo: '/img/cert-iso-27001.webp', logoWidth: 116, logoHeight: 116 },
+  { name: 'ISO 9001', logo: '/img/cert-iso-9001.webp', logoWidth: 115, logoHeight: 116 },
+  { name: 'CMMI Level 3', logo: '/img/cert-cmmi-3.webp', logoWidth: 167, logoHeight: 116 },
 ];
 
 export const legalLinks: NavLink[] = [{ href: '/privacy-policy', label: 'Privacy Policy' }];

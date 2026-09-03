@@ -333,5 +333,30 @@ for (const f of ['robots.ts', 'sitemap.ts']) {
   }
 }
 
+/* --- a logo the footer names has to be a file that exists ------------------ */
+/*
+ * These render on every page, so one wrong path is a broken image site-wide —
+ * and it fails silently: the alt text reads correctly, the layout box is still
+ * reserved by width/height, and nothing throws. The only symptom is a missing
+ * seal that nobody notices for a month.
+ *
+ * width and height are checked because they are what reserve the box before the
+ * image arrives. Re-exporting artwork at a new size and leaving the old numbers
+ * in place is how a footer starts shifting on slow connections.
+ */
+{
+  const siteSrc = fs.readFileSync(path.join(root, 'src/lib/site.ts'), 'utf8');
+  const entries = [...siteSrc.matchAll(
+    /logo: '([^']+)',\s*logoWidth: (\d+),\s*logoHeight: (\d+)/g,
+  )];
+
+  ok('the footer declares at least one certification logo', entries.length > 0);
+
+  for (const [, logo, w, h] of entries) {
+    ok(`${logo} exists in public/`, fs.existsSync(path.join(root, 'public', logo)), logo);
+    ok(`${logo} declares a box to reserve`, Number(w) > 0 && Number(h) > 0, `${w}x${h}`);
+  }
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);
