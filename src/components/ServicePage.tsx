@@ -34,8 +34,15 @@ function Section({ section, tinted }: { section: ServiceSection; tinted: boolean
 
         {section.kind === 'prose' ? (
           <div className="measure rv">
-            {section.body.map((p) => (
-              <p key={p.slice(0, 40)} className="mt-3">
+            {/* Index keys, here and in the table below. These are positional
+                content with no identity of their own — two paragraphs, or two
+                cells, may legitimately be identical, and keying by the text
+                turns that coincidence into a React error. A comparison table
+                is exactly where it happens: two columns both answering
+                "Weeks." is a correct table and a duplicate key. The lists are
+                static, so the index is both stable and correct. */}
+            {section.body.map((p, i) => (
+              <p key={i} className="mt-3">
                 {p}
               </p>
             ))}
@@ -75,22 +82,22 @@ function Section({ section, tinted }: { section: ServiceSection; tinted: boolean
               <thead>
                 <tr>
                   {section.head.map((h, i) => (
-                    <th key={h} scope="col" className={i === section.markColumn ? 'col-mark' : undefined}>
+                    <th key={i} scope="col" className={i === section.markColumn ? 'col-mark' : undefined}>
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {section.rows.map((row) => (
-                  <tr key={row[0]}>
+                {section.rows.map((row, r) => (
+                  <tr key={r}>
                     {row.map((cell, i) =>
                       i === 0 ? (
-                        <th key={cell} scope="row">
+                        <th key={i} scope="row">
                           {cell}
                         </th>
                       ) : (
-                        <td key={cell} className={i === section.markColumn ? 'col-mark' : undefined}>
+                        <td key={i} className={i === section.markColumn ? 'col-mark' : undefined}>
                           {cell}
                         </td>
                       ),
