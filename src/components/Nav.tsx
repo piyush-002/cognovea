@@ -7,11 +7,71 @@ import Logo from '@/components/Logo';
 import {
   drawerCompanyLinks,
   drawerResourceLinks,
+  industryLinks,
   navCompanyLinks,
   navPrimaryLinks,
   navResourceLinks,
   serviceLinks,
 } from '@/lib/site';
+
+/**
+ * One dropdown, used four times.
+ *
+ * This was three copies of the same twenty-five lines, and adding Industries
+ * would have made it four — which is how the trigger on one menu ends up with a
+ * different aria-expanded binding, or one menu keeps a hover style the others
+ * lost. The open state still lives in Nav, because only Nav can know that
+ * opening one closes the others.
+ */
+function NavDropdown({
+  id,
+  label,
+  links,
+  active,
+  open,
+  onToggle,
+  current,
+  narrow = false,
+}: {
+  id: string;
+  label: string;
+  links: { href: string; label: string; blurb?: string }[];
+  /** The current route is inside this menu, so its trigger reads as selected. */
+  active: boolean;
+  open: boolean;
+  onToggle: () => void;
+  current: (href: string) => 'page' | undefined;
+  narrow?: boolean;
+}) {
+  return (
+    <li className={`c-nav__item${open ? ' is-open' : ''}`}>
+      <button
+        type="button"
+        className="c-nav__trigger"
+        aria-expanded={open}
+        aria-haspopup="true"
+        aria-controls={`nav-menu-${id}`}
+        style={active ? { color: 'var(--fg)' } : undefined}
+        onClick={onToggle}
+      >
+        {label}
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+          <path d="M2 4.5 6 8.5 10 4.5" />
+        </svg>
+      </button>
+      <ul id={`nav-menu-${id}`} className={`c-nav__menu${narrow ? ' c-nav__menu--narrow' : ''}`}>
+        {links.map((l) => (
+          <li key={l.href}>
+            <Link href={l.href} aria-current={current(l.href)}>
+              <strong>{l.label}</strong>
+              {l.blurb ? <small>{l.blurb}</small> : null}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </li>
+  );
+}
 
 export default function Nav() {
   const pathname = usePathname();
@@ -23,7 +83,7 @@ export default function Nav() {
    * leaves two panels overlapping. A single value makes that unrepresentable:
    * opening one closes the other by construction rather than by remembering to.
    */
-  const [openMenu, setOpenMenu] = useState<'services' | 'resources' | 'company' | null>(null);
+  const [openMenu, setOpenMenu] = useState<'services' | 'industries' | 'resources' | 'company' | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
 
@@ -76,6 +136,7 @@ export default function Nav() {
 
   const current = (href: string) => (pathname === href || pathname === `${href}/` ? 'page' : undefined);
   const inServices = serviceLinks.some((l) => pathname.startsWith(l.href));
+  const inIndustries = industryLinks.some((l) => pathname.startsWith(l.href));
   const inCompany = navCompanyLinks.some((l) => pathname.startsWith(l.href));
   const inResources = navResourceLinks.some((l) => pathname.startsWith(l.href));
 
@@ -87,62 +148,45 @@ export default function Nav() {
 
           <nav aria-label="Primary" ref={navRef}>
             <ul className="c-nav__links">
-              <li className={`c-nav__item${openMenu === 'services' ? ' is-open' : ''}`}>
-                <button
-                  type="button"
-                  className="c-nav__trigger"
-                  aria-expanded={openMenu === 'services'}
-                  aria-haspopup="true"
-                  style={inServices ? { color: 'var(--fg)' } : undefined}
-                  onClick={() => setOpenMenu((v) => (v === 'services' ? null : 'services'))}
-                >
-                  What We Do
-                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-                    <path d="M2 4.5 6 8.5 10 4.5" />
-                  </svg>
-                </button>
-                <ul className="c-nav__menu">
-                  {serviceLinks.map((l) => (
-                    <li key={l.href}>
-                      <Link href={l.href} aria-current={current(l.href)}>
-                        <strong>{l.label}</strong>
-                        <small>{l.blurb}</small>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </li>
+              <NavDropdown
+                id="services"
+                label="What We Do"
+                links={serviceLinks}
+                active={inServices}
+                open={openMenu === 'services'}
+                onToggle={() => setOpenMenu((v) => (v === 'services' ? null : 'services'))}
+                current={current}
+              />
+
+              {/* Industries sits second, directly after what we do and before
+                  Resources. The two sectors this business is built around had no
+                  presence in the header at all — the playbooks were filed under
+                  Resources, which reads as reading material rather than as the
+                  place to find out whether we work in your industry. */}
+              <NavDropdown
+                id="industries"
+                label="Industries"
+                links={industryLinks}
+                active={inIndustries}
+                open={openMenu === 'industries'}
+                onToggle={() => setOpenMenu((v) => (v === 'industries' ? null : 'industries'))}
+                current={current}
+              />
 
               {/* No text link to /data-health-check here: the CTA beside it points
                   at the same page, and the footer, every page's closing band and
                   a dozen in-body links point there too. Two identical links four
                   inches apart in one nav add nothing a crawler can use, and cost
                   a slot on a row people scan. */}
-              <li className={`c-nav__item${openMenu === 'resources' ? ' is-open' : ''}`}>
-                <button
-                  type="button"
-                  className="c-nav__trigger"
-                  aria-expanded={openMenu === 'resources'}
-                  aria-haspopup="true"
-                  style={inResources ? { color: 'var(--fg)' } : undefined}
-                  onClick={() => setOpenMenu((v) => (v === 'resources' ? null : 'resources'))}
-                >
-                  Resources
-                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-                    <path d="M2 4.5 6 8.5 10 4.5" />
-                  </svg>
-                </button>
-                <ul className="c-nav__menu">
-                  {navResourceLinks.map((l) => (
-                    <li key={l.href}>
-                      <Link href={l.href} aria-current={current(l.href)}>
-                        <strong>{l.label}</strong>
-                        {l.blurb ? <small>{l.blurb}</small> : null}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </li>
+              <NavDropdown
+                id="resources"
+                label="Resources"
+                links={navResourceLinks}
+                active={inResources}
+                open={openMenu === 'resources'}
+                onToggle={() => setOpenMenu((v) => (v === 'resources' ? null : 'resources'))}
+                current={current}
+              />
 
               {navPrimaryLinks
                 .filter((l) => l.href !== '/contact')
@@ -154,31 +198,16 @@ export default function Nav() {
                   </li>
                 ))}
 
-              <li className={`c-nav__item${openMenu === 'company' ? ' is-open' : ''}`}>
-                <button
-                  type="button"
-                  className="c-nav__trigger"
-                  aria-expanded={openMenu === 'company'}
-                  aria-haspopup="true"
-                  style={inCompany ? { color: 'var(--fg)' } : undefined}
-                  onClick={() => setOpenMenu((v) => (v === 'company' ? null : 'company'))}
-                >
-                  Company
-                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-                    <path d="M2 4.5 6 8.5 10 4.5" />
-                  </svg>
-                </button>
-                <ul className="c-nav__menu c-nav__menu--narrow">
-                  {navCompanyLinks.map((l) => (
-                    <li key={l.href}>
-                      <Link href={l.href} aria-current={current(l.href)}>
-                        <strong>{l.label}</strong>
-                        {l.blurb ? <small>{l.blurb}</small> : null}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </li>
+              <NavDropdown
+                id="company"
+                label="Company"
+                links={navCompanyLinks}
+                active={inCompany}
+                open={openMenu === 'company'}
+                onToggle={() => setOpenMenu((v) => (v === 'company' ? null : 'company'))}
+                current={current}
+                narrow
+              />
 
               {/* Contact sits last, after the dropdown, because it is the one
                   thing on this row somebody is trying to reach. */}
@@ -222,6 +251,15 @@ export default function Nav() {
           <div className="c-drawer__group">
             <span className="eyebrow">What We Do</span>
             {serviceLinks.map((l) => (
+              <Link key={l.href} href={l.href}>
+                {l.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="c-drawer__group">
+            <span className="eyebrow">Industries</span>
+            {industryLinks.map((l) => (
               <Link key={l.href} href={l.href}>
                 {l.label}
               </Link>
