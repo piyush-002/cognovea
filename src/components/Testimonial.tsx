@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import QuoteCard, { QuoteFigure } from '@/components/QuoteCard';
-import Scroller from '@/components/Scroller';
+import QuoteCarousel from '@/components/QuoteCarousel';
 import { getTestimonials } from '@/lib/content';
 
 /**
@@ -43,15 +43,10 @@ async function Quote({
   return (
     <section className={tone === 'dark' ? 'band band--dark' : 'band'}>
       <div className="wrap">
-        {/* Deliberately not auto-advancing.
-            A logo is recognised at a glance and can move past; a testimonial has
-            to be read, and text that slides away mid-sentence is a usability
-            failure rather than a flourish — it is also what WCAG 2.2.2 is about.
-            This scroller moves only when the reader moves it, by arrow, swipe,
-            trackpad or keyboard. */}
-        <Scroller
+        {/* Reader-driven: swipe, trackpad, keyboard or the dots. See
+            QuoteCarousel for why it does not advance on its own. */}
+        <QuoteCarousel
           label="client testimonials"
-          itemClass="scroller__item--quote"
           items={items.map((t) => ({
             key: t.id,
             node: <QuoteFigure t={t} reveal={false} />,

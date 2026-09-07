@@ -32,7 +32,13 @@ import NotFound from '../src/app/(frontend)/not-found';
 import Privacy from '../src/app/(frontend)/privacy-policy/page';
 import ConsentBanner from '../src/components/ConsentBanner';
 import LogoStrip from '../src/components/LogoStrip';
-import QuoteCard from '../src/components/QuoteCard';
+import QuoteCard, { QuoteFigure } from '../src/components/QuoteCard';
+import QuoteCarousel from '../src/components/QuoteCarousel';
+import Fractional from '../src/app/(frontend)/fractional-data-leadership/page';
+import ManufacturingSvc from '../src/app/(frontend)/manufacturing-data-analytics/page';
+import OilGasSvc from '../src/app/(frontend)/oil-and-gas-data-analytics/page';
+import SapSvc from '../src/app/(frontend)/sap-data-migration-services/page';
+import ScadaSvc from '../src/app/(frontend)/scada-data-analytics/page';
 
 // The bundle runs from the project root (see tools/build-preview.mjs).
 const root = process.cwd();
@@ -85,6 +91,27 @@ const fakeLogos = (n: number) =>
     logo: { url: ART[i % ART.length], alt: `Client ${i + 1}`, width: 200, height: 80 },
   }));
 
+const longQuote = {
+  id: 'q-long',
+  quote:
+    'For our EMS project we needed people who could understand the requirement without making things more complicated than necessary. Cognovea did exactly that: straightforward in their approach, and the solution fit what we were actually looking for rather than what would have been interesting to build.',
+  authorName: 'Hari S. S.',
+  authorRole: 'Director of Operations',
+  companyName: '360 Technology',
+  photo: null,
+  clientLogo: null,
+};
+
+const shortQuote = {
+  id: 'q-short',
+  quote: 'Month-end close runs in two days instead of nine, and every step has a named owner.',
+  authorName: 'Anita Rao',
+  authorRole: 'Finance Director',
+  companyName: 'Meridian Foods',
+  photo: null,
+  clientLogo: null,
+};
+
 const fakeQuote = {
   id: '1',
   quote:
@@ -124,6 +151,37 @@ const PAGES: [string, any][] = [
   ['logos-1', () => React.createElement(LogoStrip, { heading: 'Teams we work with', clients: fakeLogos(1) })],
   ['logos-3', () => React.createElement(LogoStrip, { heading: 'Teams we work with', clients: fakeLogos(3) })],
   ['logos-7', () => React.createElement(LogoStrip, { heading: 'Who we work with', clients: fakeLogos(7) })],
+  /* The five service pages. They are data plus one template, so a fault in the
+     template shows on all five and a fault in one page's data shows on one —
+     rendering the set is how you tell those apart. */
+  ['svc-sap', SapSvc],
+  ['svc-scada', ScadaSvc],
+  ['svc-oilgas', OilGasSvc],
+  ['svc-manufacturing', ManufacturingSvc],
+  ['svc-fractional', Fractional],
+
+  /* The testimonial carousel at the counts that change its behaviour: one quote
+     renders as a lone card with no dots, several get the rail. Server-rendered
+     here, so this is the first frame before hydration — which is exactly the
+     frame that has to be right. */
+  ['quotes-carousel', () =>
+    React.createElement(QuoteCarousel, {
+      label: 'client testimonials',
+      items: [fakeQuote, longQuote, shortQuote].map((t, i) => ({
+        key: String(i),
+        node: React.createElement(QuoteFigure, { t, reveal: false }),
+      })),
+    })],
+  ['quotes-carousel-1', () =>
+    React.createElement(QuoteCarousel, {
+      label: 'client testimonials',
+      items: [{ key: '0', node: React.createElement(QuoteFigure, { t: fakeQuote, reveal: false }) }],
+    })],
+
+  /* Eight logos is above the count where the strip becomes a marquee, so this
+     is the duplicated track; logos-7 below is the static row. */
+  ['logos-8', () => React.createElement(LogoStrip, { heading: 'Who we work with', clients: fakeLogos(8) })],
+
   ['quote', () => React.createElement(QuoteCard, { t: fakeQuote, tone: 'light' })],
   ['quote-dark', () => React.createElement(QuoteCard, { t: fakeQuote, tone: 'dark' })],
 

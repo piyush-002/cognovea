@@ -1904,20 +1904,37 @@ html:not(.rv-ready) .rv {
   scroll-snap-align: start;
 }
 
-/* A quote in the carousel is a different object from a quote on a service page,
-   and needs its own sizing rather than the hero treatment scaled down.
+/* ==========================================================================
+   Testimonial carousel
+   ========================================================================== */
 
-   The standalone version is one card, alone, across a 46rem measure — big
-   display type is right there. Dropped into a 26rem track item it gave about
-   five words a line, which reads as shouting and makes a short quote look
-   enormous next to a long one. So: prose size, prose line-height, and the
-   padding and quote mark brought down to match. */
-.scroller__item--quote {
-  width: min(86vw, 26rem);
+.qcar__track {
+  display: flex;
+  gap: clamp(1rem, 2vw, 1.6rem);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 0.5rem;
 }
 
-.scroller__item--quote .quote {
-  /* Fills its item so cards in a row share one height and one baseline. */
+.qcar__track::-webkit-scrollbar {
+  display: none;
+}
+
+.qcar__item {
+  flex: 0 0 auto;
+  /* A quote is prose and needs a reading measure. The 22rem card width used
+     elsewhere breaks a sentence every four or five words. */
+  width: min(86vw, 26rem);
+  scroll-snap-align: start;
+}
+
+/* A quote in the carousel is a different object from the one on a service page,
+   and needs its own sizing rather than the hero treatment scaled down. Alone
+   across a 46rem measure, big display type is right; in a 26rem track item the
+   same rules gave about five words a line and made a short quote look enormous
+   beside a long one. */
+.qcar__item .quote {
   block-size: 100%;
   max-width: none;
   margin: 0;
@@ -1928,23 +1945,77 @@ html:not(.rv-ready) .rv {
   flex-direction: column;
 }
 
-.scroller__item--quote .quote__text {
+.qcar__item .quote__text {
   font-size: 1.0625rem;
   line-height: 1.58;
   letter-spacing: -0.006em;
 }
 
-.scroller__item--quote .quote__by {
-  /* Pushed to the bottom, so every card's attribution sits on one line across
-     the row regardless of how long the quote above it runs. */
+.qcar__item .quote__by {
+  /* Every card's attribution lands on one baseline across the row, whatever
+     the quote above it runs to. */
   margin-top: auto;
   padding-top: 1.1rem;
 }
 
-.scroller__item--quote .quote::before {
+.qcar__item .quote::before {
   font-size: 4.25rem;
   top: -0.35rem;
   left: 0.7rem;
+}
+
+.qcar__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Each dot goes to its slide, so the row is a position readout and the
+   navigation at once, and every quote is reachable from the keyboard. */
+.qcar__dot {
+  inline-size: 7px;
+  block-size: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--line-2);
+  position: relative;
+  cursor: pointer;
+  transition: inline-size 0.3s var(--ease), background 0.3s var(--ease), border-radius 0.3s var(--ease);
+  outline-offset: 5px;
+}
+
+/* The drawn dot is 7px, far below a usable touch target, so the hit area is
+   extended without changing what is drawn. */
+.qcar__dot::after {
+  content: '';
+  position: absolute;
+  inset-block: -14px;
+  inset-inline: -5px;
+}
+
+.qcar__dot:hover {
+  background: color-mix(in srgb, var(--violet) 50%, var(--line-2));
+}
+
+/* The current one stretches into a pill rather than only changing colour:
+   position stays legible for anyone who cannot separate the two hues. */
+.qcar__dot.is-current {
+  inline-size: 22px;
+  border-radius: 4px;
+  background: var(--violet);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qcar__track {
+    scroll-behavior: auto;
+  }
+
+  .qcar__dot {
+    transition: none;
+  }
 }
 
 /* ==========================================================================
