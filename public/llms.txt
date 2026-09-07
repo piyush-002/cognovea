@@ -1,0 +1,50 @@
+# Cognovea
+
+> Where Data Becomes Intelligence.
+
+Cognovea turns enterprise data into intelligence. Data analytics, business intelligence, data engineering and AI solutions that drive data-driven decision making.
+
+## Services
+
+- [Data Engineering Services](https://www.cognovea.com/data-engineering-services/): Cloud warehouses, pipelines, governance and dedicated pods.
+- [Data Modernization Services](https://www.cognovea.com/data-modernization-services/): Move off legacy systems onto a modern, AI-ready cloud stack.
+- [Generative AI Services](https://www.cognovea.com/generative-ai-services/): RAG, conversational BI, AI agents and document automation.
+- [AI Strategy & Consulting](https://www.cognovea.com/ai-strategy-consulting/): Readiness, use-case discovery, roadmap and governance.
+- [SAP Data Migration & S/4HANA](https://www.cognovea.com/sap-data-migration-services/): SAP data migration and S/4HANA data readiness for manufacturers and energy operators. Find out what your ECC data will support before you pick a migration…
+- [Fractional Data Leadership](https://www.cognovea.com/fractional-data-leadership/): Senior data leadership for manufacturers and energy operators who need the judgement of a Chief Data Officer without the cost of hiring one.
+
+## Industries
+
+- [Manufacturing](https://www.cognovea.com/manufacturing-data-analytics/): Data and AI consulting for manufacturers: plant data unified across sites, OEE and downtime you can trust, and predictive maintenance built on data that…
+- [Oil & Gas](https://www.cognovea.com/oil-and-gas-data-analytics/): Data and AI consulting for oil and gas operators: production surveillance, asset monitoring, deferment analysis and reporting that operations and finance both…
+- [SCADA & Historian Data](https://www.cognovea.com/scada-data-analytics/): Get production, well and asset data out of SCADA and historians and into something the business can use. Analytics services for oil and gas operators.
+
+## Industry playbooks
+
+Use cases by sector, each with the data it needs, how you would know it worked, and where it fails.
+
+- [All playbooks](https://www.cognovea.com/playbooks/)
+- [Data Analytics and AI Use Cases in Manufacturing Industry](https://www.cognovea.com/playbooks/manufacturing/): Six operational areas that industrial leaders actually run on their data include predictive maintenance, automated visual inspection, demand forecasting, OEE…
+- [Data and AI Use Cases in Oil & Gas](https://www.cognovea.com/playbooks/oil-and-gas/): Six operational areas that operators actually run on their data include rotating equipment monitoring, corrosion and asset integrity, production optimization,…
+- [Data and AI Use Cases in Logistics](https://www.cognovea.com/playbooks/logistics/): Six things logistics operations actually run on their data: demand and volume forecasting, route and load planning, warehouse slotting, ETA prediction, fleet…
+- [Data and AI Use Cases in Fintech](https://www.cognovea.com/playbooks/fintech/): Six things financial firms actually run on their data: transaction fraud detection, credit decisioning, anti-money-laundering triage, collections…
+- [Data and AI Use Cases in Retail & E-commerce](https://www.cognovea.com/playbooks/retail-ecommerce/): Six things retailers actually run on their data: demand forecasting, replenishment and allocation, markdown and pricing, personalisation and recommendation,…
+
+## Tools and evidence
+
+- [Data Health Check](https://www.cognovea.com/data-health-check/): A two week AI and data readiness assessment ending in a written finding.
+- [BI Automation Calculator](https://www.cognovea.com/tools/bi-automation-calculator/): Estimates what manual reporting costs a business each year.
+- [Portfolio and case studies](https://www.cognovea.com/portfolio/)
+- [Insights](https://www.cognovea.com/insights/)
+
+## Company
+
+- [About Cognovea](https://www.cognovea.com/about-us/)
+- [Careers](https://www.cognovea.com/careers/)
+- [Contact](https://www.cognovea.com/contact/): hello@cognovea.com
+- [Privacy policy](https://www.cognovea.com/privacy-policy/)
+
+## Optional
+
+- [Sitemap](https://www.cognovea.com/sitemap.xml)
+- [Robots](https://www.cognovea.com/robots.txt)

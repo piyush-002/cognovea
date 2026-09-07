@@ -358,5 +358,62 @@ for (const f of ['robots.ts', 'sitemap.ts']) {
   }
 }
 
+/* --- llms.txt ------------------------------------------------------------- */
+/*
+ * A curated map of the site for language models. Worth being clear-eyed about
+ * what it is for: Google Search states it does not use llms.txt and lists it
+ * among tactics to skip, so this is not a ranking device. Anthropic recommends
+ * it, OpenAI publishes them, and Perplexity has been observed using them — that
+ * is the whole of the case, and it is cheap enough to be worth it.
+ *
+ * It is a static file rather than a route handler on purpose: `trailingSlash`
+ * is on, so a handler at /llms.txt can be redirected to /llms.txt/, and a
+ * crawler asking for one exact path is easy to miss that way. robots.txt was
+ * already lost once to a routing subtlety that looked fine in source.
+ */
+{
+  const llmsPath = path.join(root, 'public/llms.txt');
+  ok('llms.txt is a static file in public/', fs.existsSync(llmsPath));
+
+  ok(
+    'and is NOT a route handler, which trailingSlash could redirect',
+    !fs.existsSync(path.join(root, 'src/app/llms.txt/route.ts')),
+    'a handler at /llms.txt may be served only at /llms.txt/',
+  );
+
+  if (fs.existsSync(llmsPath)) {
+    const llms = fs.readFileSync(llmsPath, 'utf8');
+
+    ok('llms.txt opens with the site name as an H1', /^# \S/.test(llms));
+    ok('llms.txt carries the one-line summary the format expects', /\n> \S/.test(llms));
+
+    // The first version of the generator emitted "undefined/..." for every URL,
+    // because site.url is reached through a module shim and a missed specifier
+    // resolves to undefined rather than throwing.
+    ok('llms.txt has no unresolved URLs', !llms.includes('undefined/'), 'found "undefined/" in the file');
+
+    const urls = [...llms.matchAll(/\]\((https?:\/\/[^)]+)\)/g)].map((m) => m[1]);
+    ok('llms.txt actually lists pages', urls.length >= 10, `${urls.length} links`);
+    ok(
+      'every llms.txt URL is on the canonical host',
+      urls.every((u) => u.startsWith(`${CANONICAL_URL}/`)),
+      urls.find((u) => !u.startsWith(`${CANONICAL_URL}/`)),
+    );
+    // trailingSlash is on for pages; the two real files must not gain one.
+    ok(
+      'the sitemap and robots links are not given a trailing slash',
+      !urls.some((u) => /\.(xml|txt)\/$/.test(u)),
+      urls.find((u) => /\.(xml|txt)\/$/.test(u)),
+    );
+
+    const robots = fs.readFileSync(path.join(root, 'src/app/robots.ts'), 'utf8');
+    const disallows = [...robots.matchAll(/'(\/[^']*)'/g)].map((m) => m[1]);
+    ok(
+      'no disallow rule covers /llms.txt',
+      !disallows.some((d) => d !== '/' && '/llms.txt'.startsWith(d.replace(/\*$/, ''))),
+    );
+  }
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);
