@@ -13,9 +13,13 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 export default function Scroller({
   items,
   label,
+  itemClass,
 }: {
   items: { key: string; node: ReactNode }[];
   label: string;
+  /** Extra class on each item, for content that needs a different width than
+      the 22rem card this was built for — a quote, for instance. */
+  itemClass?: string;
 }) {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [atStart, setAtStart] = useState(true);
@@ -77,7 +81,7 @@ export default function Scroller({
 
       <div className="scroller__track" ref={trackRef} tabIndex={0} role="group" aria-label={label}>
         {items.map((it) => (
-          <div className="scroller__item" key={it.key}>
+          <div className={itemClass ? `scroller__item ${itemClass}` : 'scroller__item'} key={it.key}>
             {it.node}
           </div>
         ))}

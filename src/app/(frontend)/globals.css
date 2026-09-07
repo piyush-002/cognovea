@@ -1904,6 +1904,49 @@ html:not(.rv-ready) .rv {
   scroll-snap-align: start;
 }
 
+/* A quote in the carousel is a different object from a quote on a service page,
+   and needs its own sizing rather than the hero treatment scaled down.
+
+   The standalone version is one card, alone, across a 46rem measure — big
+   display type is right there. Dropped into a 26rem track item it gave about
+   five words a line, which reads as shouting and makes a short quote look
+   enormous next to a long one. So: prose size, prose line-height, and the
+   padding and quote mark brought down to match. */
+.scroller__item--quote {
+  width: min(86vw, 26rem);
+}
+
+.scroller__item--quote .quote {
+  /* Fills its item so cards in a row share one height and one baseline. */
+  block-size: 100%;
+  max-width: none;
+  margin: 0;
+  padding: clamp(1.3rem, 2.4vw, 1.7rem);
+  /* Column, so the attribution can be pinned to the bottom edge. Without it a
+     short quote leaves its author floating mid-card with dead space beneath. */
+  display: flex;
+  flex-direction: column;
+}
+
+.scroller__item--quote .quote__text {
+  font-size: 1.0625rem;
+  line-height: 1.58;
+  letter-spacing: -0.006em;
+}
+
+.scroller__item--quote .quote__by {
+  /* Pushed to the bottom, so every card's attribution sits on one line across
+     the row regardless of how long the quote above it runs. */
+  margin-top: auto;
+  padding-top: 1.1rem;
+}
+
+.scroller__item--quote .quote::before {
+  font-size: 4.25rem;
+  top: -0.35rem;
+  left: 0.7rem;
+}
+
 /* ==========================================================================
    Tabs
    ========================================================================== */
