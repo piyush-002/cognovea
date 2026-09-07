@@ -73,6 +73,43 @@ export const serviceLinks: NavLink[] = [
     label: 'AI Strategy & Consulting',
     blurb: 'Readiness, use-case discovery, roadmap and governance.',
   },
+  {
+    href: '/sap-data-migration-services',
+    label: 'SAP Data Migration & S/4HANA',
+    blurb: 'ECC data readiness and cleansing, before the cutover date is set.',
+  },
+  {
+    href: '/fractional-data-leadership',
+    label: 'Fractional Data Leadership',
+    blurb: 'A senior data owner inside your business a few days a month.',
+  },
+];
+
+/*
+ * Industries get their own menu rather than living under Resources.
+ *
+ * The playbooks were the only industry presence in the header, and they sat two
+ * levels down under Resources — which put the two sectors this business is
+ * actually built around behind a label that suggests reading material. These are
+ * the commercial pages for those sectors; the playbooks stay in Resources, which
+ * is what they are.
+ */
+export const industryLinks: NavLink[] = [
+  {
+    href: '/manufacturing-data-analytics',
+    label: 'Manufacturing',
+    blurb: 'Plant data joined to ERP, so downtime and OEE have one answer.',
+  },
+  {
+    href: '/oil-and-gas-data-analytics',
+    label: 'Oil & Gas',
+    blurb: 'Production, deferment and asset reporting operations and finance share.',
+  },
+  {
+    href: '/scada-data-analytics',
+    label: 'SCADA & Historian Data',
+    blurb: 'Operational data out of the control layer, without touching it.',
+  },
 ];
 
 /*
@@ -185,9 +222,9 @@ export type Certification = {
 };
 
 export const certifications: Certification[] = [
-  { name: 'ISO/IEC 27001', logo: '/img/cert-iso-27001.png', logoWidth: 168, logoHeight: 168 },
-  { name: 'ISO 9001', logo: '/img/cert-iso-9001.png', logoWidth: 167, logoHeight: 168 },
-  { name: 'CMMI Level 3', logo: '/img/cert-cmmi-3.png', logoWidth: 242, logoHeight: 168 },
+  { name: 'ISO/IEC 27001', logo: '/img/cert-iso-27001.webp', logoWidth: 116, logoHeight: 116 },
+  { name: 'ISO 9001', logo: '/img/cert-iso-9001.webp', logoWidth: 115, logoHeight: 116 },
+  { name: 'CMMI Level 3', logo: '/img/cert-cmmi-3.webp', logoWidth: 167, logoHeight: 116 },
 ];
 
 export const legalLinks: NavLink[] = [{ href: '/privacy-policy', label: 'Privacy Policy' }];
@@ -200,6 +237,11 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   { path: '/generative-ai-services', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/ai-strategy-consulting', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/data-health-check', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/sap-data-migration-services', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/manufacturing-data-analytics', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/oil-and-gas-data-analytics', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/scada-data-analytics', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/fractional-data-leadership', priority: 0.8, changeFrequency: 'monthly' },
   // The calculator is a link target in its own right, so it ranks above the
   // blog: it is the page other sites are meant to point at.
   { path: '/tools', priority: 0.7, changeFrequency: 'monthly' },

@@ -1905,6 +1905,120 @@ html:not(.rv-ready) .rv {
 }
 
 /* ==========================================================================
+   Testimonial carousel
+   ========================================================================== */
+
+.qcar__track {
+  display: flex;
+  gap: clamp(1rem, 2vw, 1.6rem);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 0.5rem;
+}
+
+.qcar__track::-webkit-scrollbar {
+  display: none;
+}
+
+.qcar__item {
+  flex: 0 0 auto;
+  /* A quote is prose and needs a reading measure. The 22rem card width used
+     elsewhere breaks a sentence every four or five words. */
+  width: min(86vw, 26rem);
+  scroll-snap-align: start;
+}
+
+/* A quote in the carousel is a different object from the one on a service page,
+   and needs its own sizing rather than the hero treatment scaled down. Alone
+   across a 46rem measure, big display type is right; in a 26rem track item the
+   same rules gave about five words a line and made a short quote look enormous
+   beside a long one. */
+.qcar__item .quote {
+  block-size: 100%;
+  max-width: none;
+  margin: 0;
+  padding: clamp(1.3rem, 2.4vw, 1.7rem);
+  /* Column, so the attribution can be pinned to the bottom edge. Without it a
+     short quote leaves its author floating mid-card with dead space beneath. */
+  display: flex;
+  flex-direction: column;
+}
+
+.qcar__item .quote__text {
+  font-size: 1.0625rem;
+  line-height: 1.58;
+  letter-spacing: -0.006em;
+}
+
+.qcar__item .quote__by {
+  /* Every card's attribution lands on one baseline across the row, whatever
+     the quote above it runs to. */
+  margin-top: auto;
+  padding-top: 1.1rem;
+}
+
+.qcar__item .quote::before {
+  font-size: 4.25rem;
+  top: -0.35rem;
+  left: 0.7rem;
+}
+
+.qcar__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Each dot goes to its slide, so the row is a position readout and the
+   navigation at once, and every quote is reachable from the keyboard. */
+.qcar__dot {
+  inline-size: 7px;
+  block-size: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--line-2);
+  position: relative;
+  cursor: pointer;
+  transition: inline-size 0.3s var(--ease), background 0.3s var(--ease), border-radius 0.3s var(--ease);
+  outline-offset: 5px;
+}
+
+/* The drawn dot is 7px, far below a usable touch target, so the hit area is
+   extended without changing what is drawn. */
+.qcar__dot::after {
+  content: '';
+  position: absolute;
+  inset-block: -14px;
+  inset-inline: -5px;
+}
+
+.qcar__dot:hover {
+  background: color-mix(in srgb, var(--violet) 50%, var(--line-2));
+}
+
+/* The current one stretches into a pill rather than only changing colour:
+   position stays legible for anyone who cannot separate the two hues. */
+.qcar__dot.is-current {
+  inline-size: 22px;
+  border-radius: 4px;
+  background: var(--violet);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qcar__track {
+    scroll-behavior: auto;
+  }
+
+  .qcar__dot {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
    Tabs
    ========================================================================== */
 
@@ -2853,6 +2967,9 @@ tbody tr:hover {
    third of the vertical space the centred version did. */
 .c-logos {
   padding-block: clamp(1.4rem, 3vw, 2.4rem);
+  /* Declared once: the marquee keyframe has to know the same gap the list uses,
+     because the loop distance is derived from it. */
+  --logo-gap: clamp(1.5rem, 3.5vw, 3.25rem);
   /* A violet wash rather than the neutral tint, so the band belongs to the
      brand instead of reading as another grey section. It stays a wash and not a
      fill because client logos are dark or coloured and would be illegible on
@@ -2887,7 +3004,68 @@ tbody tr:hover {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: clamp(1.5rem, 3.5vw, 3.25rem);
+  gap: var(--logo-gap);
+}
+
+/* The marquee, used only above the count where a static row starts to overflow.
+   LogoStrip decides that; below it there is no track and no animation at all. */
+.c-logos__marquee {
+  flex: 1 1 320px;
+  min-inline-size: 0;
+  overflow: hidden;
+  /* Logos enter and leave through a fade rather than at a hard edge, so the
+     band reads as continuous instead of as a clipped box. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+
+.c-logos__track {
+  display: flex;
+  inline-size: max-content;
+  gap: var(--logo-gap);
+  animation: logo-marquee var(--logo-duration, 60s) linear infinite;
+}
+
+/* The track holds two identical lists. Nothing here wraps: wrapping inside a
+   max-content track would stack the second copy under the first. */
+.c-logos__track .c-logos__list {
+  flex-wrap: nowrap;
+  flex: none;
+}
+
+/* Pausable, because the logos are links and a moving target cannot be clicked.
+   focus-within covers keyboard users, who cannot hover to stop it. */
+.c-logos__marquee:hover .c-logos__track,
+.c-logos__marquee:focus-within .c-logos__track {
+  animation-play-state: paused;
+}
+
+/* Travel is one full list plus one gap. Half the track is one list plus half a
+   gap, so the remaining half-gap is added explicitly — without it the loop
+   drifts by that much on every repeat and the seam becomes visible. */
+@keyframes logo-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - var(--logo-gap) / 2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-logos__track {
+    animation: none;
+  }
+
+  /* With the animation gone the second copy is redundant and the row is wider
+     than the band, so it becomes a scrollable strip the reader controls. */
+  .c-logos__marquee {
+    overflow-x: auto;
+  }
+
+  .c-logos__track .c-logos__list[aria-hidden='true'] {
+    display: none;
+  }
 }
 
 /* Each logo gets an identical box and is fitted inside it.
@@ -2922,17 +3100,21 @@ tbody tr:hover {
      correctly and the visible mark is still tiny. Rather than ask for every
      logo to be re-exported, this lets one outlier be nudged. */
   transform: scale(var(--logo-scale, 1));
-  /* A dozen client brand palettes at full saturation fight each other and pull
-     attention off the page. Desaturated they read as a set. */
-  filter: grayscale(1);
-  opacity: 0.78;
-  transition: filter 0.35s var(--ease), opacity 0.35s var(--ease);
+  /* Full colour, as the brands themselves are.
+     This was grayscale, on the reasoning that a dozen client palettes at full
+     saturation fight each other. True in the abstract, and the wrong trade here:
+     a desaturated logo is harder to recognise at a glance, and recognition is
+     the entire job of this band. The wash behind it and the fixed box each logo
+     sits in already do enough to hold the row together as a set. */
+  opacity: 1;
+  transition: opacity 0.35s var(--ease);
 }
 
+/* Nothing to restore on hover now that the default is full colour; the link
+   just lifts slightly so it still reads as interactive. */
 .c-logos__list a:hover img,
 .c-logos__list a:focus-visible img {
-  filter: grayscale(0);
-  opacity: 1;
+  opacity: 0.82;
 }
 
 @media (max-width: 640px) {
@@ -2940,8 +3122,16 @@ tbody tr:hover {
     gap: 1rem;
   }
 
+  /* Moves the variable, not the list's gap. The marquee derives its loop
+     distance from --logo-gap, so overriding `gap` here alone would leave the
+     track travelling the desktop distance over a narrower list, and the seam
+     would drift a little further on every repeat. */
+  .c-logos {
+    --logo-gap: 2rem;
+  }
+
   .c-logos__list {
-    gap: 1.6rem 2rem;
+    row-gap: 1.6rem;
   }
 }
 
