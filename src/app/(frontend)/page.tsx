@@ -566,7 +566,7 @@ export default function HomePage() {
           until something is published, so today the page is unchanged. Placed
           directly after Proof because that is where a reader looks for evidence. */}
       <ClientLogos />
-      <Testimonial pageKey="home" />
+      <Testimonial pageKey="home" carousel />
 
       {/* ============ 09 PEOPLE, very light ============ */}
       <section className="band band--tint">

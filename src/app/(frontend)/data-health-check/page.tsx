@@ -19,10 +19,24 @@ export const revalidate = 300;
 
 const PATH = '/data-health-check';
 
+/*
+ * Retargeted, not renamed.
+ *
+ * This page already IS an AI and data readiness assessment — a fixed-scope,
+ * priced diagnostic ending in a written finding. It was simply not described in
+ * the words buyers type, so it competed for "data health check", which almost
+ * nobody searches, while "AI readiness assessment" — the softest term in the
+ * whole AI cluster, where the incumbents are generic and nobody dominates — went
+ * unclaimed.
+ *
+ * The offer, the price and the deliverable are unchanged. Deliberately no
+ * separate AI-readiness page exists: a second page would split the signal
+ * between two URLs describing one thing.
+ */
 export const metadata: Metadata = pageMetadata({
-  title: 'Book a Two Week Data Health Check | Cognovea',
+  title: 'AI and Data Readiness Assessment | Cognovea',
   description:
-    'A focused two week audit of your infrastructure, pipelines, BI, data quality and cloud costs, with a written findings report and a prioritized roadmap.',
+    'A two week AI and data readiness assessment: what your data will support today, what it will not, and what to fix first. Written findings and a prioritized roadmap.',
   path: '/data-health-check',
 });
 
