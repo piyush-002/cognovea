@@ -2,6 +2,7 @@ import type { Service } from './types';
 import { fractionalDataLeadership } from './fractional-data-leadership';
 import { manufacturingAnalytics } from './manufacturing';
 import { oilAndGasAnalytics } from './oil-and-gas';
+import { oracleFusionDataMigration } from './oracle-fusion-data-migration';
 import { sapDataMigration } from './sap-data-migration';
 import { scadaDataAnalytics } from './scada-data-analytics';
 
@@ -19,6 +20,7 @@ export type { Service, ServiceSection } from './types';
  */
 export const SERVICES: Service[] = [
   sapDataMigration,
+  oracleFusionDataMigration,
   scadaDataAnalytics,
   oilAndGasAnalytics,
   manufacturingAnalytics,
@@ -29,6 +31,7 @@ export const getService = (slug: string): Service | undefined => SERVICES.find((
 
 export {
   sapDataMigration,
+  oracleFusionDataMigration,
   scadaDataAnalytics,
   oilAndGasAnalytics,
   manufacturingAnalytics,

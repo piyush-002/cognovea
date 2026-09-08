@@ -38,6 +38,7 @@ import RichText from '../src/components/RichText';
 import Fractional from '../src/app/(frontend)/fractional-data-leadership/page';
 import ManufacturingSvc from '../src/app/(frontend)/manufacturing-data-analytics/page';
 import OilGasSvc from '../src/app/(frontend)/oil-and-gas-data-analytics/page';
+import OracleSvc from '../src/app/(frontend)/oracle-fusion-data-migration-services/page';
 import SapSvc from '../src/app/(frontend)/sap-data-migration-services/page';
 import ScadaSvc from '../src/app/(frontend)/scada-data-analytics/page';
 
@@ -207,6 +208,7 @@ const PAGES: [string, any][] = [
      template shows on all five and a fault in one page's data shows on one —
      rendering the set is how you tell those apart. */
   ['svc-sap', SapSvc],
+  ['svc-oracle', OracleSvc],
   ['svc-scada', ScadaSvc],
   ['svc-oilgas', OilGasSvc],
   ['svc-manufacturing', ManufacturingSvc],

@@ -11,6 +11,7 @@ Cognovea turns enterprise data into intelligence. Data analytics, business intel
 - [Generative AI Services](https://www.cognovea.com/generative-ai-services/): RAG, conversational BI, AI agents and document automation.
 - [AI Strategy & Consulting](https://www.cognovea.com/ai-strategy-consulting/): Readiness, use-case discovery, roadmap and governance.
 - [SAP Data Migration & S/4HANA](https://www.cognovea.com/sap-data-migration-services/): SAP data migration and S/4HANA data readiness for manufacturers and energy operators. Find out what your ECC data will support before you pick a migration…
+- [Oracle EBS to Fusion](https://www.cognovea.com/oracle-fusion-data-migration-services/): Data migration and data readiness for Oracle EBS to Fusion Cloud ERP programmes: what loads through FBDI and HDL, what has to be fixed first, and what…
 - [Fractional Data Leadership](https://www.cognovea.com/fractional-data-leadership/): Senior data leadership for manufacturers and energy operators who need the judgement of a Chief Data Officer without the cost of hiring one.
 
 ## Industries

@@ -245,8 +245,48 @@ function fractional() {
   return svg(id, s);
 }
 
+
+/** EBS objects prepared once, loaded through two loaders, cycled, reconciled. */
+function oracleFusion() {
+  const id = 'ora';
+  let s = '';
+  // Conversion objects on the left.
+  [64, 196, 328].forEach((y) => {
+    s += box(id, 44, y, 132, 88);
+    s += rows(62, y + 22, 96, 4);
+    s += link(id, `M176,${y + 44} C214,${y + 44} 214,244 246,244`, { accent: false });
+  });
+  // The prepared layer: where mapping and cleansing decisions are recorded.
+  s += box(id, 246, 176, 104, 136, { accent: true });
+  s += rows(268, 208, 62, 6);
+
+  // Two loaders, which take different objects and behave differently.
+  [[404, 128], [404, 300]].forEach(([x, y]) => {
+    s += link(id, `M350,244 C378,244 380,${y + 44} ${x},${y + 44}`);
+    s += box(id, x, y, 126, 88);
+    for (let k = 0; k < 3; k++) s += dot(x + 30 + k * 33, y + 44, 5, INK, 0.35);
+    s += link(id, `M${x + 126},${y + 44} C560,${y + 44} 566,244 596,244`);
+  });
+
+  // The target.
+  s += store(id, 668, 244, 128, 150, true);
+  s += rows(624, 220, 88, 4);
+
+  // The mock cycle: the loop that has to run more than once.
+  s += link(id, `M668,326 C640,404 360,412 298,326`, { dash: '6 7', accent: false });
+
+  // Reconciliation against the legacy ledger, drawn as the last check.
+  s += box(id, 246, 396, 104, 72);
+  s += rows(266, 418, 64, 3);
+  s += link(id, `M350,432 H596`, { accent: false, dash: '4 6' });
+  s += `<path d="M612,432 l14,14 l26,-30" fill="none" stroke="url(#${id}-stroke)"
+      stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return svg(id, s);
+}
+
 const OUT = [
   ['sv-sap-readiness.svg', sapReadiness()],
+  ['sv-oracle-fusion.svg', oracleFusion()],
   ['sv-scada.svg', scada()],
   ['sv-oilgas.svg', oilGas()],
   ['sv-manufacturing.svg', manufacturing()],

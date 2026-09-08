@@ -51,10 +51,17 @@ const hostRedirect = await import(`file://${path.join(root, 'src/lib/host-redire
 const cache = { './host-redirect.mjs': hostRedirect, '@/lib/host-redirect.mjs': hostRedirect, '@/lib/schema': {} };
 const load = (key) => {
   if (key in cache) return cache[key];
-  if (!FILES[key]) return {};
-  const out = ts.transpileModule(fs.readFileSync(path.join(root, FILES[key]), 'utf8'), {
+  /* Relative specifiers inside src/lib/services resolve by convention rather
+     than by being listed. The FILES map used to name every service file, which
+     meant adding a service page made this tool return undefined for it — no
+     error, just a hole in the array — and the failure surfaced three steps
+     later as "Cannot read properties of undefined". */
+  const file =
+    FILES[key] ?? (key.startsWith('./') ? `src/lib/services/${key.slice(2)}.ts` : undefined);
+  if (!file || !fs.existsSync(path.join(root, file))) return {};
+  const out = ts.transpileModule(fs.readFileSync(path.join(root, file), 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
-    fileName: FILES[key],
+    fileName: file,
   }).outputText;
   const m = { exports: {} };
   cache[key] = m.exports;
