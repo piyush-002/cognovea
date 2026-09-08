@@ -171,7 +171,7 @@ export default function ServicePage({ service }: { service: Service }) {
           instead of part of it, and the hero is back to being words. */}
       <section className="band">
         <div className="wrap">
-          <div className="figure figure--wide rv">
+          <div className="figure svc-diagram rv">
             {/* eslint-disable-next-line @next/next/no-img-element -- flat SVG
                 artwork; the optimiser would cost a request and return the same
                 bytes it was given. */}

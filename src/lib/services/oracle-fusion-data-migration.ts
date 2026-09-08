@@ -10,7 +10,7 @@ export const oracleFusionDataMigration: Service = {
   standfirst:
     'A Fusion re-implementation is not an upgrade. Nothing carries over on its own, and every object that lands has to be prepared, loaded and reconciled deliberately.',
   promise:
-    'We own the data workstream on an EBS to Fusion programme — the conversion objects, the load cycles and the reconciliation that decides whether the business trusts the first close.',
+    'We own the data workstream on an EBS to Fusion programme: the conversion objects, the load cycles and the reconciliation that decides whether the business trusts the first close.',
   image: {
     src: '/img/sv-oracle-fusion.svg',
     alt: 'EBS conversion objects prepared, loaded through FBDI and HDL across repeated mock cycles, and reconciled against the legacy ledger',
@@ -23,7 +23,7 @@ export const oracleFusionDataMigration: Service = {
       heading: 'Fusion is a re-implementation, not an upgrade',
       lede: 'That single fact is what most EBS programmes underestimate, and it is entirely a data problem.',
       body: [
-        'Moving from E-Business Suite to Fusion Cloud ERP is not a technical upgrade of a system you already have. It is a new application with its own data model, and nothing arrives in it except what somebody explicitly converts, maps and loads. Fifteen or twenty years of EBS history — the descriptive flexfields, the customisations somebody added in 2011, the org structures that grew rather than were designed — has no automatic destination.',
+        'Moving from E-Business Suite to Fusion Cloud ERP is not a technical upgrade of a system you already have. It is a new application with its own data model, and nothing arrives in it except what somebody explicitly converts, maps and loads. Fifteen or twenty years of EBS history has no automatic destination: the descriptive flexfields, the customisations somebody added in 2011, the org structures that grew rather than were designed.',
         'That shows up in a recognisable sequence. The programme is planned around configuration and testing. Conversion is treated as a workstream that runs alongside. Then the first mock load rejects a large share of the item master on validation rules nobody knew applied, supplier records fail because a tax attribute Fusion requires was optional in EBS, and the trial balance does not tie. Conversion stops being a workstream and becomes the critical path.',
         'The work below is specifically the data half. It runs whether or not we are involved in the configuration, and it is deliberately scoped so it can sit alongside whichever systems integrator is delivering the implementation.',
       ],
@@ -86,7 +86,7 @@ export const oracleFusionDataMigration: Service = {
           'What it will not do',
           'Decide which of three supplier records is the real one.',
           'Reconcile a total against the legacy ledger.',
-          'Nothing — this is where those decisions are made and recorded.',
+          'Nothing. This is where those decisions are made and recorded.',
         ],
         [
           'Where it goes wrong',
@@ -121,7 +121,7 @@ export const oracleFusionDataMigration: Service = {
       eyebrow: 'Being straight about it',
       heading: 'Where this gets harder than the plan assumes',
       body: [
-        'Descriptive flexfields are the most common surprise. EBS let teams add attributes wherever they were needed, and in a long-lived estate those fields carry real business meaning that exists nowhere else. Each one needs a decision — modelled in Fusion, moved into a proper attribute, or retired — and there are usually more of them than anyone expects.',
+        'Descriptive flexfields are the most common surprise. EBS let teams add attributes wherever they were needed, and in a long-lived estate those fields carry real business meaning that exists nowhere else. Each one needs a decision: modelled in Fusion, moved into a proper attribute, or retired. There are usually more of them than anyone expects.',
         'Multi-org and multi-ledger estates take considerably longer, and the reason is rarely technical. Where operating units were set up over years by different teams, the conversion forces a conversation about which structures survive, and that conversation involves people who were not in the project plan.',
         'And a chart of accounts redesign is a finance decision that a data team can support but must not make. Where we find a programme expecting us to derive the target chart, we say so: the mapping needs an owner in finance, and conversion cannot be scheduled honestly until it has one.',
       ],
@@ -131,19 +131,19 @@ export const oracleFusionDataMigration: Service = {
   faq: [
     {
       q: 'Do you replace our systems integrator?',
-      a: 'No. The SI delivers the implementation — configuration, testing, cutover. We own the data workstream inside it: profiling, mapping, conversion builds, mock-load cycles and reconciliation. Where the SI has already scoped the conversion, we will say so rather than sell it twice.',
+      a: 'No. The SI delivers the implementation: configuration, testing, cutover. We own the data workstream inside it: profiling, mapping, conversion builds, mock-load cycles and reconciliation. Where the SI has already scoped the conversion, we will say so rather than sell it twice.',
     },
     {
       q: 'How early should the data work start?',
-      a: 'Before the implementation partner is selected, ideally. What comes out of profiling — how much of the item master will fail Fusion validation, how far the chart of accounts is from the target — is one of the larger unknowns in the proposals you are about to compare, and it is cheaper to answer once than to have several vendors price around it.',
+      a: 'Before the implementation partner is selected, ideally. How much of the item master will fail Fusion validation, and how far the chart of accounts is from the target, is one of the larger unknowns in the proposals you are about to compare, and it is cheaper to answer once than to have several vendors price around it.',
     },
     {
       q: 'How much EBS history should we bring into Fusion?',
-      a: 'Almost always less than the first answer. We profile how far back the transactions are actually read, rather than how far back they exist, and in most estates the reporting depends on considerably less than the default. What stays behind does not have to be lost — it stays reportable from an archive, which satisfies audit without carrying the volume into the new system.',
+      a: 'Almost always less than the first answer. We profile how far back the transactions are actually read, rather than how far back they exist, and in most estates the reporting depends on considerably less than the default. What stays behind does not have to be lost. It stays reportable from an archive, which satisfies audit without carrying the volume into the new system.',
     },
     {
       q: 'Is this the same work as your SAP page?',
-      a: 'The shape rubs off — profile, cleanse, load, reconcile — but the substance does not transfer. Fusion validates on rules EBS never enforced, TCA models suppliers and customers differently, and FBDI and HDL behave nothing like the SAP Migration Cockpit. Somebody who has only done S/4HANA conversions will learn Fusion on your programme.',
+      a: 'The shape rubs off: profile, cleanse, load, reconcile. The substance does not transfer. Fusion validates on rules EBS never enforced, TCA models suppliers and customers differently, and FBDI and HDL behave nothing like the SAP Migration Cockpit. Somebody who has only done S/4HANA conversions will learn Fusion on your programme.',
     },
     {
       q: 'Can you help if the mock loads are already failing?',

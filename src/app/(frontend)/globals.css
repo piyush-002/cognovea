@@ -906,6 +906,24 @@ b {
   aspect-ratio: 16 / 9;
 }
 
+/* The service-page diagram.
+
+   Not .figure--wide, for two reasons. It was spanning the full wrap — around
+   1100px on a desktop — for artwork drawn at 800x520, so it was enlarged past
+   its own resolution and dominated the page. And 16/9 against art that is 20/13
+   meant `object-fit: cover` was cropping the top and bottom off a diagram,
+   which is fine for a photograph and wrong for something with meaning at its
+   edges. This matches the artwork's own ratio and contains rather than covers. */
+.svc-diagram {
+  max-inline-size: min(100%, 40rem);
+  margin-inline: auto;
+  aspect-ratio: 800 / 520;
+}
+
+.svc-diagram img {
+  object-fit: contain;
+}
+
 .feature {
   display: grid;
   gap: clamp(2rem, 5vw, 4.5rem);
