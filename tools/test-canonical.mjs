@@ -415,5 +415,47 @@ for (const f of ['robots.ts', 'sitemap.ts']) {
   }
 }
 
+/* --- rich-text tables ------------------------------------------------------ */
+/*
+ * Tables are an editor feature with a rendering half, and the rendering half is
+ * where it goes wrong quietly: the shipped JSX converter emits a wrapper div
+ * with no overflow, while this site's global `table` rule sets a 34rem
+ * min-width. Without a rule for that container, one three-column table in an
+ * article pushes the whole page sideways on a phone.
+ */
+{
+  const cfg = fs.readFileSync(path.join(root, 'src/payload.config.ts'), 'utf8');
+  const css = fs.readFileSync(path.join(root, 'src/app/(frontend)/globals.css'), 'utf8');
+
+  ok('the editor has the table feature', /EXPERIMENTAL_TableFeature\(\)/.test(cfg));
+
+  /* The trap in Payload's features API: passing an array replaces the defaults
+     rather than extending them, so bold, links and headings vanish and nobody
+     notices until they open the editor. */
+  ok(
+    'and it extends the default features rather than replacing them',
+    !/features:/.test(cfg) || /\.\.\.defaultFeatures/.test(cfg),
+    'features: given without spreading defaultFeatures — the editor loses bold, links and headings',
+  );
+
+  ok(
+    'the lexical table container scrolls instead of widening the page',
+    /\.lexical-table-container\s*\{[^}]*overflow-x:\s*auto/.test(css),
+  );
+
+  // The converter emits no <thead>, so the site's `thead th` styling never
+  // applies; both kinds of header cell need their own rule.
+  ok('column headers are styled', /lexical-table-cell-header-1/.test(css));
+  ok('row labels are styled separately from column headers', /lexical-table-cell-header-2/.test(css));
+  ok(
+    'row labels are not shouted like column headers',
+    (() => {
+      const m = css.match(/\.lexical-table-cell-header-2\s*\{([^}]*)\}/);
+      return m ? !/text-transform:\s*uppercase/.test(m[1]) : false;
+    })(),
+    'header-2 is a row label and reads as prose, not as a heading',
+  );
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);
