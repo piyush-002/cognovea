@@ -140,7 +140,11 @@ export default function ServicePage({ service }: { service: Service }) {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">{service.eyebrow}</p>
-            <h1 className="h-xl">{service.h1}</h1>
+            {/* h-lg, not h-xl. h-xl runs to 5.8rem — it is the homepage's
+                one-line hero size, and a service page title is a sentence, not
+                a slogan. At that size it filled the screen and pushed the
+                proposition below the fold. */}
+            <h1 className="h-lg">{service.h1}</h1>
             <p className="lede">{service.standfirst}</p>
           </div>
 
@@ -157,7 +161,17 @@ export default function ServicePage({ service }: { service: Service }) {
             </div>
           </div>
 
-          <div className="figure figure--wide rv mt-3">
+        </div>
+      </section>
+
+      {/* The diagram sits below the hero rather than inside it.
+          In the hero it competed with the heading and the call to action for
+          the first screen, and on a laptop it pushed both of those under the
+          fold. Given its own band it is the first thing after the proposition
+          instead of part of it, and the hero is back to being words. */}
+      <section className="band">
+        <div className="wrap">
+          <div className="figure figure--wide rv">
             {/* eslint-disable-next-line @next/next/no-img-element -- flat SVG
                 artwork; the optimiser would cost a request and return the same
                 bytes it was given. */}
@@ -167,6 +181,8 @@ export default function ServicePage({ service }: { service: Service }) {
       </section>
 
       {service.sections.map((section, i) => (
+        /* Starts tinted: the diagram band above is plain, and two plain bands
+           in a row lose the rhythm the alternation exists to create. */
         <Section key={section.heading} section={section} tinted={i % 2 === 0} />
       ))}
 
