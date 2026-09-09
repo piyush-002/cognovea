@@ -18,7 +18,10 @@ Cognovea turns enterprise data into intelligence. Data analytics, business intel
 
 - [Manufacturing](https://www.cognovea.com/manufacturing-data-analytics/): Data and AI consulting for manufacturers: plant data unified across sites, OEE and downtime you can trust, and predictive maintenance built on data that…
 - [Oil & Gas](https://www.cognovea.com/oil-and-gas-data-analytics/): Data and AI consulting for oil and gas operators: production surveillance, asset monitoring, deferment analysis and reporting that operations and finance both…
-- [SCADA & Historian Data](https://www.cognovea.com/scada-data-analytics/): Get production, well and asset data out of SCADA and historians and into something the business can use. Analytics services for oil and gas operators.
+
+## More services
+
+- [Getting Value Out of SCADA and Historian Data](https://www.cognovea.com/scada-data-analytics/): Get production, well and asset data out of SCADA and historians and into something the business can use. Analytics services for oil and gas operators.
 
 ## Industry playbooks
 

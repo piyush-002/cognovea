@@ -43,9 +43,16 @@ const load = (key) => {
      meant adding a service page made this tool return undefined for it — no
      error, just a hole in the array — and the failure surfaced three steps
      later as "Cannot read properties of undefined". */
-  const file =
-    FILES[key] ?? (key.startsWith('./') ? `src/lib/services/${key.slice(2)}.ts` : undefined);
-  if (!file || !fs.existsSync(path.join(root, file))) return {};
+  /* Relative specifiers resolve by convention. Two roots, because the modules
+     that use them live in two places: a service file importing './types' means
+     src/lib/services, and site.ts importing './positioning' means src/lib. */
+  const candidates = FILES[key]
+    ? [FILES[key]]
+    : key.startsWith('./')
+      ? [`src/lib/services/${key.slice(2)}.ts`, `src/lib/${key.slice(2)}.ts`]
+      : [];
+  const file = candidates.find((c) => fs.existsSync(path.join(root, c)));
+  if (!file) return {};
   const src = ts.transpileModule(fs.readFileSync(path.join(root, file), 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
     fileName: file,
@@ -131,11 +138,63 @@ for (const s of SERVICES) {
 
 /* --- the nav has to be able to reach them ---------------------------------- */
 {
-  const reachable = SERVICES.filter((s) => siteSrc.includes(`href: '/${s.slug}'`));
+  /*
+   * Reachable, not necessarily from the header.
+   *
+   * This used to demand every service page appear in the nav, which was right
+   * while every service was a top-level offer and wrong as soon as one was not.
+   * SCADA is a capability demonstrated inside energy work rather than an
+   * industry, so it is reached from the Oil & Gas page instead of standing
+   * beside it in the menu. What actually matters is that no page is orphaned:
+   * a page reachable from nowhere is a page that only the sitemap knows about.
+   */
+  const inNav = (s) => siteSrc.includes(`href: '/${s.slug}'`);
+  const linkedFromAnotherService = (s) =>
+    SERVICES.some((other) => other.slug !== s.slug && other.related.some((r) => r.href === `/${s.slug}`));
+
+  const orphans = SERVICES.filter((s) => !inNav(s) && !linkedFromAnotherService(s));
   ok(
-    'every service page is linked from the header',
-    reachable.length === SERVICES.length,
-    `not in serviceLinks or industryLinks: ${SERVICES.filter((s) => !reachable.includes(s)).map((s) => s.slug).join(', ')}`,
+    'no service page is orphaned',
+    orphans.length === 0,
+    `reachable from neither the header nor another service page: ${orphans.map((s) => s.slug).join(', ')}`,
+  );
+}
+
+
+/* --- the positioning voice ------------------------------------------------ */
+/*
+ * The home page title moved into src/lib/positioning.ts, which took it out of
+ * reach of test-titles: that suite parses static `metadata` literals, and a
+ * title built from a variable is invisible to it. Two assertions quietly
+ * disappeared when this was wired up. These replace them, and cover both
+ * variants at once rather than only whichever one the environment happens to
+ * select.
+ */
+{
+  const voiceSrc = fs.readFileSync(path.join(root, 'src/lib/positioning.ts'), 'utf8');
+  const titles = [...voiceSrc.matchAll(/title:\s*'([^']+)'/g)].map((m) => m[1]);
+  const descriptions = [...voiceSrc.matchAll(/description:\s*\n?\s*'([^']+)'/g)].map((m) => m[1]);
+
+  ok('both positionings declare a home title', titles.length === 2, `${titles.length} found`);
+  for (const t of titles) {
+    ok(`"${t.slice(0, 34)}…" fits a search result`, t.length <= 62, `${t.length} chars`);
+  }
+  ok('the two home titles are actually different', new Set(titles).size === titles.length);
+
+  for (const d of descriptions) {
+    ok(
+      `a description is a usable length (${d.length})`,
+      d.length >= 80 && d.length <= 230,
+      d.slice(0, 60),
+    );
+  }
+
+  /* The flag has to default to the site as it is today, or merging this changes
+     the live site without anyone deciding to. */
+  ok(
+    "positioning defaults to 'data'",
+    /=== 'ai' \? 'ai' : 'data'/.test(voiceSrc),
+    'the default is what ships when the env var is unset',
   );
 }
 

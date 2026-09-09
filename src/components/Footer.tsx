@@ -1,3 +1,4 @@
+import { voice } from '@/lib/positioning';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import CookieSettings from '@/components/CookieSettings';
@@ -13,8 +14,7 @@ export default function Footer() {
           <div>
             <Logo />
             <p className="c-foot__tag">
-              Where data becomes intelligence. Data engineering, analytics, business intelligence and AI for growing
-              enterprises.
+              {voice.footerBlurb}
             </p>
 
             {/* Bottom of the left column, under the mark and the line that says

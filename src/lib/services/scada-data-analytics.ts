@@ -32,7 +32,7 @@ export const scadaDataAnalytics: Service = {
       kind: 'steps',
       eyebrow: 'How the work runs',
       heading: 'Out of the control layer, without touching the control layer',
-      lede: 'The security question is the first one asked in every one of these engagements, so it is answered first here too.',
+      lede: 'The security question is the first one anybody asks, so it is answered first here too.',
       steps: [
         {
           title: 'One-way egress, agreed with the OT team',
@@ -112,7 +112,7 @@ export const scadaDataAnalytics: Service = {
     },
     {
       q: 'How many tags do you need?',
-      a: 'Far fewer than most operators expect. A useful production surveillance and deferment picture typically comes from a small fraction of the available tags. Starting with every tag is the most common way these projects get slow and expensive without getting more useful.',
+      a: 'Usually far fewer than the tag list suggests. A useful production surveillance and deferment picture typically comes from a small fraction of the available tags. Starting with every tag is the most common way these projects get slow and expensive without getting more useful.',
     },
     {
       q: 'Our tag naming is a mess. Is that a blocker?',

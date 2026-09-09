@@ -10,6 +10,7 @@ import Rotator from '@/components/Rotator';
 import Scroller from '@/components/Scroller';
 import Tabs from '@/components/Tabs';
 import Testimonial from '@/components/Testimonial';
+import { voice } from '@/lib/positioning';
 import { pageMetadata } from '@/lib/seo';
 
 /* Statically generated, and this page shows client logos and a testimonial,
@@ -21,10 +22,12 @@ import { pageMetadata } from '@/lib/seo';
 export const revalidate = 300;
 
 
+/* Title and description follow the positioning. This is the one page where the
+   brand narrative and the search term are the same thing, which is why it moves
+   with the flag while the service pages do not. */
 export const metadata: Metadata = pageMetadata({
-  title: 'Cognovea | Data Analytics and AI Solutions',
-  description:
-    'Cognovea turns enterprise data into intelligence. Data analytics, business intelligence, data engineering and AI solutions that drive data-driven decision making.',
+  title: voice.home.title,
+  description: voice.home.description,
   path: '/',
 });
 
@@ -224,18 +227,15 @@ export default function HomePage() {
       <section className="c-hero">
         <div className="wrap c-hero__grid">
           <div>
-            <p className="eyebrow">Data + AI Solutions</p>
+            <p className="eyebrow">{voice.home.eyebrow}</p>
             <h1 className="h-xl" style={{ marginTop: '1.6rem' }}>
-              Where Data Becomes <span className="grad">Intelligence.</span>
+              {voice.home.h1Lead}
+              <span className="grad">{voice.home.h1Accent}</span>
             </h1>
-            <p className="c-hero__sub">Data Depth. AI Power. Real Impact.</p>
+            <p className="c-hero__sub">{voice.home.sub}</p>
 
             <p className="lede" style={{ marginTop: '2rem', maxWidth: '40rem' }}>
-              When data is transformed into intelligence, and intelligence is transformed into impact, the trajectory
-              of an organization changes. Through the power of data analytics and robust enterprise data analytics, we
-              unlock the hidden potential within your systems to drive tangible business value. Beyond simply analyzing
-              and processing data, Cognovea converts complex insights into meaningful results that fuel sustainable
-              growth and competitive advantage.
+              {voice.home.lede}
             </p>
 
             <div className="btn-row">
@@ -368,7 +368,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">What Becomes Possible</p>
-            <h2 className="h-lg">What Becomes Possible When Your Data Starts Working Together</h2>
+            <h2 className="h-lg">{voice.home.possible}</h2>
           </div>
 
           <div className="grid grid--4">
@@ -397,7 +397,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">What We Do</p>
-            <h2 className="h-lg">From Data to Decisions, We Build What Makes Intelligence Possible</h2>
+            <h2 className="h-lg">{voice.home.build}</h2>
           </div>
 
           <div className="rv">
@@ -434,7 +434,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">How We Work</p>
-            <h2 className="h-lg">A Practical Path Moving From Possibility to Progress</h2>
+            <h2 className="h-lg">{voice.home.path}</h2>
             <p className="lede">
               Progress with data rarely happens in one move. It happens in stages, each one building the confidence and
               clarity needed for the next.
@@ -506,7 +506,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">Industries</p>
-            <h2 className="h-lg">Intelligence That Understands the Business Behind the Data</h2>
+            <h2 className="h-lg">{voice.home.understands}</h2>
             <p className="lede">
               Every industry runs on data differently, and the best insights come from knowing that difference.
             </p>
@@ -621,7 +621,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">Insights</p>
-            <h2 className="h-lg">Floating Ideas for the Data-Driven Enterprise.</h2>
+            <h2 className="h-lg">{voice.home.insights}</h2>
             <p className="lede">
               The world of data and AI moves quickly, and our team believes that staying informed is crucial for staying
               ahead.

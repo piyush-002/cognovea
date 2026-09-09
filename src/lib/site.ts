@@ -1,4 +1,5 @@
 import { CANONICAL_URL } from './host-redirect.mjs';
+import { byPositioning, voice } from './positioning';
 /**
  * Single source of truth for site-wide values: URLs, contact details, nav.
  * Change the domain here once and canonicals, sitemap, robots and JSON-LD follow.
@@ -6,14 +7,13 @@ import { CANONICAL_URL } from './host-redirect.mjs';
 
 export const site = {
   name: 'Cognovea',
-  tagline: 'Where Data Becomes Intelligence.',
+  tagline: voice.tagline,
   /* Imported, not restated. next.config.mjs needs the same value for the www
      redirect and cannot import a .ts module, so it lives in host-redirect.mjs
      and both read it from there. Two copies of this string is exactly the bug
      being fixed: canonicals said the apex while every real URL was www. */
   url: CANONICAL_URL,
-  description:
-    'Cognovea turns enterprise data into intelligence. Data analytics, business intelligence, data engineering and AI solutions that drive data-driven decision making.',
+  description: voice.siteDescription,
   email: 'hello@cognovea.com',
   phones: ['+91 98937 38323', '+91 99242 99318'],
   locations: {
@@ -52,7 +52,7 @@ export type NavLink = {
   blurb?: string;
 };
 
-export const serviceLinks: NavLink[] = [
+const SERVICE_LINKS: NavLink[] = [
   {
     href: '/data-engineering-services',
     label: 'Data Engineering Services',
@@ -90,6 +90,12 @@ export const serviceLinks: NavLink[] = [
   },
 ];
 
+/* Ordered by whichever positioning is live. Under the data narrative this is
+   the list above, untouched; under the AI narrative the two AI pages come
+   first, because a menu is read top to bottom and the first two items are the
+   ones that say what kind of company this is. */
+export const serviceLinks: NavLink[] = byPositioning(SERVICE_LINKS);
+
 /*
  * Industries get their own menu rather than living under Resources.
  *
@@ -99,6 +105,12 @@ export const serviceLinks: NavLink[] = [
  * the commercial pages for those sectors; the playbooks stay in Resources, which
  * is what they are.
  */
+/* SCADA is deliberately NOT here.
+   It is a capability demonstrated inside energy work, not an industry Cognovea
+   serves, and listing it beside Manufacturing and Oil & Gas presented one
+   system type in one sector as a third of what the business does. It keeps its
+   page, its route and its place in the sitemap, and it is reached from the Oil
+   & Gas page, which is how the work actually arrived. */
 export const industryLinks: NavLink[] = [
   {
     href: '/manufacturing-data-analytics',
@@ -109,11 +121,6 @@ export const industryLinks: NavLink[] = [
     href: '/oil-and-gas-data-analytics',
     label: 'Oil & Gas',
     blurb: 'Production, deferment and asset reporting operations and finance share.',
-  },
-  {
-    href: '/scada-data-analytics',
-    label: 'SCADA & Historian Data',
-    blurb: 'Operational data out of the control layer, without touching it.',
   },
 ];
 

@@ -65,7 +65,7 @@ export const oilAndGasAnalytics: Service = {
       kind: 'steps',
       eyebrow: 'How engagements start',
       heading: 'Small, verifiable, then extended',
-      lede: 'We have never seen a good outcome from an operator that started with a platform programme.',
+      lede: 'Starting with a platform programme rather than a question is the most reliable way to spend a year and land nothing.',
       steps: [
         {
           title: 'A Health Check on the data that matters',
