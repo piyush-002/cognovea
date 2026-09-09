@@ -10,7 +10,7 @@ export const scadaDataAnalytics: Service = {
   standfirst:
     'The data is already being collected. It is sitting in a historian that engineering can query and nobody else can.',
   promise:
-    'We move production and asset data out of the control layer and into a place where finance, planning and operations can all read the same numbers — without touching the control network.',
+    'We move production and asset data out of the control layer and into a place where finance, planning and operations can all read the same numbers, without touching the control network.',
   image: {
     src: '/img/sv-scada.svg',
     alt: 'Field telemetry flowing from SCADA and a historian through a one-way boundary into a cloud warehouse and dashboards',
@@ -36,11 +36,11 @@ export const scadaDataAnalytics: Service = {
       steps: [
         {
           title: 'One-way egress, agreed with the OT team',
-          body: 'Data leaves through a read-only path the OT and instrumentation team specifies and controls — commonly a historian replica, a data diode or a broker in the DMZ. Nothing we build writes back toward the control network, and the OT team keeps the ability to shut the path off without our involvement.',
+          body: 'Data leaves through a read-only path the OT and instrumentation team specifies and controls: commonly a historian replica, a data diode or a broker in the DMZ. Nothing we build writes back toward the control network, and the OT team keeps the ability to shut the path off without our involvement.',
         },
         {
           title: 'Tags become things a business recognises',
-          body: 'A tag name is a control-system identifier, not a business concept. We map tags to wells, pads, units and assets, attach the units of measure explicitly, and record which tag is authoritative when two disagree. This mapping is the asset — it is what makes every later question answerable.',
+          body: 'A tag name is a control-system identifier, not a business concept. We map tags to wells, pads, units and assets, attach the units of measure explicitly, and record which tag is authoritative when two disagree. This mapping is the asset. It is what makes every later question answerable.',
         },
         {
           title: 'One place the numbers come from',
@@ -95,7 +95,7 @@ export const scadaDataAnalytics: Service = {
       heading: 'Where this does not work',
       body: [
         'If the tag naming has no convention at all and nobody remaining at the company knows what the tags mean, the mapping step becomes archaeology and takes considerably longer than the rest of the project. This is survivable and worth doing, but it should be scoped honestly rather than discovered.',
-        'If the historian is only retaining a few months at full resolution, anything that depends on comparing behaviour to a failure two years ago is not available yet — and the first useful action is to change the retention policy and wait.',
+        'If the historian is only retaining a few months at full resolution, anything that depends on comparing behaviour to a failure two years ago is not available yet, and the first useful action is to change the retention policy and wait.',
         'And if the OT team has not agreed the egress path, nothing above starts. That is the correct order. An analytics project that routes around the people responsible for the control network is a project that gets stopped later, at greater cost, and rightly.',
       ],
     },
@@ -108,7 +108,7 @@ export const scadaDataAnalytics: Service = {
     },
     {
       q: 'We already have AVEVA PI. Are you proposing we replace it?',
-      a: 'No. PI stays as the system of record for raw signal — it is very good at that and nothing here is. What we do is copy the tags that matter into a warehouse where they can sit beside ERP, maintenance and production reporting data and be queried by people who do not know tag names.',
+      a: 'No. PI stays as the system of record for raw signal. It is very good at that, and nothing here is. What we do is copy the tags that matter into a warehouse where they can sit beside ERP, maintenance and production reporting data and be queried by people who do not know tag names.',
     },
     {
       q: 'How many tags do you need?',

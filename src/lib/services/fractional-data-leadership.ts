@@ -10,7 +10,7 @@ export const fractionalDataLeadership: Service = {
   standfirst:
     'Plenty of companies have data problems that no amount of additional engineering will solve, because the missing thing is someone senior deciding what matters.',
   promise:
-    'A senior data leader inside your business a few days a month — owning the strategy, the sequencing and the vendor decisions, and accountable for them.',
+    'A senior data leader inside your business a few days a month, owning the strategy, the sequencing and the vendor decisions, and accountable for them.',
   image: {
     src: '/img/sv-fractional.svg',
     alt: 'A single accountable owner sitting between the executive team, the data team and outside vendors',
@@ -24,7 +24,7 @@ export const fractionalDataLeadership: Service = {
       lede: 'It is usually described as a tooling problem, or a vendor problem, or a reporting problem.',
       body: [
         'The businesses that need this most rarely arrive asking for it. They arrive saying the dashboards are not being used, or that two systems disagree and nobody can say which is right, or that they have bought a platform and are not sure what it was for. Underneath most of those is the same thing: several people are making data decisions part-time, none of them owns the outcome, and so the decisions do not add up to a direction.',
-        'A full-time Chief Data Officer solves that, and for a mid-market manufacturer or operator the cost is difficult to justify against the size of the problem — and difficult to fill, because the people who can do the job well are largely employed. So the role goes unfilled, the work distributes itself across an IT director, a finance analyst and whoever is loudest, and the pattern repeats.',
+        'A full-time Chief Data Officer solves that, and for a mid-market manufacturer or operator the cost is difficult to justify against the size of the problem, and difficult to fill, because the people who can do the job well are largely employed. So the role goes unfilled, the work distributes itself across an IT director, a finance analyst and whoever is loudest, and the pattern repeats.',
         'Fractional leadership is a straightforward answer to that shape: the judgement and the accountability, at the fraction of a week the problem actually requires. In our experience it is often the highest-leverage thing a company in this position can buy, precisely because it stops the spending that was going to happen anyway from being spent badly.',
       ],
     },
@@ -49,7 +49,7 @@ export const fractionalDataLeadership: Service = {
         },
         {
           title: 'Growing the team you have',
-          body: 'Hiring plans, structure, and mentoring the analysts and engineers already in place — including honest advice about which roles you do not need yet.',
+          body: 'Hiring plans, structure, and mentoring the analysts and engineers already in place, including honest advice about which roles you do not need yet.',
         },
         {
           title: 'Governance proportionate to the business',
@@ -85,7 +85,7 @@ export const fractionalDataLeadership: Service = {
         ['Time to in place', 'Three to nine months to hire, if the search succeeds.', 'Weeks.', 'Weeks.'],
         [
           'What it will not fix',
-          'Nothing, given time — it is the complete answer where it is affordable.',
+          'Nothing, given time. It is the complete answer where it is affordable.',
           'A genuine shortage of hands. This is judgement, not capacity.',
           'A missing owner. The project ends and the drift resumes.',
         ],
@@ -103,7 +103,7 @@ export const fractionalDataLeadership: Service = {
         },
         {
           title: 'A named person, a fixed rhythm',
-          body: 'Typically two to four days a month, with the same person each time — including a standing slot with the executive team, because the role does not work if it only ever talks to IT.',
+          body: 'Typically two to four days a month, with the same person each time, including a standing slot with the executive team, because the role does not work if it only ever talks to IT.',
         },
         {
           title: 'Reviewed at ninety days, and again at a year',
@@ -128,11 +128,11 @@ export const fractionalDataLeadership: Service = {
     },
     {
       q: 'What if we already have a data team?',
-      a: 'That is the most common situation. The team is usually competent and under-directed — working on what was asked most recently rather than what matters most. The first job is normally to give them a sequence they can defend, not to change who is on the team.',
+      a: 'That is the most common situation. The team is usually competent and under-directed, working on what was asked most recently rather than what matters most. The first job is normally to give them a sequence they can defend, not to change who is on the team.',
     },
     {
       q: 'Do you work with manufacturers and energy companies specifically?',
-      a: 'That is where most of our work sits, and it matters more than it might sound. Industrial data has particular conditions — OT and IT boundaries, plant-level variation, ERP estates that have grown for twenty years — and someone who has only led data in a software or retail business will spend the first six months learning them.',
+      a: 'That is where most of our work sits, and it matters more than it might sound. Industrial data has particular conditions: OT and IT boundaries, plant-level variation, ERP estates that have grown for twenty years. Someone who has only led data in a software or retail business will spend the first six months learning them.',
     },
     {
       q: 'What happens when the engagement ends?',

@@ -10,7 +10,7 @@ export const oilAndGasAnalytics: Service = {
   standfirst:
     'Upstream and midstream operators are not short of data. They are short of one place where production, maintenance and financial numbers agree.',
   promise:
-    'We work on the reporting and analytics layer above your control systems — production surveillance, deferment, asset behaviour and the numbers that go to the board — without going anywhere near the control network.',
+    'We work on the reporting and analytics layer above your control systems, covering production surveillance, deferment, asset behaviour and the numbers that go to the board, without going anywhere near the control network.',
   image: {
     src: '/img/sv-oilgas.svg',
     alt: 'Well telemetry, maintenance records and production reporting converging into one set of agreed figures',
@@ -87,7 +87,7 @@ export const oilAndGasAnalytics: Service = {
       heading: 'Your OT and security teams will scrutinise this, and they should',
       body: [
         'Oil and gas applies the highest scrutiny of any sector we work in to anything that touches operational systems, and that scrutiny is appropriate. We plan for it rather than around it: the OT and instrumentation team specifies the egress path, controls it, and can shut it off without involving us. Nothing we build writes back toward the control network.',
-        'The practical consequence is that discovery takes longer here than it does in manufacturing, and we build that into the schedule rather than discovering it. An engagement that assumes a two-week security conversation and gets a two-month one has not been badly run — it has been badly scoped.',
+        'The practical consequence is that discovery takes longer here than it does in manufacturing, and we build that into the schedule rather than discovering it. An engagement that assumes a two-week security conversation and gets a two-month one has not been badly run. It has been badly scoped.',
         'The corollary is that the OT team is usually the most valuable ally in the project. They know which tags are trustworthy, which sensors have been reading wrong for a year, and which historical periods should be discounted. That knowledge is not written down anywhere and it changes what the analysis is worth.',
       ],
     },
@@ -96,7 +96,7 @@ export const oilAndGasAnalytics: Service = {
   faq: [
     {
       q: 'Do you work with upstream, midstream or both?',
-      a: 'Both, though the work looks different. Upstream engagements tend to centre on production surveillance, deferment and well performance; midstream on throughput, measurement reconciliation and asset integrity. The underlying data problem — operational and financial figures that do not agree — is the same in each.',
+      a: 'Both, though the work looks different. Upstream engagements tend to centre on production surveillance, deferment and well performance; midstream on throughput, measurement reconciliation and asset integrity. The underlying data problem is the same in each: operational and financial figures that do not agree.',
     },
     {
       q: 'Are you asking to connect to our SCADA system?',
@@ -112,7 +112,7 @@ export const oilAndGasAnalytics: Service = {
     },
     {
       q: 'How much of our history do you need?',
-      a: 'For reporting and surveillance, months. For anything that learns from failures — rotating equipment especially — you need enough history to contain a reasonable number of failures, which is usually a few years. If the historian is only retaining a few months at full resolution, that is worth fixing now so the option exists later.',
+      a: 'For reporting and surveillance, months. For anything that learns from failures, rotating equipment especially, you need enough history to contain a reasonable number of failures, which is usually a few years. If the historian is only retaining a few months at full resolution, that is worth fixing now so the option exists later.',
     },
   ],
 

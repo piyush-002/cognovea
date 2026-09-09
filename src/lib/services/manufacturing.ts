@@ -25,7 +25,7 @@ export const manufacturingAnalytics: Service = {
       body: [
         'A modern plant generates a great deal of data and stores most of it. PLCs and SCADA hold machine state, the MES or the paper log holds what was run, the ERP holds what was ordered and what it cost, and the quality system holds what passed. Each is reasonably reliable about its own subject. Very little connects them, which is why questions that span two of them are answered by a person rather than a system.',
         'That shows up as a specific and recognisable set of symptoms. OEE is reported but not trusted, because downtime reason codes are entered by whoever is nearest and nobody audits them. Two plants report the same metric differently and the comparison is quietly abandoned. Margin per product is known at a level too coarse to act on. And the maintenance team knows which machines are trouble without being able to show it.',
-        'The work is less exotic than it sounds. Before anything predictive is worth attempting, plant data has to be joined to business data at a grain both sides accept — and in our experience that step alone changes more decisions than the modelling that follows it.',
+        'The work is less exotic than it sounds. Before anything predictive is worth attempting, plant data has to be joined to business data at a grain both sides accept. In our experience that step alone changes more decisions than the modelling that follows it.',
       ],
     },
     {
@@ -45,7 +45,7 @@ export const manufacturingAnalytics: Service = {
         },
         {
           title: 'Demand forecasting',
-          body: 'Forecast at the level you actually place orders at, using true demand — including what you could not supply, since sales history alone understates it.',
+          body: 'Forecast at the level you actually place orders at, using true demand, including what you could not supply, since sales history alone understates it.',
         },
         {
           title: 'OEE and scheduling',
@@ -90,7 +90,7 @@ export const manufacturingAnalytics: Service = {
         },
         {
           title: 'An OEE or downtime view the plant agrees with',
-          body: 'Built from machine data, reconciled against what the plant team believes. Where the two disagree, that disagreement is the finding — it is usually reason codes, and it is usually worth more than the dashboard.',
+          body: 'Built from machine data, reconciled against what the plant team believes. Where the two disagree, that disagreement is the finding. It is usually reason codes, and usually worth more than the dashboard.',
         },
         {
           title: 'Then one predictive use case',
@@ -104,7 +104,7 @@ export const manufacturingAnalytics: Service = {
       heading: 'Where predictive maintenance does not work yet',
       body: [
         'Predictive maintenance is the use case manufacturers ask for most and the one most often scoped before its conditions are met. A model learns to recognise the run-up to a failure by being shown failures. If a machine has failed twice in the recorded history, there is nothing to learn from, however good the sensor coverage is.',
-        'The other common blocker is that failures were recorded as events but not as causes, so the history says a line stopped without saying what broke. That is fixable, and fixing it is cheap compared with a modelling project built on top of it — but it takes a few months of disciplined recording before the data is worth modelling.',
+        'The other common blocker is that failures were recorded as events but not as causes, so the history says a line stopped without saying what broke. That is fixable, and fixing it is cheap compared with a modelling project built on top of it. But it takes a few months of disciplined recording before the data is worth modelling.',
         'When we find either condition, we say so, and the honest recommendation is usually to start with condition monitoring and better failure recording, then revisit prediction in six to twelve months. That is a smaller sale for us and a considerably better outcome for the plant.',
       ],
     },
@@ -113,7 +113,7 @@ export const manufacturingAnalytics: Service = {
   faq: [
     {
       q: 'Do we need to connect the plant floor before anything useful happens?',
-      a: 'No, and starting there is a common way to spend a year before producing anything. A great deal of value sits in joining ERP, quality and maintenance data — systems that are already reachable — and that work often reveals which plant-floor connections are actually worth making.',
+      a: 'No, and starting there is a common way to spend a year before producing anything. A great deal of value sits in joining ERP, quality and maintenance data, systems that are already reachable, and that work often reveals which plant-floor connections are actually worth making.',
     },
     {
       q: 'We run several plants and they all do things differently. Is that a problem?',
@@ -121,7 +121,7 @@ export const manufacturingAnalytics: Service = {
     },
     {
       q: 'Who needs to be involved from our side?',
-      a: 'A plant or operations leader who owns the question, someone from plant IT, and — importantly — the OT or automation engineer responsible for the production network. That last person is often engaged late and is usually the one who determines the timeline.',
+      a: 'A plant or operations leader who owns the question, someone from plant IT, and, importantly, the OT or automation engineer responsible for the production network. That last person is often engaged late and is usually the one who determines the timeline.',
     },
     {
       q: 'Our OEE numbers are already reported. Why would they change?',
