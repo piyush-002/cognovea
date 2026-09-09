@@ -34,9 +34,11 @@ import ConsentBanner from '../src/components/ConsentBanner';
 import LogoStrip from '../src/components/LogoStrip';
 import QuoteCard, { QuoteFigure } from '../src/components/QuoteCard';
 import QuoteCarousel from '../src/components/QuoteCarousel';
+import RichText from '../src/components/RichText';
 import Fractional from '../src/app/(frontend)/fractional-data-leadership/page';
 import ManufacturingSvc from '../src/app/(frontend)/manufacturing-data-analytics/page';
 import OilGasSvc from '../src/app/(frontend)/oil-and-gas-data-analytics/page';
+import OracleSvc from '../src/app/(frontend)/oracle-fusion-data-migration-services/page';
 import SapSvc from '../src/app/(frontend)/sap-data-migration-services/page';
 import ScadaSvc from '../src/app/(frontend)/scada-data-analytics/page';
 
@@ -90,6 +92,57 @@ const fakeLogos = (n: number) =>
     scale: 1,
     logo: { url: ART[i % ART.length], alt: `Client ${i + 1}`, width: 200, height: 80 },
   }));
+
+
+/* A real Lexical editor state with a table in it, shaped the way the shipped
+   TableJSXConverter reads: rows of cells, headerState > 0 meaning <th>.
+   headerState 1 is a column header (top row), 2 a row header (first column) —
+   both appear here so the styling for each is visible. */
+const cell = (text: string, headerState = 0, colSpan = 1) => ({
+  type: 'tablecell',
+  version: 1,
+  headerState,
+  colSpan,
+  rowSpan: 1,
+  children: [
+    {
+      type: 'paragraph',
+      version: 1,
+      children: [{ type: 'text', version: 1, text, format: 0, detail: 0, mode: 'normal', style: '' }],
+    },
+  ],
+});
+
+const row = (cells: unknown[]) => ({ type: 'tablerow', version: 1, children: cells });
+
+const tableState = {
+  root: {
+    type: 'root',
+    version: 1,
+    format: '',
+    indent: 0,
+    direction: 'ltr',
+    children: [
+      {
+        type: 'paragraph',
+        version: 1,
+        children: [
+          { type: 'text', version: 1, text: 'A table written in the admin editor:', format: 0, detail: 0, mode: 'normal', style: '' },
+        ],
+      },
+      {
+        type: 'table',
+        version: 1,
+        children: [
+          row([cell('Approach', 1), cell('What moves', 1), cell('Cleansing effort', 1)]),
+          row([cell('Brownfield', 2), cell('The existing system converts in place, customisation included.'), cell('Highest')]),
+          row([cell('Selective', 2), cell('Chosen company codes and objects move to a new system.'), cell('Moderate')]),
+          row([cell('Greenfield', 2), cell('Only master data and opening balances come across.'), cell('Lowest on legacy data')]),
+        ],
+      },
+    ],
+  },
+};
 
 const longQuote = {
   id: 'q-long',
@@ -155,6 +208,7 @@ const PAGES: [string, any][] = [
      template shows on all five and a fault in one page's data shows on one —
      rendering the set is how you tell those apart. */
   ['svc-sap', SapSvc],
+  ['svc-oracle', OracleSvc],
   ['svc-scada', ScadaSvc],
   ['svc-oilgas', OilGasSvc],
   ['svc-manufacturing', ManufacturingSvc],
@@ -164,6 +218,15 @@ const PAGES: [string, any][] = [
      renders as a lone card with no dots, several get the rail. Server-rendered
      here, so this is the first frame before hydration — which is exactly the
      frame that has to be right. */
+  /* A rich-text table, rendered through the same RichText component an article
+     uses. The point is the two things the converter does differently: no
+     <thead>, and a wrapper with no overflow — so this is also the case that
+     would catch a wide table pushing a phone page sideways. */
+  ['rich-table', () =>
+    React.createElement('section', { className: 'band' },
+      React.createElement('div', { className: 'wrap measure' },
+        React.createElement(RichText, { data: tableState })))],
+
   ['quotes-carousel', () =>
     React.createElement(QuoteCarousel, {
       label: 'client testimonials',

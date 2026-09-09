@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { resendAdapter } from '@payloadcms/email-resend';
-import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import { EXPERIMENTAL_TableFeature, lexicalEditor } from '@payloadcms/richtext-lexical';
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
@@ -207,7 +207,23 @@ export default buildConfig({
   collections: [Posts, Portfolio, Jobs, Testimonials, Clients, Enquiries, ToolLeads, Media, Users, RateLimits],
   globals: [SiteSettings],
 
-  editor: lexicalEditor(),
+  /*
+   * Tables in the rich-text editor, on top of everything the editor had before.
+   *
+   * `defaultFeatures` is spread rather than replaced: calling lexicalEditor with
+   * a features array and forgetting that spread silently removes bold, links,
+   * headings and the rest, and the loss only shows when somebody opens the
+   * editor.
+   *
+   * The name is Payload's, not a comment: it is exported as
+   * EXPERIMENTAL_TableFeature, which means the stored node shape can change
+   * between minor versions. Content already written is JSON in an existing
+   * column, so enabling this needs no migration — but a future Payload upgrade
+   * is the moment to re-check that old tables still render.
+   */
+  editor: lexicalEditor({
+    features: ({ defaultFeatures }) => [...defaultFeatures, EXPERIMENTAL_TableFeature()],
+  }),
 
   secret,
 

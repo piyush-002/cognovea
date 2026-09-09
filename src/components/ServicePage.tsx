@@ -18,7 +18,24 @@ import type { Service, ServiceSection } from '@/lib/services/types';
  * reordering content in the data file cannot produce two tinted bands in a row.
  */
 
-function Section({ section, tinted }: { section: ServiceSection; tinted: boolean }) {
+function Section({
+  section,
+  tinted,
+  media,
+}: {
+  section: ServiceSection;
+  tinted: boolean;
+  /**
+   * The page's diagram, shown beside this section rather than on its own.
+   *
+   * It sat in its own band and read as decoration between two arguments. Beside
+   * the opening section it illustrates the mechanism that section describes,
+   * which is the only place on the page where it is doing work rather than
+   * filling space. The alternative was the last section before the FAQ, and
+   * that puts the picture after the reader has already decided.
+   */
+  media?: React.ReactNode;
+}) {
   const head = (
     <div className="s-head rv">
       <p className="eyebrow">{section.eyebrow}</p>
@@ -27,10 +44,9 @@ function Section({ section, tinted }: { section: ServiceSection; tinted: boolean
     </div>
   );
 
-  return (
-    <section className={tinted ? 'band band--tint' : 'band'}>
-      <div className="wrap">
-        {head}
+  const body = (
+    <>
+      {head}
 
         {section.kind === 'prose' ? (
           <div className="measure rv">
@@ -108,6 +124,23 @@ function Section({ section, tinted }: { section: ServiceSection; tinted: boolean
             </table>
           </div>
         ) : null}
+    </>
+  );
+
+  return (
+    <section className={tinted ? 'band band--tint' : 'band'}>
+      <div className="wrap">
+        {media ? (
+          /* feature--copy, because the column beside it is long prose: it gives
+             the figure a taller crop so it balances the text instead of floating
+             at the top of a much longer column. */
+          <div className="feature feature--copy">
+            <div>{body}</div>
+            <div className="feature__media rv rv--right">{media}</div>
+          </div>
+        ) : (
+          body
+        )}
       </div>
     </section>
   );
@@ -140,7 +173,11 @@ export default function ServicePage({ service }: { service: Service }) {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">{service.eyebrow}</p>
-            <h1 className="h-xl">{service.h1}</h1>
+            {/* h-lg, not h-xl. h-xl runs to 5.8rem — it is the homepage's
+                one-line hero size, and a service page title is a sentence, not
+                a slogan. At that size it filled the screen and pushed the
+                proposition below the fold. */}
+            <h1 className="h-lg">{service.h1}</h1>
             <p className="lede">{service.standfirst}</p>
           </div>
 
@@ -157,17 +194,28 @@ export default function ServicePage({ service }: { service: Service }) {
             </div>
           </div>
 
-          <div className="figure figure--wide rv mt-3">
-            {/* eslint-disable-next-line @next/next/no-img-element -- flat SVG
-                artwork; the optimiser would cost a request and return the same
-                bytes it was given. */}
-            <img src={service.image.src} alt={service.image.alt} width={800} height={520} decoding="async" />
-          </div>
         </div>
       </section>
 
       {service.sections.map((section, i) => (
-        <Section key={section.heading} section={section} tinted={i % 2 === 0} />
+        <Section
+          key={section.heading}
+          section={section}
+          tinted={i % 2 === 0}
+          /* The diagram rides with the opening section. Every service page
+             opens with prose describing how the thing works, which is what the
+             drawing shows. */
+          media={
+            i === 0 ? (
+              <div className="figure svc-diagram">
+                {/* eslint-disable-next-line @next/next/no-img-element -- flat SVG
+                    artwork; the optimiser would cost a request and return the same
+                    bytes it was given. */}
+                <img src={service.image.src} alt={service.image.alt} width={800} height={520} decoding="async" />
+              </div>
+            ) : undefined
+          }
+        />
       ))}
 
       <section className="band band--deep">

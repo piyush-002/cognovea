@@ -79,6 +79,11 @@ export const serviceLinks: NavLink[] = [
     blurb: 'ECC data readiness and cleansing, before the cutover date is set.',
   },
   {
+    href: '/oracle-fusion-data-migration-services',
+    label: 'Oracle EBS to Fusion',
+    blurb: 'Conversion, mock loads and reconciliation on a Fusion Cloud programme.',
+  },
+  {
     href: '/fractional-data-leadership',
     label: 'Fractional Data Leadership',
     blurb: 'A senior data owner inside your business a few days a month.',
@@ -238,6 +243,7 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   { path: '/ai-strategy-consulting', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/data-health-check', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/sap-data-migration-services', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/oracle-fusion-data-migration-services', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/manufacturing-data-analytics', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/oil-and-gas-data-analytics', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/scada-data-analytics', priority: 0.9, changeFrequency: 'monthly' },

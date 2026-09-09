@@ -23,7 +23,7 @@ export const sapDataMigration: Service = {
       heading: 'The data question arrives before the migration partner does',
       lede: 'By the time a systems integrator is selected, the scope is usually already wrong.',
       body: [
-        'SAP has set mainstream maintenance for Business Suite 7 to end in 2027, with extended maintenance available beyond that at a premium. That deadline is what puts most manufacturers and energy operators into an S/4HANA conversation, and it is why so many of those conversations start at the wrong end — with a platform decision and a cutover date, agreed before anybody has looked at what the master data will actually support.',
+        'SAP has set mainstream maintenance for Business Suite 7 to end in 2027, with extended maintenance available beyond that at a premium. That deadline is what puts most manufacturers and energy operators into an S/4HANA conversation, and it is why so many of those conversations start at the wrong end, with a platform decision and a cutover date agreed before anybody has looked at what the master data will actually support.',
         'The pattern is consistent enough to predict. A programme is scoped assuming material, vendor and customer masters come across broadly as they are. Then someone profiles them properly, three months in, and finds duplicate material numbers across plants, units of measure that disagree between the master and the BOM, vendors that were created twice and paid under both, and a decade of Z-table extensions nobody documented. Cleansing was budgeted as a workstream and turns out to be the critical path.',
         'None of that is unusual, and none of it is a reason for alarm. It is a reason to look first. The work below is deliberately separable from the migration itself: you can have it done, and the findings in writing, without having chosen an implementation partner or committed to a date.',
       ],
@@ -36,7 +36,7 @@ export const sapDataMigration: Service = {
       steps: [
         {
           title: 'Read access, and a named person per module',
-          body: 'We need read access to the ECC system and one person who can answer questions in each area that matters — typically MM, SD, FI and PP. Not their time in workshops. Just someone we can ask when the data says something the documentation does not.',
+          body: 'We need read access to the ECC system and one person who can answer questions in each area that matters, typically MM, SD, FI and PP. Not their time in workshops. Just someone we can ask when the data says something the documentation does not.',
         },
         {
           title: 'We profile what is there, not what is documented',
@@ -71,7 +71,7 @@ export const sapDataMigration: Service = {
         ],
         [
           'Cleansing effort',
-          'Highest — mandatory pre-conversion fixes plus everything you chose not to fix.',
+          'Highest. Mandatory pre-conversion fixes, plus everything you chose not to fix.',
           'Moderate, and scoped to what you selected.',
           'Lowest on legacy data, highest on rebuilding master data correctly.',
         ],
@@ -122,7 +122,7 @@ export const sapDataMigration: Service = {
       heading: 'How much history to bring',
       body: [
         'Almost every programme brings more history than it needs, because nobody wants to be the person who said no and then gets asked for a five-year comparison. The result is a slower migration, a larger target system, and a longer cutover window.',
-        'It is a better conversation when it happens against numbers. We profile how far back the transactions actually get read — not how far back they exist — and what the reporting genuinely depends on. In most estates the answer is considerably less than the default, and the difference is measured in days of cutover.',
+        'It is a better conversation when it happens against numbers. We profile how far back the transactions actually get read, not how far back they exist, and what the reporting genuinely depends on. In most estates the answer is considerably less than the default, and the difference is measured in days of cutover.',
         'The rest does not have to be thrown away. History that stays reportable from an archive satisfies audit and satisfies the person who wanted the five-year comparison, without sitting in the live system.',
       ],
     },
