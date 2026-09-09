@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Arrow } from '@/components/Bits';
 import ClientLogos from '@/components/ClientLogos';
 import Counter from '@/components/Counter';
+import Price from '@/components/Price';
 import MarkCanvas from '@/components/MarkCanvas';
 import Marquee from '@/components/Marquee';
 import Rotator from '@/components/Rotator';
@@ -11,6 +12,7 @@ import Scroller from '@/components/Scroller';
 import Tabs from '@/components/Tabs';
 import Testimonial from '@/components/Testimonial';
 import { voice } from '@/lib/positioning';
+import { PRICES, type Money } from '@/lib/pricing';
 import { pageMetadata } from '@/lib/seo';
 
 /* Statically generated, and this page shows client logos and a testimonial,
@@ -52,16 +54,18 @@ const STACK = [
   'Looker',
 ];
 
-/* Durations and starting points from the documents, deliberately not results. */
-const FACTS: { n: number; prefix?: string; suffix?: string; label: string }[] = [
+/* Durations and starting points from the documents, deliberately not results.
+
+   The price is the one entry that is not a plain number, because it is two
+   numbers: rupees for a visitor in India, dollars for everyone else. It comes
+   from lib/pricing.ts and renders as a pair, one of which the CSS hides. */
+type Fact =
+  | { n: number; prefix?: string; suffix?: string; label: string }
+  | { price: Money; label: string };
+
+const FACTS: Fact[] = [
   { n: 2, suffix: ' wks', label: 'A Data Health Check runs two weeks, start to findings report.' },
-  // "Rs", not the ₹ glyph, because the three other places this figure appears
-  // are prose taken from the source documents and all of them read "Rs
-  // 1,50,000". This counter was the only one rendering it differently, and it
-  // is the only one of the four that is not document copy — so it moves, and
-  // the wording stays untouched. Flipping all four to ₹ would read better and
-  // means editing that copy, which is your call rather than mine.
-  { n: 150000, prefix: 'Rs ', label: 'Where the Data Health Check starts, scope depending.' },
+  { price: PRICES.healthCheckFrom, label: 'Where the Data Health Check starts, scope depending.' },
   { n: 90, suffix: ' days', label: 'Window in which part of the audit fee credits toward future work.' },
   { n: 8, prefix: '4–', label: 'A Managed Data Department runs as a team of four to eight.' },
 ];
@@ -293,7 +297,9 @@ export default function HomePage() {
             </div>
             <div className="fact">
               <div className="fact__k">From</div>
-              <div className="fact__v">Rs 1,50,000</div>
+              <div className="fact__v">
+                <Price amount={PRICES.healthCheckFrom} />
+              </div>
             </div>
             <Link className="btn btn--primary" href="/data-health-check">
               Book a Data Health Check
@@ -353,7 +359,20 @@ export default function HomePage() {
               {FACTS.map((f) => (
                 <div className="stat" key={f.label}>
                   <span className="stat__n">
-                    <Counter to={f.n} prefix={f.prefix} suffix={f.suffix} />
+                    {'price' in f ? (
+                      /* Both figures count up; only the one the CSS leaves
+                         visible is ever observed, so only it animates. */
+                      <span className="price">
+                        <span className="price__usd">
+                          <Counter to={f.price.usd} prefix="$" />
+                        </span>
+                        <span className="price__inr">
+                          <Counter to={f.price.inr} prefix="Rs " locale="en-IN" />
+                        </span>
+                      </span>
+                    ) : (
+                      <Counter to={f.n} prefix={f.prefix} suffix={f.suffix} />
+                    )}
                   </span>
                   <span className="stat__l">{f.label}</span>
                 </div>

@@ -5283,3 +5283,31 @@ tbody tr:hover {
     font-size: 1.28rem;
   }
 }
+
+/* --- Regional pricing -------------------------------------------------------
+
+   Both currencies are rendered into every page by Price.tsx; exactly one is
+   ever visible. The default is dollars, which is what a crawler indexes and
+   what a visitor with JavaScript disabled sees. The inline script in
+   layout.tsx sets data-geo="in" before first paint when the clock is on IST,
+   and that flips the pair.
+
+   display, not visibility or opacity: the hidden figure must take no space, or
+   the two would size the row together and the shorter one would sit in a box
+   built for the longer.                                                     */
+
+.price {
+  white-space: nowrap;
+}
+
+.price__inr {
+  display: none;
+}
+
+html[data-geo='in'] .price__usd {
+  display: none;
+}
+
+html[data-geo='in'] .price__inr {
+  display: inline;
+}
