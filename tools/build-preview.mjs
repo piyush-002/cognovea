@@ -26,12 +26,30 @@ function loadEsbuild() {
       /* try the next one */
     }
   }
-  throw new Error('esbuild not found. Run `npm install` first.');
+  return null;
 }
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, '..');
 const esbuild = loadEsbuild();
+
+/* esbuild is a native binary, and this harness has now been unrunnable in
+   three environments because of that: an absolute path baked in from one
+   sandbox, a Linux VM carrying macOS binaries, and a sandbox with the npm
+   registry blocked. Each time the harness silently did not run, and twice a
+   bug it would have caught reached Rishabh.
+
+   tools/require-tsx.cjs is the same harness driven by TypeScript's
+   transpiler, which is pure JavaScript and therefore always available. It is
+   slower and produces no bundle to screenshot, but it renders every case and
+   fails on exactly the same things. */
+if (!esbuild) {
+  console.log('esbuild unavailable; rendering via the TypeScript transpiler instead');
+  const require_ = createRequire(import.meta.url);
+  require_('./require-tsx.cjs');
+  require_('./render.tsx');
+  process.exit(0);
+}
 
 await esbuild.build({
   entryPoints: [path.join(here, 'render.tsx')],
