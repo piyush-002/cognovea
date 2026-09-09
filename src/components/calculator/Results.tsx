@@ -87,7 +87,7 @@ export default function Results({
                and can end up several times the labour cost. A large number
                nobody can trace looks like a trick; the same number with its
                working shown is an argument the reader can check or dispute. */
-            note={`${result.decisionLagDays} days late × ${formatCurrency(inputs.costPerDayOfDelay ?? 0)} a day × ${result.staleDecisionsPerYear.toLocaleString('en-IN')} decisions a year. Your figure, your arithmetic — if it looks too large, the day value is the number to revisit.`}
+            note={`${result.decisionLagDays} days late × ${formatCurrency(inputs.costPerDayOfDelay ?? 0)} a day × ${result.staleDecisionsPerYear.toLocaleString('en-US')} decisions a year. Your figure, your arithmetic — if it looks too large, the day value is the number to revisit.`}
           />
         ) : (
           <div className="calc-bar calc-bar--unpriced">
@@ -105,7 +105,7 @@ export default function Results({
                 {result.staleDecisionsPerYear > 0 ? (
                   <>
                     Decisions here are being made on data <strong>{result.decisionLagDays} working days old</strong>,
-                    around {result.staleDecisionsPerYear.toLocaleString('en-IN')} times a year.{' '}
+                    around {result.staleDecisionsPerYear.toLocaleString('en-US')} times a year.{' '}
                   </>
                 ) : (
                   <>

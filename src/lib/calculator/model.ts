@@ -72,17 +72,22 @@ function sane(n: unknown, lo: number, hi: number, fallback = 0): number {
 export const LIMITS = {
   people: [1, 5000],
   hoursPerWeek: [0, 60],
-  hourlyCost: [0, 100000],
+  /* Dollars per hour, fully loaded. Was [0, 100000], which was a sane
+     rupee ceiling and an absurd dollar one — it would have accepted a
+     six-figure hourly rate without complaint. */
+  hourlyCost: [0, 2000],
   reportsPerMonth: [0, 2000],
   decisionLagDays: [0, 60],
-  costPerDayOfDelay: [0, 100000000],
-  investment: [0, 1000000000],
+  // Likewise: ten crore a day was the rupee ceiling. A million dollars a
+  // day is the equivalent order of magnitude and still deliberately generous.
+  costPerDayOfDelay: [0, 1000000],
+  investment: [0, 10000000],
 } as const;
 
 /**
  * Clamp everything into range, and supply nothing where a value is missing.
  *
- * The fallbacks used to be 4 people, 8 hours a week, Rs 1600 an hour, 12 reports
+ * The fallbacks used to be 4 people, 8 hours a week, $60 an hour, 12 reports
  * a month — plausible numbers, close to what somebody would type. That made a
  * missing value indistinguishable from a real one: an empty field produced a
  * confident, sensible-looking result that the visitor had not entered, and
@@ -161,7 +166,7 @@ export function calculate(raw: Partial<Inputs>): Result {
    *
    * The value entered is PER DECISION, and the arithmetic is shown on the page
    * so nobody has to guess. That matters because this term compounds fast:
-   * three days at Rs 20,000 across 144 decisions is Rs 86 lakh, several times
+   * three days at $500 across 144 decisions is $216,000, several times
    * the labour cost. That may be true for a business where a late decision is
    * genuinely expensive, but it must be visibly the visitor's own arithmetic
    * rather than something the tool did quietly on their behalf.
@@ -218,12 +223,19 @@ export function calculate(raw: Partial<Inputs>): Result {
   };
 }
 
-/** Indian digit grouping, matching the rest of the site. */
+/**
+ * US dollars, US digit grouping.
+ *
+ * The locale matters as much as the symbol: 'en-IN' groups 150000 as 1,50,000,
+ * which is correct in India and reads as a typo everywhere this calculator is
+ * now aimed. Changing the glyph and leaving the locale would have produced
+ * "$1,50,000" — worse than either currency done properly.
+ */
 export function formatCurrency(n: number): string {
   const rounded = Math.round(n);
-  return `Rs ${rounded.toLocaleString('en-IN')}`;
+  return `$${rounded.toLocaleString('en-US')}`;
 }
 
 export function formatHours(n: number): string {
-  return `${Math.round(n).toLocaleString('en-IN')} hrs`;
+  return `${Math.round(n).toLocaleString('en-US')} hrs`;
 }

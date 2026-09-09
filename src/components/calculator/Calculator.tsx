@@ -254,7 +254,7 @@ export default function Calculator() {
           </div>
           <div className="field">
             <label htmlFor="cost">
-              Fully loaded cost per hour (Rs)
+              Fully loaded cost per hour ($)
               <InfoTip label="cost per hour">
                 The shortcuts below are starting points, not survey data. Type your own and the calculation follows
                 your number.
@@ -341,7 +341,7 @@ export default function Calculator() {
         {showAdvanced && (
           <div className="calc__advanced">
             <div className="field">
-              <label htmlFor="daycost">What does a day of delay cost, per decision? (Rs)</label>
+              <label htmlFor="daycost">What does a day of delay cost, per decision? ($)</label>
               <input id="daycost" type="number" inputMode="numeric" min={0} {...field('costPerDayOfDelay', 'Leave blank if unsure')} />
               <p className="field__hint">
                 Per decision, not for the business as a whole — it is multiplied by the days late and the number of
@@ -350,7 +350,7 @@ export default function Calculator() {
               </p>
             </div>
             <div className="field">
-              <label htmlFor="investment">What would you expect to invest? (Rs)</label>
+              <label htmlFor="investment">What would you expect to invest? ($)</label>
               <input id="investment" type="number" inputMode="numeric" min={0} {...field('investment', 'For a payback figure')} />
               <p className="field__hint">Only used to work out payback against your own savings. We quote no price here.</p>
             </div>
