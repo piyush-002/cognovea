@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="">
+
+  <defs>
+    <radialGradient id="nxt-a" cx="28%" cy="26%" r="56%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity=".60"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="nxt-b" cx="74%" cy="72%" r="52%">
+      <stop offset="0%" stop-color="#4F6BF0" stop-opacity=".36"/>
+      <stop offset="100%" stop-color="#4F6BF0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="nxt-c" cx="86%" cy="18%" r="34%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="nxt-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="55%" stop-color="#4F6BF0"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+    <filter id="nxt-blur" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="52"/>
+    </filter>
+    <marker id="nxt-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0A1024" fill-opacity=".55"/>
+    </marker>
+  </defs>
+  <rect width="800" height="520" fill="#FFFFFF"/>
+  <g filter="url(#nxt-blur)" opacity="0.85">
+    <rect width="800" height="520" fill="url(#nxt-a)"/>
+    <rect width="800" height="520" fill="url(#nxt-b)"/>
+    <rect width="800" height="520" fill="url(#nxt-c)"/>
+  </g>
+<line x1="86" y1="442" x2="736" y2="442" stroke="#0A1024" stroke-opacity=".2" stroke-width="1.25"/><line x1="86" y1="96" x2="86" y2="442" stroke="#0A1024" stroke-opacity=".2" stroke-width="1.25"/><line x1="86" y1="196" x2="736" y2="196" stroke="#7C3AED" stroke-opacity=".42"
+      stroke-width="1.75" stroke-dasharray="6 7"/><path d="M116,386 L162,360 L208,372 L254,326 L300,340 L346,300 L392,288" fill="none"
+      stroke="#0A1024" stroke-opacity=".5" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/><circle cx="116" cy="386" r="3.6" fill="#0A1024" fill-opacity="0.45"/><circle cx="162" cy="360" r="3.6" fill="#0A1024" fill-opacity="0.45"/><circle cx="208" cy="372" r="3.6" fill="#0A1024" fill-opacity="0.45"/><circle cx="254" cy="326" r="3.6" fill="#0A1024" fill-opacity="0.45"/><circle cx="300" cy="340" r="3.6" fill="#0A1024" fill-opacity="0.45"/><circle cx="346" cy="300" r="3.6" fill="#0A1024" fill-opacity="0.45"/><circle cx="392" cy="288" r="3.6" fill="#0A1024" fill-opacity="0.45"/><line x1="392" y1="118" x2="392" y2="442" stroke="#0A1024" stroke-opacity=".3"
+      stroke-width="1.5" stroke-dasharray="4 6"/><path d="M392,288 C486,242 604,186 736,132 L736,314 C604,318 486,300 392,288 Z"
+      fill="url(#nxt-stroke)" fill-opacity=".16"/><path d="M392,288 C486,242 604,186 736,132" fill="none" stroke="url(#nxt-stroke)"
+      stroke-opacity=".55" stroke-width="1.5"/><path d="M392,288 C486,300 604,318 736,314" fill="none" stroke="url(#nxt-stroke)"
+      stroke-opacity=".55" stroke-width="1.5"/><path d="M392,288 C486,258 570,208 736,152" fill="none" stroke="url(#nxt-stroke)"
+      stroke-opacity=".95" stroke-width="2.75" stroke-dasharray="8 6" stroke-linecap="round"/><circle cx="617.7" cy="195.8" r="9.5" fill="#FFFFFF"
+      stroke="url(#nxt-stroke)" stroke-width="2.5"/><circle cx="617.7" cy="195.8" r="3.4" fill="#7C3AED" fill-opacity="0.95"/>
+</svg>

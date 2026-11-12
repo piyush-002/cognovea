@@ -96,6 +96,21 @@ const store = (id, cx, cy, w, h, accent = false) => {
   </g>`;
 };
 
+/** Bars, for the panels that are standing in for a chart. The last one is
+    accented, because in every one of these drawings it is the figure that
+    matters rather than the series. */
+const bars = (id, x, y, w, h, heights) => {
+  const bw = w / (heights.length * 1.75);
+  const gap = (w - bw * heights.length) / (heights.length - 1);
+  return heights.map((f, i) => {
+    const bh = Math.round(h * f);
+    const accent = i === heights.length - 1;
+    return `<rect x="${(x + i * (bw + gap)).toFixed(1)}" y="${y + h - bh}"
+      width="${bw.toFixed(1)}" height="${bh}" rx="3"
+      fill="${accent ? `url(#${id}-stroke)` : INK}" fill-opacity="${accent ? 0.9 : 0.22}"/>`;
+  }).join('');
+};
+
 const svg = (id, body) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="">
 ${defs(id)}
@@ -284,6 +299,192 @@ function oracleFusion() {
   return svg(id, s);
 }
 
+/** A goal broken into tasks, checked, and stopped at a person before it lands. */
+function agentic() {
+  const id = 'agt';
+  let s = '';
+
+  // The request arriving as a goal rather than as a script.
+  s += box(id, 56, 232, 104, 56);
+  s += rows(74, 250, 68, 2);
+  s += link(id, `M160,260 H190`, { accent: false });
+
+  // The planner. Accented: deciding the plan is the thing RPA cannot do.
+  s += box(id, 196, 220, 104, 80, { accent: true, r: 12 });
+  s += dot(248, 248, 3.4, INK, 0.32);
+  s += rows(216, 264, 64, 2);
+
+  // Workers, fanned out, doing one thing each.
+  const workers = [96, 228, 360];
+  workers.forEach((y) => {
+    s += box(id, 348, y, 108, 64);
+    s += rows(366, y + 20, 72, 3);
+    s += link(id, `M300,260 C322,260 326,${y + 32} 342,${y + 32}`, { accent: false, arrow: true });
+    s += link(id, `M456,${y + 32} C480,${y + 32} 486,260 502,260`, { accent: false, arrow: false });
+  });
+
+  // The reviewer: the step that stops an agent marking its own homework.
+  s += box(id, 508, 220, 104, 80, { r: 12 });
+  s += `<path d="M534,256 l12,12 l22,-26" fill="none" stroke="url(#${id}-stroke)"
+      stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+  s += rows(528, 278, 64, 1);
+  s += link(id, `M612,260 H642`, { accent: false });
+
+  // What lands, once it has been checked and approved.
+  s += box(id, 648, 228, 92, 64);
+  s += rows(666, 248, 56, 3);
+
+  // The high-risk branch: down to a person, and only then onward.
+  s += link(id, `M560,300 V396`, { dash: '6 7' });
+  s += box(id, 452, 396, 164, 76, { accent: true, r: 12 });
+  s += `<g transform="translate(486,434)">
+      <circle cx="0" cy="-7" r="6.4" fill="none" stroke="${INK}" stroke-opacity=".62" stroke-width="2"/>
+      <path d="M-11,9 a11,10 0 0 1 22,0" fill="none" stroke="${INK}" stroke-opacity=".62"
+        stroke-width="2" stroke-linecap="round"/>
+    </g>`;
+  s += rows(514, 422, 76, 3);
+  s += link(id, `M616,434 C664,434 694,400 694,300`, { dash: '6 7' });
+
+  // The audit trail: every decision written down, which is what makes the rest
+  // of it signable off.
+  s += box(id, 56, 396, 264, 76, { r: 12 });
+  [0, 1, 2].forEach((i) => {
+    const y = 414 + i * 20;
+    s += dot(78, y, 3.2, INK, 0.3);
+    s += rows(94, y - 2, 196, 1);
+  });
+  s += link(id, `M248,300 V390`, { accent: false, dash: '4 7' });
+  s += link(id, `M320,434 H446`, { accent: false, arrow: false, dash: '4 7' });
+  return svg(id, s);
+}
+
+/** Your data, the boundary around it, and the business on the other side. */
+function enterpriseAi() {
+  const id = 'eai';
+  let s = '';
+
+  // The perimeter. Drawn first and dashed, because the whole argument of this
+  // page is that the boundary is where the engineering is.
+  s += `<rect x="56" y="88" width="468" height="352" rx="18" fill="#FFFFFF" fill-opacity=".55"
+      stroke="url(#${id}-stroke)" stroke-opacity=".75" stroke-width="2" stroke-dasharray="9 8"/>`;
+
+  // Inside: what is yours. Sources into a store.
+  [[88, 132], [88, 196], [88, 260]].forEach(([x, y]) => {
+    s += box(id, x, y, 92, 44);
+    s += rows(x + 14, y + 15, 58, 2);
+    s += link(id, `M180,${y + 22} C212,${y + 22} 214,322 232,322`, { accent: false, arrow: false });
+  });
+  s += store(id, 286, 330, 104, 96, true);
+
+  // Inside: the architecture that reads it. Three stages, stacked.
+  [140, 212, 284].forEach((y, i) => {
+    s += box(id, 372, y, 128, 52);
+    s += dot(392, y + 26, 3.4, INK, 0.3);
+    s += rows(406, y + 18, 76, 2);
+    if (i > 0) s += link(id, `M436,${y} V${y - 20}`, { accent: false, arrow: false });
+  });
+  s += link(id, `M340,324 C356,324 356,312 366,310`);
+
+  // The one controlled way out. Everything crosses here or not at all.
+  s += `<circle cx="524" cy="264" r="18" fill="#FFFFFF" stroke="url(#${id}-stroke)" stroke-width="2.5"/>`;
+  s += dot(524, 264, 4.5, VIOLET, 0.9);
+  s += link(id, `M500,236 C512,236 518,250 522,258`, { accent: false, arrow: false });
+
+  // Outside: the business, served without the data leaving.
+  [[600, 150], [600, 240], [600, 330]].forEach(([x, y]) => {
+    s += box(id, x, y, 144, 68);
+    s += rows(x + 20, y + 22, 96, 3);
+    s += link(id, `M542,264 C566,264 572,${y + 34} 594,${y + 34}`, { accent: false });
+  });
+  return svg(id, s);
+}
+
+/** One trusted figure, and the two layers that are the reason you can trust it. */
+function dataQuality() {
+  const id = 'dqg';
+  let s = '';
+
+  // The number leadership actually reads. Accented: everything below exists so
+  // that this one is right the first time.
+  s += box(id, 430, 66, 250, 132, { accent: true, r: 14 });
+  s += `<rect x="458" y="96" width="104" height="14" rx="7" fill="url(#${id}-stroke)" fill-opacity=".9"/>`;
+  s += rows(458, 126, 118, 2);
+  s += bars(id, 458, 150, 190, 32, [0.5, 0.68, 0.58, 0.82]);
+
+  // The quality layer: accuracy, completeness, consistency, timeliness.
+  s += box(id, 206, 244, 474, 88, { r: 12 });
+  [258, 372, 486, 600].forEach((x) => {
+    s += `<circle cx="${x}" cy="288" r="15" fill="#FFFFFF" stroke="${INK}" stroke-opacity=".2" stroke-width="1.25"/>`;
+    s += `<path d="M${x - 6},${288} l4.5,4.5 l8,-9.5" fill="none" stroke="url(#${id}-stroke)"
+        stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  });
+
+  // The governance layer: an owner, a written rule, and the trail back.
+  s += box(id, 206, 368, 474, 96, { r: 12 });
+  s += `<g transform="translate(258,416)">
+      <circle cx="0" cy="-7" r="6.4" fill="none" stroke="${INK}" stroke-opacity=".62" stroke-width="2"/>
+      <path d="M-11,9 a11,10 0 0 1 22,0" fill="none" stroke="${INK}" stroke-opacity=".62"
+        stroke-width="2" stroke-linecap="round"/>
+    </g>`;
+  s += `<rect x="318" y="392" width="58" height="48" rx="7" fill="#FFFFFF" fill-opacity=".95"
+      stroke="url(#${id}-stroke)" stroke-opacity=".8" stroke-width="1.75"/>`;
+  s += rows(330, 404, 34, 3, 9);
+  s += rows(406, 400, 232, 3, 13);
+
+  // The source the figure came from, and the lineage back to it.
+  s += store(id, 110, 416, 92, 72, false);
+  s += link(id, `M156,416 H196`, { accent: false, dash: '5 7' });
+
+  // Bottom to top: source, governed, checked, reported.
+  s += link(id, `M600,368 V336`, { arrow: false, accent: false });
+  s += link(id, `M286,368 V336`, { arrow: false, accent: false });
+  s += link(id, `M600,244 V200`, { arrow: false, accent: false });
+  s += link(id, `M470,244 V200`, { arrow: false, accent: false });
+  return svg(id, s);
+}
+
+/** Source, foundation, analysis, insight, decision — the page's own spine. */
+function dataAnalytics() {
+  const id = 'dan';
+  let s = '';
+
+  // Where it starts: systems that were never meant to be read together.
+  [140, 236, 332].forEach((y) => {
+    s += box(id, 56, y, 88, 50);
+    s += rows(70, y + 17, 56, 2);
+    s += link(id, `M144,${y + 25} C166,${y + 25} 168,256 184,256`, { accent: false, arrow: false });
+  });
+
+  // The foundation. Accented, because the argument of the page is that this is
+  // what decides whether anything above it can be trusted.
+  s += box(id, 190, 134, 116, 244, { accent: true, r: 14 });
+  s += store(id, 248, 214, 80, 64, false);
+  s += rows(212, 272, 72, 4);
+  s += link(id, `M306,256 H338`, { accent: false });
+
+  // The analysis sitting on it.
+  s += box(id, 350, 158, 168, 196, { r: 12 });
+  s += rows(372, 184, 108, 2);
+  s += bars(id, 372, 220, 124, 94, [0.44, 0.6, 0.52, 0.78]);
+  s += link(id, `M518,256 H552`, { accent: false });
+
+  // The insight: the one reading that changes what somebody does.
+  s += `<circle cx="578" cy="256" r="20" fill="#FFFFFF" stroke="url(#${id}-stroke)" stroke-width="2.5"/>`;
+  s += `<path d="M569,262 l7,-8 l5,5 l9,-12" fill="none" stroke="url(#${id}-stroke)"
+      stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  s += link(id, `M598,256 H630`, { accent: false });
+
+  // And the decision it reaches.
+  s += box(id, 642, 196, 104, 120, { r: 12 });
+  s += `<g transform="translate(676,232)">
+      <circle cx="0" cy="-6" r="6" fill="none" stroke="${INK}" stroke-opacity=".62" stroke-width="2"/>
+      <path d="M-10,8 a10,9 0 0 1 20,0" fill="none" stroke="${INK}" stroke-opacity=".62"
+        stroke-width="2" stroke-linecap="round"/>
+    </g>`;
+  s += rows(662, 258, 66, 3);
+  return svg(id, s);
+}
+
 const OUT = [
   ['sv-sap-readiness.svg', sapReadiness()],
   ['sv-oracle-fusion.svg', oracleFusion()],
@@ -291,6 +492,10 @@ const OUT = [
   ['sv-oilgas.svg', oilGas()],
   ['sv-manufacturing.svg', manufacturing()],
   ['sv-fractional.svg', fractional()],
+  ['sv-agentic.svg', agentic()],
+  ['sv-enterprise-ai.svg', enterpriseAi()],
+  ['sv-data-quality.svg', dataQuality()],
+  ['sv-data-analytics.svg', dataAnalytics()],
 ];
 
 const dir = path.join(process.cwd(), 'public/img');

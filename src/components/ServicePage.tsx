@@ -71,6 +71,13 @@ function Section({
               <div key={c.title} className="card card--pad-lg">
                 <h3>{c.title}</h3>
                 <p className="mt-3">{c.body}</p>
+                {c.bullets && c.bullets.length > 0 ? (
+                  <ul className="card__points">
+                    {c.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                ) : null}
               </div>
             ))}
           </div>

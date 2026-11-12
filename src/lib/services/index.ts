@@ -1,4 +1,8 @@
 import type { Service } from './types';
+import { agenticWorkflowAutomation } from './agentic-workflow-automation';
+import { dataAnalyticsServices } from './data-analytics-services';
+import { dataQualityGovernance } from './data-quality-governance';
+import { enterpriseAiConsulting } from './enterprise-ai-consulting';
 import { fractionalDataLeadership } from './fractional-data-leadership';
 import { manufacturingAnalytics } from './manufacturing';
 import { oilAndGasAnalytics } from './oil-and-gas';
@@ -14,11 +18,15 @@ export type { Service, ServiceSection } from './types';
  * biggest-sounding terms first.
  *
  * The remaining pages in the plan — data governance, predictive analytics,
- * business intelligence, RAG, MLOps, agentic AI, platforms, managed services —
- * are specified in the screen and keyword map and are deliberately not stubbed
+ * business intelligence, RAG, MLOps, platforms, managed services — are
+ * specified in the screen and keyword map and are deliberately not stubbed
  * here. An empty page ranks worse than no page.
  */
 export const SERVICES: Service[] = [
+  dataAnalyticsServices,
+  dataQualityGovernance,
+  enterpriseAiConsulting,
+  agenticWorkflowAutomation,
   sapDataMigration,
   oracleFusionDataMigration,
   scadaDataAnalytics,
@@ -30,6 +38,10 @@ export const SERVICES: Service[] = [
 export const getService = (slug: string): Service | undefined => SERVICES.find((s) => s.slug === slug);
 
 export {
+  dataAnalyticsServices,
+  dataQualityGovernance,
+  enterpriseAiConsulting,
+  agenticWorkflowAutomation,
   sapDataMigration,
   oracleFusionDataMigration,
   scadaDataAnalytics,

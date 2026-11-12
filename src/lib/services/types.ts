@@ -27,7 +27,11 @@ export type ServiceSection =
       lede?: string;
       /** Three reads best at this width; two is right for longer bodies. */
       cols?: 2 | 3;
-      cards: { title: string; body: string }[];
+      /** `bullets` is for the cards that genuinely carry a short list — the
+          capability blocks on the category page name three concrete things
+          each. Optional, because most cards are a paragraph and a list of one
+          or two items reads as padding. */
+      cards: { title: string; body: string; bullets?: string[] }[];
     }
   | {
       kind: 'steps';
