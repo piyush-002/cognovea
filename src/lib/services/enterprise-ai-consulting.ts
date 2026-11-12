@@ -187,7 +187,7 @@ export const enterpriseAiConsulting: Service = {
   faq: [
     {
       q: 'What is the difference between generative AI and agentic AI for buyers?',
-      a: 'It comes down to action versus text. Generative models produce static output — a drafted email, a summarised PDF. If the goal is to automate a function rather than assist a person, you need agentic systems. An agent has autonomy: it takes a high-level objective, breaks it into steps, works with your other software to gather what it needs, and carries out the action itself.',
+      a: 'It comes down to action versus text. Generative models produce static output: a drafted email, a summarised PDF. If the goal is to automate a function rather than assist a person, you need agentic systems. An agent has autonomy: it takes a high-level objective, breaks it into steps, works with your other software to gather what it needs, and carries out the action itself.',
     },
     {
       q: 'Why invest in AI agents rather than AI assistants?',

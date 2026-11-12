@@ -207,7 +207,7 @@ export const agenticWorkflowAutomation: Service = {
     },
     {
       q: 'How do we maintain human control over autonomous agents?',
-      a: 'Through a human-in-the-loop framework and hard operational guardrails written into the system before it goes live: explicit boundaries, budget limits and data access restrictions. For a high-stakes action — moving money, writing to a system of record, sending something to a client — the agent is not able to proceed by itself. It pauses, produces a summary of what it found and what it intends to do, and waits for a person to authorise it.',
+      a: 'Through a human-in-the-loop framework and hard operational guardrails written into the system before it goes live: explicit boundaries, budget limits and data access restrictions. For a high-stakes action, such as moving money, writing to a system of record or sending something to a client, the agent is not able to proceed by itself. It pauses, produces a summary of what it found and what it intends to do, and waits for a person to authorise it.',
     },
     {
       q: 'How do you stop an agent hallucinating or making a bad operational call?',
