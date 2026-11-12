@@ -1,4 +1,5 @@
 import { CANONICAL_URL } from './host-redirect.mjs';
+import { byPositioning, POSITIONING, voice } from './positioning';
 /**
  * Single source of truth for site-wide values: URLs, contact details, nav.
  * Change the domain here once and canonicals, sitemap, robots and JSON-LD follow.
@@ -6,14 +7,13 @@ import { CANONICAL_URL } from './host-redirect.mjs';
 
 export const site = {
   name: 'Cognovea',
-  tagline: 'Where Data Becomes Intelligence.',
+  tagline: voice.tagline,
   /* Imported, not restated. next.config.mjs needs the same value for the www
      redirect and cannot import a .ts module, so it lives in host-redirect.mjs
      and both read it from there. Two copies of this string is exactly the bug
      being fixed: canonicals said the apex while every real URL was www. */
   url: CANONICAL_URL,
-  description:
-    'Cognovea turns enterprise data into intelligence. Data analytics, business intelligence, data engineering and AI solutions that drive data-driven decision making.',
+  description: voice.siteDescription,
   email: 'hello@cognovea.com',
   phones: ['+91 98937 38323', '+91 99242 99318'],
   locations: {
@@ -52,7 +52,44 @@ export type NavLink = {
   blurb?: string;
 };
 
-export const serviceLinks: NavLink[] = [
+/** A named column inside a dropdown. `id` is only ever a CSS/aria hook. */
+export type NavGroup = {
+  id: string;
+  label: string;
+  /** Sits under the group heading, above its links. One line, no full stop. */
+  note: string;
+  links: NavLink[];
+};
+
+/*
+ * What We Do is split into two named columns rather than one list of eleven.
+ *
+ * Eleven items with a description each is not a menu anybody reads; it is a
+ * page that happens to be inside a panel. Worse, flat order was the only thing
+ * saying how the offers relate, so "Oracle EBS to Fusion" and "Agentic Workflow
+ * Automation" sat as peers at the same depth, and a visitor had to already know
+ * the business to tell a migration project from an AI build.
+ *
+ * Naming the two columns does the work the ordering was failing at: it states
+ * that there are two kinds of engagement here, which one a given page belongs
+ * to, and — because each column has a category page at its head — where to go
+ * when none of the specific entries is quite it.
+ *
+ * It also makes the boundary explicit and countable, which matters right now:
+ * whatever sits in the AI column is exactly the set that moves if the AI work
+ * goes to a separate brand. Today that is four pages, not two.
+ */
+const DATA_SERVICES: NavLink[] = [
+  {
+    href: '/data-analytics-services',
+    label: 'Data Analytics Services',
+    blurb: 'The category page: engineering, platforms, quality, BI, prediction and what they feed.',
+  },
+  {
+    href: '/data-quality-and-governance-services',
+    label: 'Data Quality & Governance',
+    blurb: 'Owners, rules and automatic checks, so the numbers stop being argued about.',
+  },
   {
     href: '/data-engineering-services',
     label: 'Data Engineering Services',
@@ -62,16 +99,6 @@ export const serviceLinks: NavLink[] = [
     href: '/data-modernization-services',
     label: 'Data Modernization Services',
     blurb: 'Move off legacy systems onto a modern, AI-ready cloud stack.',
-  },
-  {
-    href: '/generative-ai-services',
-    label: 'Generative AI Services',
-    blurb: 'RAG, conversational BI, AI agents and document automation.',
-  },
-  {
-    href: '/ai-strategy-consulting',
-    label: 'AI Strategy & Consulting',
-    blurb: 'Readiness, use-case discovery, roadmap and governance.',
   },
   {
     href: '/sap-data-migration-services',
@@ -90,6 +117,64 @@ export const serviceLinks: NavLink[] = [
   },
 ];
 
+const AI_SERVICES: NavLink[] = [
+  {
+    href: '/enterprise-ai-consulting',
+    label: 'Enterprise AI Consulting',
+    blurb: 'The category page: strategy, build, retrieval, BI, prediction and the ops underneath.',
+  },
+  {
+    href: '/ai-strategy-consulting',
+    label: 'AI Strategy & Consulting',
+    blurb: 'Readiness, use-case discovery, roadmap and governance.',
+  },
+  {
+    href: '/generative-ai-services',
+    label: 'Generative AI Services',
+    blurb: 'RAG, conversational BI, AI agents and document automation.',
+  },
+  {
+    href: '/agentic-workflow-automation',
+    label: 'Agentic Workflow Automation',
+    blurb: 'Multi-agent systems that re-plan when a step fails, with a human on the approvals.',
+  },
+];
+
+/* byPositioning is applied inside the AI column, not across the whole menu.
+   Its job was always to decide which AI pages lead; with the columns named,
+   which *kind of work* leads is the group order below, and the function is
+   left doing the narrower thing it is actually good at. */
+const DATA_GROUP: NavGroup = {
+  id: 'data',
+  label: 'Data',
+  note: 'Getting the foundation right',
+  links: DATA_SERVICES,
+};
+
+const AI_GROUP: NavGroup = {
+  id: 'ai',
+  label: 'AI',
+  note: 'Built on top of it',
+  links: byPositioning(AI_SERVICES),
+};
+
+/**
+ * The two columns, ordered by whichever positioning is live.
+ *
+ * Under the data narrative Data leads, which is what the site says today. Under
+ * the AI narrative the columns swap — a menu is read left to right, and the
+ * first column is the one that says what kind of company this is.
+ */
+export const serviceGroups: NavGroup[] = POSITIONING === 'ai' ? [AI_GROUP, DATA_GROUP] : [DATA_GROUP, AI_GROUP];
+
+/**
+ * The same links, flat, for the places that want a single list: the footer
+ * column, the 404 page, and the "is the current route in this menu" check.
+ * Derived rather than declared, so a page cannot be added to the menu and
+ * missed in the footer.
+ */
+export const serviceLinks: NavLink[] = serviceGroups.flatMap((g) => g.links);
+
 /*
  * Industries get their own menu rather than living under Resources.
  *
@@ -99,6 +184,12 @@ export const serviceLinks: NavLink[] = [
  * the commercial pages for those sectors; the playbooks stay in Resources, which
  * is what they are.
  */
+/* SCADA is deliberately NOT here.
+   It is a capability demonstrated inside energy work, not an industry Cognovea
+   serves, and listing it beside Manufacturing and Oil & Gas presented one
+   system type in one sector as a third of what the business does. It keeps its
+   page, its route and its place in the sitemap, and it is reached from the Oil
+   & Gas page, which is how the work actually arrived. */
 export const industryLinks: NavLink[] = [
   {
     href: '/manufacturing-data-analytics',
@@ -109,11 +200,6 @@ export const industryLinks: NavLink[] = [
     href: '/oil-and-gas-data-analytics',
     label: 'Oil & Gas',
     blurb: 'Production, deferment and asset reporting operations and finance share.',
-  },
-  {
-    href: '/scada-data-analytics',
-    label: 'SCADA & Historian Data',
-    blurb: 'Operational data out of the control layer, without touching it.',
   },
 ];
 
@@ -242,6 +328,10 @@ export const routes: { path: string; priority: number; changeFrequency: 'weekly'
   { path: '/generative-ai-services', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/ai-strategy-consulting', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/data-health-check', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/data-analytics-services', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/data-quality-and-governance-services', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/enterprise-ai-consulting', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/agentic-workflow-automation', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/sap-data-migration-services', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/oracle-fusion-data-migration-services', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/manufacturing-data-analytics', priority: 0.9, changeFrequency: 'monthly' },

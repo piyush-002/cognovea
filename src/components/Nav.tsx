@@ -11,8 +11,23 @@ import {
   navCompanyLinks,
   navPrimaryLinks,
   navResourceLinks,
+  type NavGroup,
+  type NavLink,
+  serviceGroups,
   serviceLinks,
 } from '@/lib/site';
+
+/** One entry, identical whether it sits in a plain menu or a named column. */
+function NavItem({ link, current }: { link: NavLink; current: (href: string) => 'page' | undefined }) {
+  return (
+    <li>
+      <Link href={link.href} aria-current={current(link.href)}>
+        <strong>{link.label}</strong>
+        {link.blurb ? <small>{link.blurb}</small> : null}
+      </Link>
+    </li>
+  );
+}
 
 /**
  * One dropdown, used four times.
@@ -22,11 +37,18 @@ import {
  * different aria-expanded binding, or one menu keeps a hover style the others
  * lost. The open state still lives in Nav, because only Nav can know that
  * opening one closes the others.
+ *
+ * Pass `links` for a plain list, or `groups` for named columns. Only What We Do
+ * uses columns, and it is still this component rather than a second one so the
+ * trigger, the aria wiring and the open/close behaviour cannot drift apart —
+ * the part that differs is the panel body, and that is the only part that
+ * branches.
  */
 function NavDropdown({
   id,
   label,
   links,
+  groups,
   active,
   open,
   onToggle,
@@ -35,7 +57,8 @@ function NavDropdown({
 }: {
   id: string;
   label: string;
-  links: { href: string; label: string; blurb?: string }[];
+  links?: NavLink[];
+  groups?: NavGroup[];
   /** The current route is inside this menu, so its trigger reads as selected. */
   active: boolean;
   open: boolean;
@@ -43,6 +66,10 @@ function NavDropdown({
   current: (href: string) => 'page' | undefined;
   narrow?: boolean;
 }) {
+  const menuClass = groups
+    ? 'c-nav__menu c-nav__menu--groups'
+    : `c-nav__menu${narrow ? ' c-nav__menu--narrow' : ''}`;
+
   return (
     <li className={`c-nav__item${open ? ' is-open' : ''}`}>
       <button
@@ -59,16 +86,33 @@ function NavDropdown({
           <path d="M2 4.5 6 8.5 10 4.5" />
         </svg>
       </button>
-      <ul id={`nav-menu-${id}`} className={`c-nav__menu${narrow ? ' c-nav__menu--narrow' : ''}`}>
-        {links.map((l) => (
-          <li key={l.href}>
-            <Link href={l.href} aria-current={current(l.href)}>
-              <strong>{l.label}</strong>
-              {l.blurb ? <small>{l.blurb}</small> : null}
-            </Link>
-          </li>
-        ))}
-      </ul>
+
+      {groups ? (
+        /* A div, not a ul, because the columns are sections with headings and a
+           list whose items are themselves lists reads as one flat set to a
+           screen reader. Each column keeps its own ul, labelled by its heading. */
+        <div id={`nav-menu-${id}`} className={menuClass}>
+          {groups.map((g) => (
+            <section key={g.id} className="c-nav__group" aria-labelledby={`nav-group-${id}-${g.id}`}>
+              <p className="c-nav__group-head" id={`nav-group-${id}-${g.id}`}>
+                <span className="c-nav__group-label">{g.label}</span>
+                <span className="c-nav__group-note">{g.note}</span>
+              </p>
+              <ul>
+                {g.links.map((l) => (
+                  <NavItem key={l.href} link={l} current={current} />
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <ul id={`nav-menu-${id}`} className={menuClass}>
+          {(links ?? []).map((l) => (
+            <NavItem key={l.href} link={l} current={current} />
+          ))}
+        </ul>
+      )}
     </li>
   );
 }
@@ -151,7 +195,7 @@ export default function Nav() {
               <NavDropdown
                 id="services"
                 label="What We Do"
-                links={serviceLinks}
+                groups={serviceGroups}
                 active={inServices}
                 open={openMenu === 'services'}
                 onToggle={() => setOpenMenu((v) => (v === 'services' ? null : 'services'))}
@@ -248,14 +292,20 @@ export default function Nav() {
         </div>
 
         <div className="wrap c-drawer__body">
-          <div className="c-drawer__group">
-            <span className="eyebrow">What We Do</span>
-            {serviceLinks.map((l) => (
-              <Link key={l.href} href={l.href}>
-                {l.label}
-              </Link>
-            ))}
-          </div>
+          {/* Same two columns as the desktop menu, stacked. The drawer had all
+              eleven under one heading, which on a phone is a scroll with no
+              landmarks in it; the headings are what let somebody stop reading
+              once they know which half they are in. */}
+          {serviceGroups.map((g) => (
+            <div className="c-drawer__group" key={g.id}>
+              <span className="eyebrow">What We Do · {g.label}</span>
+              {g.links.map((l) => (
+                <Link key={l.href} href={l.href}>
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+          ))}
 
           <div className="c-drawer__group">
             <span className="eyebrow">Industries</span>

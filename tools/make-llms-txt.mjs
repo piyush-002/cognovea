@@ -56,9 +56,16 @@ const load = (key) => {
      meant adding a service page made this tool return undefined for it — no
      error, just a hole in the array — and the failure surfaced three steps
      later as "Cannot read properties of undefined". */
-  const file =
-    FILES[key] ?? (key.startsWith('./') ? `src/lib/services/${key.slice(2)}.ts` : undefined);
-  if (!file || !fs.existsSync(path.join(root, file))) return {};
+  /* Relative specifiers resolve by convention. Two roots, because the modules
+     that use them live in two places: a service file importing './types' means
+     src/lib/services, and site.ts importing './positioning' means src/lib. */
+  const candidates = FILES[key]
+    ? [FILES[key]]
+    : key.startsWith('./')
+      ? [`src/lib/services/${key.slice(2)}.ts`, `src/lib/${key.slice(2)}.ts`]
+      : [];
+  const file = candidates.find((c) => fs.existsSync(path.join(root, c)));
+  if (!file) return {};
   const out = ts.transpileModule(fs.readFileSync(path.join(root, file), 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
     fileName: file,
@@ -116,6 +123,23 @@ if (industryLinks?.length) {
     ...industryLinks.map((l) => line(l.label, l.href, serviceNote(l.href) ?? l.blurb)),
     '',
   );
+}
+
+/* Anything with a page but no place in the nav.
+   The Services and Industries sections above are built from the nav, which
+   means a page that leaves the nav silently disappears from this file — and
+   this file exists precisely so that nothing on the site is invisible. */
+{
+  const listed = new Set([...serviceLinks, ...(industryLinks ?? [])].map((l) => l.href));
+  const rest = SERVICES.filter((s) => !listed.has(`/${s.slug}`));
+  if (rest.length) {
+    sections.push(
+      '## More services',
+      '',
+      ...rest.map((s) => line(s.h1, `/${s.slug}`, short(s.description))),
+      '',
+    );
+  }
 }
 
 const playbooks = publishedPlaybooks();

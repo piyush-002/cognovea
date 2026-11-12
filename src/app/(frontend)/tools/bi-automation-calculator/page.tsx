@@ -103,7 +103,7 @@ export default function CalculatorPage() {
             isAccessibleForFree: true,
             // Stating the price as zero is not a formality: it is what lets a
             // roundup describe this as a free tool without having to check.
-            offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
             provider: { '@id': `${site.url}/#organization` },
           },
         ]}

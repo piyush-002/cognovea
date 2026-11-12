@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="">
+
+  <defs>
+    <radialGradient id="agt-a" cx="28%" cy="26%" r="56%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity=".60"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="agt-b" cx="74%" cy="72%" r="52%">
+      <stop offset="0%" stop-color="#4F6BF0" stop-opacity=".36"/>
+      <stop offset="100%" stop-color="#4F6BF0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="agt-c" cx="86%" cy="18%" r="34%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="agt-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="55%" stop-color="#4F6BF0"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+    <filter id="agt-blur" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="52"/>
+    </filter>
+    <marker id="agt-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0A1024" fill-opacity=".55"/>
+    </marker>
+  </defs>
+  <rect width="800" height="520" fill="#FFFFFF"/>
+  <g filter="url(#agt-blur)" opacity="0.85">
+    <rect width="800" height="520" fill="url(#agt-a)"/>
+    <rect width="800" height="520" fill="url(#agt-b)"/>
+    <rect width="800" height="520" fill="url(#agt-c)"/>
+  </g>
+<rect x="56" y="232" width="104" height="56" rx="10"
+     fill="#FFFFFF" fill-opacity=".92"
+     stroke="#0A1024"
+     stroke-opacity="0.18" stroke-width="1.25"/><rect x="74" y="250" width="37.4"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><rect x="74" y="261" width="62.6"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.21000000000000002"/><path d="M160,260 H190" fill="none"
+     stroke="#0A1024" stroke-opacity="0.22"
+     stroke-width="1.5" stroke-linecap="round"
+     
+     marker-end="url(#agt-arrow)"/><rect x="196" y="220" width="104" height="80" rx="12"
+     fill="#FFFFFF" fill-opacity=".92"
+     stroke="url(#agt-stroke)"
+     stroke-opacity="1" stroke-width="2"/><circle cx="248" cy="248" r="3.4" fill="#0A1024" fill-opacity="0.32"/><rect x="216" y="264" width="35.2"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><rect x="216" y="275" width="58.9"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.21000000000000002"/><rect x="348" y="96" width="108" height="64" rx="10"
+     fill="#FFFFFF" fill-opacity=".92"
+     stroke="#0A1024"
+     stroke-opacity="0.18" stroke-width="1.25"/><rect x="366" y="116" width="39.6"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><rect x="366" y="127" width="66.2"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.21000000000000002"/><rect x="366" y="138" width="60.5"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.26"/><path d="M300,260 C322,260 326,128 342,128" fill="none"
+     stroke="#0A1024" stroke-opacity="0.22"
+     stroke-width="1.5" stroke-linecap="round"
+     
+     marker-end="url(#agt-arrow)"/><path d="M456,128 C480,128 486,260 502,260" fill="none"
+     stroke="#0A1024" stroke-opacity="0.22"
+     stroke-width="1.5" stroke-linecap="round"
+     
+     /><rect x="348" y="228" width="108" height="64" rx="10"
+     fill="#FFFFFF" fill-opacity=".92"
+     stroke="#0A1024"
+     stroke-opacity="0.18" stroke-width="1.25"/><rect x="366" y="248" width="39.6"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><rect x="366" y="259" width="66.2"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.21000000000000002"/><rect x="366" y="270" width="60.5"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.26"/><path d="M300,260 C322,260 326,260 342,260" fill="none"
+     stroke="#0A1024" stroke-opacity="0.22"
+     stroke-width="1.5" stroke-linecap="round"
+     
+     marker-end="url(#agt-arrow)"/><path d="M456,260 C480,260 486,260 502,260" fill="none"
+     stroke="#0A1024" stroke-opacity="0.22"
+     stroke-width="1.5" stroke-linecap="round"
+     
+     /><rect x="348" y="360" width="108" height="64" rx="10"
+     fill="#FFFFFF" fill-opacity=".92"
+     stroke="#0A1024"
+     stroke-opacity="0.18" stroke-width="1.25"/><rect x="366" y="380" width="39.6"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><rect x="366" y="391" width="66.2"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.21000000000000002"/><rect x="366" y="402" width="60.5"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.26"/><path d="M300,260 C322,260 326,392 342,392" fill="none"
+     stroke="#0A1024" stroke-opacity="0.22"
+     stroke-width="1.5" stroke-linecap="round"
+     
+     marker-end="url(#agt-arrow)"/><path d="M456,392 C480,392 486,260 502,260" fill="none"
+     stroke="#0A1024" stroke-opacity="0.22"
+     stroke-width="1.5" stroke-linecap="round"
+     
+     /><rect x="508" y="220" width="104" height="80" rx="12"
+     fill="#FFFFFF" fill-opacity=".92"
+     stroke="#0A1024"
+     stroke-opacity="0.18" stroke-width="1.25"/><path d="M534,256 l12,12 l22,-26" fill="none" stroke="url(#agt-stroke)"
+      stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="528" y="278" width="35.2"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><path d="M612,260 H642" fill="none"
+     stroke="#0A1024" stroke-opacity="0.22"
+     stroke-width="1.5" stroke-linecap="round"
+     
+     marker-end="url(#agt-arrow)"/><rect x="648" y="228" width="92" height="64" rx="10"
+     fill="#FFFFFF" fill-opacity=".92"
+     stroke="#0A1024"
+     stroke-opacity="0.18" stroke-width="1.25"/><rect x="666" y="248" width="30.8"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><rect x="666" y="259" width="51.5"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.21000000000000002"/><rect x="666" y="270" width="47.0"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.26"/><path d="M560,300 V396" fill="none"
+     stroke="url(#agt-stroke)" stroke-opacity="0.85"
+     stroke-width="2.25" stroke-linecap="round"
+     stroke-dasharray="6 7"
+     marker-end="url(#agt-arrow)"/><rect x="452" y="396" width="164" height="76" rx="12"
+     fill="#FFFFFF" fill-opacity=".92"
+     stroke="url(#agt-stroke)"
+     stroke-opacity="1" stroke-width="2"/><g transform="translate(486,434)">
+      <circle cx="0" cy="-7" r="6.4" fill="none" stroke="#0A1024" stroke-opacity=".62" stroke-width="2"/>
+      <path d="M-11,9 a11,10 0 0 1 22,0" fill="none" stroke="#0A1024" stroke-opacity=".62"
+        stroke-width="2" stroke-linecap="round"/>
+    </g><rect x="514" y="422" width="41.8"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><rect x="514" y="433" width="69.9"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.21000000000000002"/><rect x="514" y="444" width="63.8"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.26"/><path d="M616,434 C664,434 694,400 694,300" fill="none"
+     stroke="url(#agt-stroke)" stroke-opacity="0.85"
+     stroke-width="2.25" stroke-linecap="round"
+     stroke-dasharray="6 7"
+     marker-end="url(#agt-arrow)"/><rect x="56" y="396" width="264" height="76" rx="12"
+     fill="#FFFFFF" fill-opacity=".92"
+     stroke="#0A1024"
+     stroke-opacity="0.18" stroke-width="1.25"/><circle cx="78" cy="414" r="3.2" fill="#0A1024" fill-opacity="0.3"/><rect x="94" y="412" width="107.8"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><circle cx="78" cy="434" r="3.2" fill="#0A1024" fill-opacity="0.3"/><rect x="94" y="432" width="107.8"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><circle cx="78" cy="454" r="3.2" fill="#0A1024" fill-opacity="0.3"/><rect x="94" y="452" width="107.8"
+       height="3.5" rx="1.75" fill="#0A1024" fill-opacity="0.16"/><path d="M248,300 V390" fill="none"
+     stroke="#0A1024" stroke-opacity="0.22"
+     stroke-width="1.5" stroke-linecap="round"
+     stroke-dasharray="4 7"
+     marker-end="url(#agt-arrow)"/><path d="M320,434 H446" fill="none"
+     stroke="#0A1024" stroke-opacity="0.22"
+     stroke-width="1.5" stroke-linecap="round"
+     stroke-dasharray="4 7"
+     />
+</svg>

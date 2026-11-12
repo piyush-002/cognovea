@@ -15,11 +15,17 @@ export default function Counter({
   prefix = '',
   suffix = '',
   duration = 1400,
+  locale = 'en-US',
 }: {
   to: number;
   prefix?: string;
   suffix?: string;
   duration?: number;
+  /**
+   * Number grouping. 'en-IN' for a rupee figure, where 150000 is written
+   * 1,50,000 rather than 150,000; the default is right for everything else.
+   */
+  locale?: string;
 }) {
   const ref = useRef<HTMLSpanElement | null>(null);
   const [value, setValue] = useState(to);
@@ -60,7 +66,7 @@ export default function Counter({
   return (
     <span ref={ref}>
       {prefix}
-      {value.toLocaleString('en-IN')}
+      {value.toLocaleString(locale)}
       {suffix}
     </span>
   );

@@ -65,7 +65,7 @@ export default async function SummaryPage({ searchParams }: Props) {
   // person's figures. decodeInputs() normalises as it decodes — a missing
   // head-count becomes 1, everything else becomes 0 — so a bare visit to this
   // route would otherwise produce a dated, branded page reading "Costing you
-  // now: Rs 0" under the words "worked out from figures you entered". That is a
+  // now: $0" under the words "worked out from figures you entered". That is a
   // document somebody could forward, and it would be a fabrication.
   if (!hasCompleteState(query)) {
     return (
@@ -174,7 +174,7 @@ export default async function SummaryPage({ searchParams }: Props) {
             </div>
             <p>
               {inputs.decisionLagDays} days late × {formatCurrency(inputs.costPerDayOfDelay ?? 0)} a day ×{' '}
-              {r.staleDecisionsPerYear.toLocaleString('en-IN')} decisions a year. Your figure for what a day of delay
+              {r.staleDecisionsPerYear.toLocaleString('en-US')} decisions a year. Your figure for what a day of delay
               is worth — we supplied no number here.
             </p>
           </>
@@ -182,7 +182,7 @@ export default async function SummaryPage({ searchParams }: Props) {
           <p>
             Decisions are being made on data <b>{inputs.decisionLagDays} working days old</b>
             {r.staleDecisionsPerYear > 0
-              ? `, around ${r.staleDecisionsPerYear.toLocaleString('en-IN')} times a year`
+              ? `, around ${r.staleDecisionsPerYear.toLocaleString('en-US')} times a year`
               : ''}
             . We have put no number on that: what a day of delay costs depends entirely on the decision, and any
             figure we supplied would be a guess about your business.

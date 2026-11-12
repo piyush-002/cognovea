@@ -7,6 +7,8 @@ import Faq from '@/components/Faq';
 import { faqSchema, type FaqItem } from '@/lib/schema';
 import JsonLd from '@/components/JsonLd';
 import { pageMetadata } from '@/lib/seo';
+import Price from '@/components/Price';
+import { PRICES } from '@/lib/pricing';
 
 /* Statically generated, and this page shows client logos and a testimonial,
    both of which are published from the admin long after the build. Without a
@@ -49,7 +51,15 @@ const SCOPE = ['Infrastructure', 'Pipelines', 'BI', 'Data Quality', 'Cloud Costs
 const LADDER = [
   {
     h: 'Data Health Check',
-    p: 'A two-week audit of your infrastructure, pipelines, BI, data quality, and cloud costs. You get: a written findings report and a prioritized roadmap, with no obligation to continue. From Rs 1,50,000.',
+    /* The only rung whose copy is not a plain string. The wording is the
+       document's, unchanged; the figure is the two-currency pair. */
+    p: (
+      <>
+        A two-week audit of your infrastructure, pipelines, BI, data quality, and cloud costs. You get: a written
+        findings report and a prioritized roadmap, with no obligation to continue. From{' '}
+        <Price amount={PRICES.healthCheckFrom} />.
+      </>
+    ),
   },
   {
     h: 'Platform Build',
@@ -158,7 +168,9 @@ export default function DataHealthCheckPage() {
             </div>
             <div className="fact rv">
               <div className="fact__k">From</div>
-              <div className="fact__v">Rs 1,50,000</div>
+              <div className="fact__v">
+                <Price amount={PRICES.healthCheckFrom} />
+              </div>
             </div>
           </div>
 

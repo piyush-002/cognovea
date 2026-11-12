@@ -1386,6 +1386,85 @@ html:not(.rv-ready) .rv {
   background: var(--paper-2);
 }
 
+/* --- What We Do: two named columns ---------------------------------------
+   The only menu with enough entries to need structure. Width is set per column
+   rather than on the panel, so adding a page to one column cannot quietly
+   squeeze the other's descriptions into four-line blocks. */
+/* Explicit column widths, not minmax(0, …). The panel is absolutely
+   positioned, so it is shrink-to-fit: a column with a zero minimum has nothing
+   to size against and collapses to its longest word. */
+.c-nav__menu--groups {
+  display: grid;
+  grid-template-columns: repeat(2, 19.5rem);
+  gap: 0 0.5rem;
+  padding: 0.9rem 0.75rem 0.75rem;
+  /* Eleven entries with a description each is ~680px, which clears a 900px
+     window and does not clear a 768px one. Scroll the panel rather than let
+     the last two services fall off the bottom of the screen. */
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* The divider is on the column, not between panels, so it sits inside the
+   padding and stops short of the panel edge the way a rule should. */
+.c-nav__menu--groups .c-nav__group + .c-nav__group {
+  border-inline-start: 1px solid var(--line);
+  padding-inline-start: 0.5rem;
+}
+
+.c-nav__menu--groups ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.c-nav__group-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 0.35rem;
+  padding: 0 0.9rem;
+}
+
+.c-nav__group-label {
+  font-family: var(--f-head);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--eyebrow);
+}
+
+.c-nav__group-note {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: #9aa3b5;
+}
+
+/* Below the dropdown breakpoint the panel is never shown — the drawer takes
+   over — but a narrow laptop can still open it, and two 20rem columns plus
+   chrome does not fit under about 1100px. */
+@media (max-width: 1180px) {
+  .c-nav__menu--groups {
+    grid-template-columns: 21rem;
+  }
+
+  .c-nav__menu--groups .c-nav__group + .c-nav__group {
+    border-inline-start: 0;
+    padding-inline-start: 0;
+    margin-top: 0.4rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--line);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-nav__menu {
+    transition: none;
+  }
+}
+
 .c-nav__cta {
   padding: 0.7rem 1.3rem;
   border-radius: 8px;
@@ -5282,4 +5361,170 @@ tbody tr:hover {
   .pf__head h2 {
     font-size: 1.28rem;
   }
+}
+
+/* --- Regional pricing -------------------------------------------------------
+
+   Both currencies are rendered into every page by Price.tsx; exactly one is
+   ever visible. The default is dollars, which is what a crawler indexes and
+   what a visitor with JavaScript disabled sees. The inline script in
+   layout.tsx sets data-geo="in" before first paint when the clock is on IST,
+   and that flips the pair.
+
+   display, not visibility or opacity: the hidden figure must take no space, or
+   the two would size the row together and the shorter one would sit in a box
+   built for the longer.                                                     */
+
+.price {
+  white-space: nowrap;
+}
+
+.price__inr {
+  display: none;
+}
+
+html[data-geo='in'] .price__usd {
+  display: none;
+}
+
+html[data-geo='in'] .price__inr {
+  display: inline;
+}
+
+/* --- How We Work: the staged rail -------------------------------------------
+
+   Five stages were five detached blocks, each with its own hairline, and the
+   sequence they describe was carried entirely by the numbers. The rail draws
+   that sequence instead: each step's hairline becomes a gradient segment that
+   scales in from the left as the block reveals, with a node landing on it once
+   the segment has arrived. Across a row on a desktop it reads as one line
+   drawing left to right; stacked on a phone the same code reads as a sequence
+   drawing downward, which is why this is a scaleX on each step rather than one
+   absolutely positioned line across the grid.
+
+   Opt-in via .steps--rail rather than applied to .step, which also appears on
+   about-us, the Data Health Check and Proof, on both light and dark grounds.
+
+   The node is --eyebrow, not a literal colour: Legible Blue on white, Readout
+   Cyan on navy. The segment is the full gradient, which is a line and not a
+   fill, so it stays inside the four sanctioned appearances.                  */
+
+.steps--rail .step::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--grad);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s var(--ease);
+  /* After the block's own reveal, so the line arrives on something already
+     there rather than racing it. --rv-delay is the sibling stagger Reveal
+     already sets, so the segments fire in reading order for free. */
+  transition-delay: calc(var(--rv-delay, 0ms) + 140ms);
+}
+
+.steps--rail .step[data-rv='in']::before {
+  transform: scaleX(1);
+}
+
+.steps--rail .step::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--eyebrow);
+  transform: scale(0);
+  transition: transform 0.4s var(--ease);
+  transition-delay: calc(var(--rv-delay, 0ms) + 640ms);
+}
+
+.steps--rail .step[data-rv='in']::after {
+  transform: scale(1);
+}
+
+/* Declared after the reveal rule above: same specificity, so source order is
+   what lets hover win once the node has landed. */
+.steps--rail .step:hover::after {
+  transform: scale(1.5);
+}
+
+/* --- What We Do: the art that comes with the tab ---------------------------
+
+   The panel already fades up as a whole. The art gets its own, slightly later
+   entrance so a tab switch reads as the drawing changing rather than the
+   entire panel blinking: the copy is what the visitor asked for, the drawing
+   is what answers it, and arriving a beat apart is what makes the switch
+   legible. Not a reveal-on-scroll — this fires on the state change that
+   caused it.                                                                */
+
+.pillar__art {
+  animation: pillar-art 0.46s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 70ms;
+}
+
+@keyframes pillar-art {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The rail and its nodes are state, not decoration: they show which stages
+     exist. Reduced motion removes the drawing, not the line. */
+  .steps--rail .step::before {
+    transform: scaleX(1);
+  }
+
+  .steps--rail .step::after {
+    transform: scale(1);
+  }
+
+  .pillar__art {
+    animation: none;
+  }
+}
+
+/* --- A short list inside a card ---------------------------------------------
+
+   The marker is a dot in --eyebrow rather than a disc bullet: Legible Blue on
+   white, Readout Cyan on navy, so it follows the ground like everything else.
+   Sized and positioned against the line box rather than the line height, so it
+   stays on the first line when an item wraps to three.                       */
+
+.card__points {
+  margin: 1.1em 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.card__points li {
+  position: relative;
+  padding-left: 1.15rem;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--fg-2);
+}
+
+.card__points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.58em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--eyebrow);
 }

@@ -4,12 +4,15 @@ import Link from 'next/link';
 import { Arrow } from '@/components/Bits';
 import ClientLogos from '@/components/ClientLogos';
 import Counter from '@/components/Counter';
+import Price from '@/components/Price';
 import MarkCanvas from '@/components/MarkCanvas';
 import Marquee from '@/components/Marquee';
 import Rotator from '@/components/Rotator';
 import Scroller from '@/components/Scroller';
 import Tabs from '@/components/Tabs';
 import Testimonial from '@/components/Testimonial';
+import { voice } from '@/lib/positioning';
+import { PRICES, type Money } from '@/lib/pricing';
 import { pageMetadata } from '@/lib/seo';
 
 /* Statically generated, and this page shows client logos and a testimonial,
@@ -21,10 +24,12 @@ import { pageMetadata } from '@/lib/seo';
 export const revalidate = 300;
 
 
+/* Title and description follow the positioning. This is the one page where the
+   brand narrative and the search term are the same thing, which is why it moves
+   with the flag while the service pages do not. */
 export const metadata: Metadata = pageMetadata({
-  title: 'Cognovea | Data Analytics and AI Solutions',
-  description:
-    'Cognovea turns enterprise data into intelligence. Data analytics, business intelligence, data engineering and AI solutions that drive data-driven decision making.',
+  title: voice.home.title,
+  description: voice.home.description,
   path: '/',
 });
 
@@ -49,16 +54,18 @@ const STACK = [
   'Looker',
 ];
 
-/* Durations and starting points from the documents, deliberately not results. */
-const FACTS: { n: number; prefix?: string; suffix?: string; label: string }[] = [
+/* Durations and starting points from the documents, deliberately not results.
+
+   The price is the one entry that is not a plain number, because it is two
+   numbers: rupees for a visitor in India, dollars for everyone else. It comes
+   from lib/pricing.ts and renders as a pair, one of which the CSS hides. */
+type Fact =
+  | { n: number; prefix?: string; suffix?: string; label: string }
+  | { price: Money; label: string };
+
+const FACTS: Fact[] = [
   { n: 2, suffix: ' wks', label: 'A Data Health Check runs two weeks, start to findings report.' },
-  // "Rs", not the ₹ glyph, because the three other places this figure appears
-  // are prose taken from the source documents and all of them read "Rs
-  // 1,50,000". This counter was the only one rendering it differently, and it
-  // is the only one of the four that is not document copy — so it moves, and
-  // the wording stays untouched. Flipping all four to ₹ would read better and
-  // means editing that copy, which is your call rather than mine.
-  { n: 150000, prefix: 'Rs ', label: 'Where the Data Health Check starts, scope depending.' },
+  { price: PRICES.healthCheckFrom, label: 'Where the Data Health Check starts, scope depending.' },
   { n: 90, suffix: ' days', label: 'Window in which part of the audit fee credits toward future work.' },
   { n: 8, prefix: '4–', label: 'A Managed Data Department runs as a team of four to eight.' },
 ];
@@ -94,13 +101,17 @@ const PILLARS = [
   {
     eyebrow: 'See Clearly',
     h: 'Data Analytics & Business Intelligence',
-    p: 'Good decisions begin with seeing the business as it really is. We bring disparate data streams together through comprehensive data analytics, business intelligence, visualization, and enterprise analytics. By establishing a single source of truth, we empower teams across your organization with a deeper, clearer understanding of performance metrics, customer behavior, operational efficiency, and emerging growth opportunities. Our solutions transform raw operational data into interactive, intuitive dashboards and actionable insights that drive confident decision-making.',
+    p: 'Good decisions begin with seeing the business as it really is. We bring disparate data streams together through comprehensive data analytics, business intelligence, visualization, and enterprise analytics. By establishing a single source of truth, we empower teams across your organization with a deeper, clearer understanding of performance metrics, customer behavior, operational efficiency, and emerging growth opportunities.',
+    art: '/img/hm-see-clearly.svg',
+    alt: 'Five separate source systems converging on a single panel showing one figure and one chart',
     links: [] as { href: string; label: string }[],
   },
   {
     eyebrow: 'Build the Foundation',
     h: 'Data Engineering & Modern Data Platforms',
     p: 'Intelligence is only as strong as the foundation beneath it. We design and build modern data platforms, data architectures, integrations, and cloud data engineering systems that bring information together, make it reliable, and prepare it for everything that comes next.',
+    art: '/img/hm-foundation.svg',
+    alt: 'A platform in three layers: sources feeding a store, a processing lane above it, and the panels it serves on top',
     links: [
       { href: '/data-engineering-services', label: 'Data Engineering Services' },
       { href: '/data-modernization-services', label: 'Data Modernization Services' },
@@ -110,12 +121,16 @@ const PILLARS = [
     eyebrow: 'Know What’s Next',
     h: 'Data Science, Predictive Analytics & AI',
     p: 'Understanding yesterday is useful. Anticipating tomorrow is more valuable. Our data science, predictive analytics, machine learning, and forecasting capabilities help organizations identify patterns, predict outcomes, and make better-informed decisions before events unfold.',
+    art: '/img/hm-know-next.svg',
+    alt: 'Observed history running into a forecast cone, with the projected line crossing a marked threshold',
     links: [],
   },
   {
     eyebrow: 'Work Smarter',
     h: 'AI, Generative AI & Intelligent Automation',
-    p: 'The next step is turning intelligence into action. We help organizations bring AI into the way their people actually work, from automating repetitive processes to building intelligent AI agents and practical generative AI applications. The goal is not to add AI for the sake of it, but to make everyday work simpler, faster, and more effective. By bringing people and technology together, we help teams spend less time on routine tasks and more time on work that requires judgment, creativity, and human thinking.',
+    p: 'The next step is turning intelligence into action. We help organizations bring AI into the way their people actually work, from automating repetitive processes to building intelligent AI agents and practical generative AI applications. The goal is not to add AI for the sake of it, but to make everyday work simpler, faster, and more effective.',
+    art: '/img/hm-work-smarter.svg',
+    alt: 'A queue of work running through automated steps, one of them pausing at a person before the run continues',
     links: [
       { href: '/generative-ai-services', label: 'Generative AI Services' },
       { href: '/ai-strategy-consulting', label: 'AI Strategy & Consulting' },
@@ -224,18 +239,15 @@ export default function HomePage() {
       <section className="c-hero">
         <div className="wrap c-hero__grid">
           <div>
-            <p className="eyebrow">Data + AI Solutions</p>
+            <p className="eyebrow">{voice.home.eyebrow}</p>
             <h1 className="h-xl" style={{ marginTop: '1.6rem' }}>
-              Where Data Becomes <span className="grad">Intelligence.</span>
+              {voice.home.h1Lead}
+              <span className="grad">{voice.home.h1Accent}</span>
             </h1>
-            <p className="c-hero__sub">Data Depth. AI Power. Real Impact.</p>
+            <p className="c-hero__sub">{voice.home.sub}</p>
 
             <p className="lede" style={{ marginTop: '2rem', maxWidth: '40rem' }}>
-              When data is transformed into intelligence, and intelligence is transformed into impact, the trajectory
-              of an organization changes. Through the power of data analytics and robust enterprise data analytics, we
-              unlock the hidden potential within your systems to drive tangible business value. Beyond simply analyzing
-              and processing data, Cognovea converts complex insights into meaningful results that fuel sustainable
-              growth and competitive advantage.
+              {voice.home.lede}
             </p>
 
             <div className="btn-row">
@@ -293,7 +305,9 @@ export default function HomePage() {
             </div>
             <div className="fact">
               <div className="fact__k">From</div>
-              <div className="fact__v">Rs 1,50,000</div>
+              <div className="fact__v">
+                <Price amount={PRICES.healthCheckFrom} />
+              </div>
             </div>
             <Link className="btn btn--primary" href="/data-health-check">
               Book a Data Health Check
@@ -353,7 +367,20 @@ export default function HomePage() {
               {FACTS.map((f) => (
                 <div className="stat" key={f.label}>
                   <span className="stat__n">
-                    <Counter to={f.n} prefix={f.prefix} suffix={f.suffix} />
+                    {'price' in f ? (
+                      /* Both figures count up; only the one the CSS leaves
+                         visible is ever observed, so only it animates. */
+                      <span className="price">
+                        <span className="price__usd">
+                          <Counter to={f.price.usd} prefix="$" />
+                        </span>
+                        <span className="price__inr">
+                          <Counter to={f.price.inr} prefix="Rs " locale="en-IN" />
+                        </span>
+                      </span>
+                    ) : (
+                      <Counter to={f.n} prefix={f.prefix} suffix={f.suffix} />
+                    )}
                   </span>
                   <span className="stat__l">{f.label}</span>
                 </div>
@@ -368,7 +395,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">What Becomes Possible</p>
-            <h2 className="h-lg">What Becomes Possible When Your Data Starts Working Together</h2>
+            <h2 className="h-lg">{voice.home.possible}</h2>
           </div>
 
           <div className="grid grid--4">
@@ -397,7 +424,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">What We Do</p>
-            <h2 className="h-lg">From Data to Decisions, We Build What Makes Intelligence Possible</h2>
+            <h2 className="h-lg">{voice.home.build}</h2>
           </div>
 
           <div className="rv">
@@ -406,21 +433,34 @@ export default function HomePage() {
                 key: p.eyebrow,
                 label: p.eyebrow,
                 content: (
-                  <div className="card card--pad-lg card--flat">
-                    <p className="eyebrow">{p.eyebrow}</p>
-                    <h3 className="h-md" style={{ marginTop: '1.1rem', maxWidth: '30rem' }}>
-                      {p.h}
-                    </h3>
-                    <p style={{ maxWidth: '52rem' }}>{p.p}</p>
-                    {p.links.length > 0 && (
-                      <p style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', marginTop: '1.4em' }}>
-                        {p.links.map((l) => (
-                          <Link className="link-arrow" href={l.href} key={l.href}>
-                            {l.label}
-                          </Link>
-                        ))}
-                      </p>
-                    )}
+                  <div className="feature feature--copy">
+                    <div>
+                      <p className="eyebrow">{p.eyebrow}</p>
+                      <h3 className="h-md" style={{ marginTop: '1.1rem', maxWidth: '30rem' }}>
+                        {p.h}
+                      </h3>
+                      <p style={{ maxWidth: '52rem' }}>{p.p}</p>
+                      {p.links.length > 0 && (
+                        <p style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', marginTop: '1.4em' }}>
+                          {p.links.map((l) => (
+                            <Link className="link-arrow" href={l.href} key={l.href}>
+                              {l.label}
+                            </Link>
+                          ))}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Deliberately not <Figure>. That component carries .rv, and
+                        every panel but the active one is `hidden`, so its figure
+                        never intersects and would sit at opacity 0 until the tab
+                        is opened AND scrolled. The panel's own entrance animation
+                        covers this instead. */}
+                    <div className="feature__media">
+                      <div className="figure figure--wide pillar__art">
+                        <img src={p.art} alt={p.alt} width={800} height={520} loading="lazy" decoding="async" />
+                      </div>
+                    </div>
                   </div>
                 ),
               }))}
@@ -434,14 +474,14 @@ export default function HomePage() {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">How We Work</p>
-            <h2 className="h-lg">A Practical Path Moving From Possibility to Progress</h2>
+            <h2 className="h-lg">{voice.home.path}</h2>
             <p className="lede">
               Progress with data rarely happens in one move. It happens in stages, each one building the confidence and
               clarity needed for the next.
             </p>
           </div>
 
-          <div className="grid grid--5">
+          <div className="grid grid--5 steps--rail">
             {STEPS.map((s, i) => (
               <div className="step rv" key={s.h}>
                 <span className="step__n">{String(i + 1).padStart(2, '0')}</span>
@@ -506,7 +546,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">Industries</p>
-            <h2 className="h-lg">Intelligence That Understands the Business Behind the Data</h2>
+            <h2 className="h-lg">{voice.home.understands}</h2>
             <p className="lede">
               Every industry runs on data differently, and the best insights come from knowing that difference.
             </p>
@@ -621,7 +661,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="s-head rv">
             <p className="eyebrow">Insights</p>
-            <h2 className="h-lg">Floating Ideas for the Data-Driven Enterprise.</h2>
+            <h2 className="h-lg">{voice.home.insights}</h2>
             <p className="lede">
               The world of data and AI moves quickly, and our team believes that staying informed is crucial for staying
               ahead.

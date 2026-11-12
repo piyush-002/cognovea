@@ -202,7 +202,7 @@ const orgSchema = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sora.variable} ${inter.variable}`}>
+    <html lang="en" className={`${sora.variable} ${inter.variable}`} suppressHydrationWarning>
       <head>
         {/* Scroll-reveal safety net. globals.css starts .rv elements hidden so they
             can animate in; if JavaScript never runs, nothing would ever reveal them.
@@ -212,10 +212,44 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             the usual trick, but it changes the DOM before React hydrates, so the
             server HTML and the client DOM differ and React reports a hydration
             mismatch. A <noscript> style is identical on both sides, no mismatch,
-            no suppressHydrationWarning needed. */}
+            no suppressHydrationWarning needed.
+
+            The geo script below is the case where that trick is unavoidable,
+            and it carries the suppressHydrationWarning that this one avoids. */}
         <noscript
           dangerouslySetInnerHTML={{
             __html: '<style>.rv{opacity:1 !important;transform:none !important;transition:none !important}</style>',
+          }}
+        />
+
+        {/* Which currency the prices render in.
+            
+            Cognovea quotes a Data Health Check in rupees in India and in
+            dollars everywhere else. Both figures are in the HTML of every page
+            (see Price.tsx); this decides which one the CSS shows.
+
+            It runs inline, in <head>, before the browser paints, so the reader
+            never sees one price replaced by another and nothing shifts. That
+            is the whole reason it is a blocking inline script rather than a
+            useEffect: an effect runs after hydration, which means a visible
+            swap and a layout shift charged to CLS.
+
+            The timezone is the signal because it is the only one available
+            without asking the network. The accurate signal is the request IP,
+            which Vercel will hand over — but only to a page rendered per
+            request, and these pages are static and served from the edge cache.
+            Trading that for a more precise guess at the reader's country is a
+            bad trade; a clock set to IST is right for very nearly everyone.
+
+            Setting an attribute on <html> from outside React is what
+            suppressHydrationWarning on <html> below is for. It applies to that
+            element only, not to its children. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var z=Intl.DateTimeFormat().resolvedOptions().timeZone;" +
+              "if(z==='Asia/Kolkata'||z==='Asia/Calcutta')" +
+              "document.documentElement.setAttribute('data-geo','in')}catch(e){}",
           }}
         />
       </head>

@@ -1,3 +1,4 @@
+import { voice } from '@/lib/positioning';
 import Link from 'next/link';
 import Mark from '@/components/Mark';
 
@@ -16,7 +17,7 @@ export default function Logo({ href = '/' }: { href?: string }) {
         <span className="logo__word">
           cogno<em>vea</em>
         </span>
-        <span className="logo__tag">Data + AI Solutions</span>
+        <span className="logo__tag">{voice.logoTag}</span>
       </span>
     </Link>
   );

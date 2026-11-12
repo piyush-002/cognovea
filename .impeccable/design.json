@@ -1,0 +1,399 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-18T11:46:23.210Z",
+  "title": "Design System: Cognovea",
+  "extensions": {
+    "colorMeta": {
+      "signal-violet": {
+        "role": "primary",
+        "displayName": "Signal Violet",
+        "canonical": "#7c3aed",
+        "tonalRamp": [
+          "oklch(15% 0.093 303)",
+          "oklch(25% 0.155 303)",
+          "oklch(35% 0.217 303)",
+          "oklch(45% 0.260 303)",
+          "oklch(58% 0.260 303)",
+          "oklch(72% 0.260 303)",
+          "oklch(86% 0.140 303)",
+          "oklch(95% 0.050 303)"
+        ]
+      },
+      "signal-violet-wash": {
+        "role": "primary",
+        "displayName": "Signal Violet Wash",
+        "canonical": "#f7f3fe",
+        "tonalRamp": [
+          "oklch(15% 0.004 303)",
+          "oklch(25% 0.007 303)",
+          "oklch(35% 0.010 303)",
+          "oklch(45% 0.012 303)",
+          "oklch(58% 0.012 303)",
+          "oklch(72% 0.012 303)",
+          "oklch(86% 0.006 303)",
+          "oklch(95% 0.002 303)"
+        ]
+      },
+      "instrument-blue": {
+        "role": "secondary",
+        "displayName": "Instrument Blue",
+        "canonical": "#4f6bf0",
+        "tonalRamp": [
+          "oklch(15% 0.068 267)",
+          "oklch(25% 0.113 267)",
+          "oklch(35% 0.158 267)",
+          "oklch(45% 0.190 267)",
+          "oklch(58% 0.190 267)",
+          "oklch(72% 0.190 267)",
+          "oklch(86% 0.102 267)",
+          "oklch(95% 0.037 267)"
+        ]
+      },
+      "legible-blue": {
+        "role": "secondary",
+        "displayName": "Legible Blue",
+        "canonical": "#3050d8",
+        "tonalRamp": [
+          "oklch(15% 0.068 266)",
+          "oklch(25% 0.113 266)",
+          "oklch(35% 0.158 266)",
+          "oklch(45% 0.190 266)",
+          "oklch(58% 0.190 266)",
+          "oklch(72% 0.190 266)",
+          "oklch(86% 0.102 266)",
+          "oklch(95% 0.037 266)"
+        ]
+      },
+      "readout-cyan": {
+        "role": "tertiary",
+        "displayName": "Readout Cyan",
+        "canonical": "#22d3ee",
+        "tonalRamp": [
+          "oklch(15% 0.050 200)",
+          "oklch(25% 0.083 200)",
+          "oklch(35% 0.117 200)",
+          "oklch(45% 0.140 200)",
+          "oklch(58% 0.140 200)",
+          "oklch(72% 0.140 200)",
+          "oklch(86% 0.075 200)",
+          "oklch(95% 0.027 200)"
+        ]
+      },
+      "deep-water-navy": {
+        "role": "neutral",
+        "displayName": "Deep Water Navy",
+        "canonical": "#0a1024",
+        "tonalRamp": [
+          "oklch(15% 0.014 268)",
+          "oklch(25% 0.024 268)",
+          "oklch(35% 0.033 268)",
+          "oklch(45% 0.040 268)",
+          "oklch(58% 0.040 268)",
+          "oklch(72% 0.040 268)",
+          "oklch(86% 0.022 268)",
+          "oklch(95% 0.008 268)"
+        ]
+      },
+      "paper-tint": {
+        "role": "neutral",
+        "displayName": "Paper Tint",
+        "canonical": "#f5f7fb",
+        "tonalRamp": [
+          "oklch(15% 0.003 260)",
+          "oklch(25% 0.005 260)",
+          "oklch(35% 0.007 260)",
+          "oklch(45% 0.008 260)",
+          "oklch(58% 0.008 260)",
+          "oklch(72% 0.008 260)",
+          "oklch(86% 0.004 260)",
+          "oklch(95% 0.002 260)"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "#48536b",
+        "tonalRamp": [
+          "oklch(15% 0.013 265)",
+          "oklch(25% 0.021 265)",
+          "oklch(35% 0.029 265)",
+          "oklch(45% 0.035 265)",
+          "oklch(58% 0.035 265)",
+          "oklch(72% 0.035 265)",
+          "oklch(86% 0.019 265)",
+          "oklch(95% 0.007 265)"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink Soft",
+        "canonical": "#667085",
+        "tonalRamp": [
+          "oklch(15% 0.011 264)",
+          "oklch(25% 0.018 264)",
+          "oklch(35% 0.025 264)",
+          "oklch(45% 0.030 264)",
+          "oklch(58% 0.030 264)",
+          "oklch(72% 0.030 264)",
+          "oklch(86% 0.016 264)",
+          "oklch(95% 0.006 264)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headlines only, one per page. Tightest tracking in the system."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings. Clamped against vh as well as vw so sections stay inside one screen."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card and sub-section headings."
+      },
+      "subtitle": {
+        "displayName": "Subtitle",
+        "purpose": "Smallest heading, inside dense cards and list items."
+      },
+      "lede": {
+        "displayName": "Lede",
+        "purpose": "The paragraph under a hero or section heading, in Ink Muted."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default prose at 16.5px, slightly larger than browser default."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "The eyebrow: uppercase, wide-tracked, preceded by a 24px rule."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient",
+        "value": "0 1px 2px rgba(10, 16, 36, 0.04), 0 2px 8px -3px rgba(10, 16, 36, 0.06)",
+        "purpose": "Barely-there resting shadow for elements separating from a tinted ground."
+      },
+      {
+        "name": "lift",
+        "value": "0 20px 48px -26px rgba(10, 16, 36, 0.3), 0 2px 8px -3px rgba(10, 16, 36, 0.05)",
+        "purpose": "Card hover. Long and soft, reads as distance rather than a drop shadow."
+      },
+      {
+        "name": "deep-lift",
+        "value": "0 40px 90px -40px rgba(10, 16, 36, 0.45)",
+        "purpose": "Elements floating above the page: nav dropdown, mobile drawer."
+      },
+      {
+        "name": "violet-glow",
+        "value": "0 10px 26px -14px rgba(124, 58, 237, 0.9)",
+        "purpose": "Primary button at rest; the glow belongs to the button colour, not a neutral shadow."
+      },
+      {
+        "name": "violet-glow-hover",
+        "value": "0 18px 36px -16px rgba(124, 58, 237, 0.95)",
+        "purpose": "Primary button on hover."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 3px rgba(124, 58, 237, 0.14)",
+        "purpose": "Input focus, paired with a Signal Violet border."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "The only easing curve in the system. Everything uses it."
+      },
+      {
+        "name": "duration-color",
+        "value": "0.25s",
+        "purpose": "Colour-only state changes, e.g. nav link text."
+      },
+      {
+        "name": "duration-control",
+        "value": "0.3s",
+        "purpose": "Buttons, chips, inputs: transform, background, border, shadow."
+      },
+      {
+        "name": "duration-surface",
+        "value": "0.4s",
+        "purpose": "Cards and the sticky nav backdrop."
+      },
+      {
+        "name": "duration-hairline",
+        "value": "0.55s",
+        "purpose": "The card gradient hairline scaling from the left."
+      },
+      {
+        "name": "duration-reveal",
+        "value": "0.9s",
+        "purpose": "Scroll reveal: opacity and transform together."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "xs",
+        "value": "560px"
+      },
+      {
+        "name": "sm",
+        "value": "620px"
+      },
+      {
+        "name": "md",
+        "value": "760px"
+      },
+      {
+        "name": "lg",
+        "value": "900px"
+      },
+      {
+        "name": "xl",
+        "value": "1000px"
+      },
+      {
+        "name": "hero",
+        "value": "1020px"
+      },
+      {
+        "name": "wrap",
+        "value": "1240px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The action colour, solid. One per view where possible; the arrow travels on hover.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Book a Data Health Check<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M12 5l7 7-7 7\"/></svg></a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 0.65rem; padding: 0.95rem 1.7rem; border-radius: 8px; border: 1px solid transparent; max-inline-size: 100%; text-align: center; text-decoration: none; font-family: var(--f-body, Inter, ui-sans-serif, system-ui, sans-serif); font-size: 15px; font-weight: 500; letter-spacing: -0.008em; background: var(--violet, #7c3aed); color: #fff; box-shadow: 0 10px 26px -14px rgba(124, 58, 237, 0.9); transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s, box-shadow 0.3s; } .ds-btn-primary svg { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); } .ds-btn-primary:hover { background: #6a2fd4; transform: translateY(-2px); box-shadow: 0 18px 36px -16px rgba(124, 58, 237, 0.95); } .ds-btn-primary:hover svg { transform: translateX(4px); } .ds-btn-primary:focus-visible { outline: 2px solid var(--blue-ink, #3050d8); outline-offset: 3px; border-radius: 4px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action. Its border is a token that flips with the ground, so one rule works on white and on navy.",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#\">See how we work<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M12 5l7 7-7 7\"/></svg></a>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 0.65rem; padding: 0.95rem 1.7rem; border-radius: 8px; max-inline-size: 100%; text-decoration: none; font-family: var(--f-body, Inter, ui-sans-serif, system-ui, sans-serif); font-size: 15px; font-weight: 500; letter-spacing: -0.008em; background: transparent; border: 1px solid var(--ghost-border, rgba(10, 16, 36, 0.22)); color: var(--fg, #0a1024); transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s, border-color 0.3s; } .ds-btn-ghost svg { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); } .ds-btn-ghost:hover { background: var(--ghost-hover-bg, rgba(10, 16, 36, 0.04)); border-color: var(--fg-3, #667085); transform: translateY(-2px); } .ds-btn-ghost:hover svg { transform: translateX(4px); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--blue-ink, #3050d8); outline-offset: 3px; border-radius: 4px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat at rest. On hover it lifts 4px and a 2px gradient hairline scales in from the left edge — one of the four sanctioned gradient appearances.",
+      "html": "<article class=\"ds-card\"><h3 class=\"ds-card__h\">Data Engineering</h3><p class=\"ds-card__p\">Cloud warehouses, pipelines, governance and dedicated pods.</p></article>",
+      "css": ".ds-card { position: relative; display: block; padding: clamp(1.6rem, 2.4vw, 2.2rem); border: 1px solid var(--line, rgba(10, 16, 36, 0.1)); border-radius: 16px; background: var(--card, #fff); overflow: hidden; transition: border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), background 0.4s; } .ds-card::after { content: \"\"; position: absolute; inset-inline: 0; top: 0; height: 2px; background: linear-gradient(96deg, #7c3aed 0%, #4f6bf0 46%, #22d3ee 100%); transform: scaleX(0); transform-origin: left; transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1); } .ds-card:hover { transform: translateY(-4px); border-color: var(--line-2, rgba(10, 16, 36, 0.18)); box-shadow: 0 20px 48px -26px rgba(10, 16, 36, 0.3), 0 2px 8px -3px rgba(10, 16, 36, 0.05); } .ds-card:hover::after { transform: scaleX(1); } .ds-card__h { margin: 0 0 0.85em; font-family: var(--f-head, Sora, ui-sans-serif, system-ui, sans-serif); font-size: clamp(1.3rem, 2.1vw, 1.7rem); font-weight: 600; line-height: 1.22; letter-spacing: -0.028em; color: var(--fg, #0a1024); text-wrap: balance; } .ds-card__p { margin: 0; font-family: var(--f-body, Inter, ui-sans-serif, system-ui, sans-serif); font-size: 16.5px; line-height: 1.65; letter-spacing: -0.006em; color: var(--fg-2, #48536b); }"
+    },
+    {
+      "name": "Eyebrow",
+      "kind": "custom",
+      "refersTo": "label",
+      "description": "The system signature. An uppercase wide-tracked label preceded by a 24px rule, in Legible Blue on white and Readout Cyan on navy. It labels a section the way a tab labels a drawer.",
+      "html": "<p class=\"ds-eyebrow\">What We Do</p>",
+      "css": ".ds-eyebrow { display: inline-flex; align-items: center; gap: 0.65rem; margin: 0; font-family: var(--f-body, Inter, ui-sans-serif, system-ui, sans-serif); font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--eyebrow, #3050d8); } .ds-eyebrow::before { content: \"\"; width: 24px; height: 1.5px; background: currentColor; flex: none; }"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Read-only capability labels. 7px radius, deliberately one pixel under the control radius so a row of them does not read as a row of buttons.",
+      "html": "<ul class=\"ds-chips\"><li>Data Engineering</li><li>Analytics &amp; BI</li><li>AI</li></ul>",
+      "css": ".ds-chips { display: flex; flex-wrap: wrap; gap: 0.55rem; padding: 0; margin: 0; list-style: none; } .ds-chips li { padding: 0.45rem 1rem; border: 1px solid var(--line-2, rgba(10, 16, 36, 0.18)); border-radius: 7px; font-family: var(--f-body, Inter, ui-sans-serif, system-ui, sans-serif); font-size: 13.5px; font-weight: 500; color: var(--fg-2, #48536b); transition: color 0.3s, border-color 0.3s, background 0.3s; } .ds-chips li:hover { color: var(--fg, #0a1024); border-color: var(--blue, #4f6bf0); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "The native outline is suppressed only because the replacement is stronger: a Signal Violet border plus a 3px violet ring.",
+      "html": "<div class=\"ds-field\"><label for=\"ds-email\">Work email <span class=\"ds-req\">*</span></label><input id=\"ds-email\" type=\"email\" placeholder=\"you@company.com\"></div>",
+      "css": ".ds-field label { display: block; margin-bottom: 0.5rem; font-family: var(--f-body, Inter, ui-sans-serif, system-ui, sans-serif); font-size: 13.5px; font-weight: 500; color: var(--fg-2, #48536b); } .ds-field .ds-req { color: var(--violet, #7c3aed); } .ds-field input { width: 100%; padding: 0.9rem 1.05rem; border: 1px solid var(--line-2, rgba(10, 16, 36, 0.18)); border-radius: 8px; background: var(--surface, #fff); color: #0a1024; font-family: var(--f-body, Inter, ui-sans-serif, system-ui, sans-serif); font-size: 15px; transition: border-color 0.3s, box-shadow 0.3s; } .ds-field input::placeholder { color: var(--fg-3, #667085); } .ds-field input:focus { outline: none; border-color: var(--violet, #7c3aed); box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14); }"
+    },
+    {
+      "name": "Nav Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Weight 450 in Ink Muted, with a 1.5px violet underline inset from the padding that scales from the left on hover and on the current page.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\">What We Do</a><a href=\"#\" aria-current=\"page\">Industries</a><a href=\"#\">Insights</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 0.1rem; } .ds-nav a { position: relative; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.6rem 0.9rem; border-radius: 8px; font-family: var(--f-body, Inter, ui-sans-serif, system-ui, sans-serif); font-size: 15px; font-weight: 450; color: var(--fg-2, #48536b); text-decoration: none; white-space: nowrap; transition: color 0.25s; } .ds-nav a::after { content: \"\"; position: absolute; left: 0.9rem; right: 0.9rem; bottom: 0.4rem; height: 1.5px; background: var(--violet, #7c3aed); transform: scaleX(0); transform-origin: left; transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1); } .ds-nav a:hover, .ds-nav a[aria-current=\"page\"] { color: var(--fg, #0a1024); } .ds-nav a:hover::after, .ds-nav a[aria-current=\"page\"]::after { transform: scaleX(1); } .ds-nav a:focus-visible { outline: 2px solid var(--blue-ink, #3050d8); outline-offset: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Instrument, Not the Poster",
+    "overview": "This is an enterprise instrument rather than a startup poster. Solid colour does nearly all of the work; the brand spectrum is spent as signal, in four named places, and withheld everywhere else. The ground alternates between a white canvas and a deep navy that supplies weight, and the alternation itself is what creates structure — a reader moving down a page is moving between plates, not scrolling through decoration. The mood is confident, clear and quietly modern. It is legible to a mid-market buyer and credible to an enterprise one, which is a narrower target than either alone: too much exuberance loses the second, too much grey loses the first. The resolution is restraint with one very saturated exception, held in reserve. Every band is bounded by viewport height as well as width, so a section lands at or inside one screen on a short laptop rather than growing to fill whatever type scale the width suggests. Measured at 1440×900 every section sits between 0.74 and 0.98 screens. That constraint is structural, not stylistic: it is why the type scale clamps against `vh` and why five-item rows get their own grid.",
+    "keyCharacteristics": [
+      "A held colour budget: ~55% white and near-white, ~30% deep navy, ~10% violet and blue, ~5% cyan and gradient.",
+      "The gradient is rationed to four appearances and never fills a surface.",
+      "Semantic tokens redeclare on dark ground, so one component works on either plate without a variant.",
+      "Sections are height-bounded; one screen is the working target.",
+      "Type is Sora over Inter, tracked tight and negative at every heading size.",
+      "Generated, deterministic artwork rather than stock imagery or icon sets."
+    ],
+    "rules": [
+      {
+        "name": "The Rationed Gradient Rule",
+        "body": "The violet→blue→cyan gradient appears in exactly four places: the logo mark, one word of the hero headline, the 2px scroll progress bar, and a 2px hairline revealed on card hover. It is a line or a mark, never a fill. A new use has to be argued for, not assumed.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Blues Rule",
+        "body": "Instrument Blue is for gradients and marks; Legible Blue is for anything a person reads. They are not interchangeable and the difference is contrast, not taste.",
+        "section": "colors"
+      },
+      {
+        "name": "The Inverted Plate Rule",
+        "body": "Dark sections redeclare `--fg`, `--fg-2`, `--fg-3`, `--line`, `--line-2`, `--card`, `--eyebrow`, `--link` and `--ghost-border` rather than overriding component rules. Style new components against those tokens and they work on either ground for free. Style against a literal colour and they will be dark-on-dark in a band you have not seen yet — this has already happened once, across five pages, at ratios as low as 2.45:1.",
+        "section": "colors"
+      },
+      {
+        "name": "The Negative Tracking Rule",
+        "body": "Every heading size carries negative letter-spacing, tightening as the size grows (`-0.022em` at subtitle through `-0.042em` at display). A heading set at default tracking will look wrong here before you can say why.",
+        "section": "typography"
+      },
+      {
+        "name": "The Balanced Heading Rule",
+        "body": "Headings carry `text-wrap: balance`. Do not hand-break them with `<br>`.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Screen Rule",
+        "body": "Every section is sized to land at or under one screen. Three mechanisms do it: type clamped against `vh` as well as `vw`, `.grid--5` for five-item rows, and the height-aware band scale. Pages carrying several hundred words of source copy are the honest exception.",
+        "section": "layout"
+      },
+      {
+        "name": "The Source Order Rule",
+        "body": "The viewport-height trims sit at the end of `globals.css` deliberately. They override `.c-hero`, whose base rule appears later in the file, and at equal specificity source order decides. Moving them up silently disables them.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat-At-Rest Rule",
+        "body": "No surface carries a shadow in its default state except where it must separate from a tinted ground. Shadow is a response.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do style new components against the semantic tokens (`--fg`, `--fg-2`, `--fg-3`, `--line`, `--line-2`, `--card`, `--eyebrow`, `--link`, `--ghost-border`) so they work on white and navy without a variant.",
+      "Do clamp heading sizes against `vh` as well as `vw`, following the existing scale, so sections keep landing inside one screen.",
+      "Do keep the gradient to a line, a mark or a hairline. It has four homes today; adding a fifth should be a decision, not a default.",
+      "Do use Legible Blue (`{colors.legible-blue}`) for anything a person reads and Instrument Blue (`{colors.instrument-blue}`) only in gradients and marks.",
+      "Do let button labels wrap, and keep `max-inline-size: 100%` on them.",
+      "Do give every disclosure `aria-expanded` / `aria-controls`, every moving element a reduced-motion path, and every tap target in the drawer 48px.",
+      "Do put helpers a Server Component calls in `src/lib/`, and run `npm run check:boundaries` after adding one."
+    ],
+    "donts": [
+      "Don't reach for a literal hex where a token exists. That is how five pages ended up dark-on-dark at 2.45:1 on markup that looked correct.",
+      "Don't fill a surface with the gradient, and prefer solid colour for buttons, cards, icons and backgrounds. A violet button beside a violet heading on a violet card is what makes a site read as a startup landing page rather than an enterprise one — a surface can earn an exception, but it should be arguing for one.",
+      "Don't use `overflow: hidden` on `html` or `body`; it makes them scroll containers and breaks every sticky element on the site. `clip` is the value.",
+      "Don't put `white-space: nowrap` on a button.",
+      "Don't move the viewport-height trims from the end of `globals.css`.",
+      "Don't add a third typeface. Labels are Inter at 600 and wide tracking.",
+      "Don't introduce an unseeded random generator into anything server-rendered.",
+      "Don't ship placeholder proof. The layouts for client logos, awards and case studies exist and stay empty until real ones arrive; the generated artwork in `public/img` is explicitly a placeholder for photography, not a substitute for it."
+    ]
+  }
+}
