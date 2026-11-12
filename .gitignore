@@ -25,3 +25,18 @@ preview/
 # Scratch: files staged for deletion. This VM cannot unlink, so they are
 # moved here rather than removed. Safe to delete the whole folder.
 _to_delete/
+
+# Agent tooling, not product code.
+#
+# The impeccable skill vendors a 16MB tree including a Mach-O binary and two
+# scripts that call atob() — all three are things repo-guard is specifically
+# written to refuse, so committing this directory makes every subsequent commit
+# fail its own pre-commit hook. The skill is installed per-machine; it is not
+# something a clone of this repo needs.
+.github/skills/
+.github/agents/
+.github/hooks/
+.claude/
+
+# Local impeccable state. design.json is the DESIGN.md sidecar and IS committed.
+.impeccable/config.local.json
